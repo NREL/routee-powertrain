@@ -1,0 +1,11 @@
+functional_tests/data/*
+.DS_Store
+*.pyc
+*.*.pyc
+.vscode/
+routee/trained_models/
+data/
+.idea/
+
+.ipynb_checkpoints
+__pycache__
