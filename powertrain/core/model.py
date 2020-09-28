@@ -2,9 +2,9 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 
-from routee.validation import errors
-from routee.core.utils import test_train_split
-from routee.estimators.base import BaseEstimator
+from powertrain.validation import errors
+from powertrain.core.utils import test_train_split
+from powertrain.estimators.base import BaseEstimator
 
 from collections import namedtuple
 
@@ -24,7 +24,7 @@ class Model:
             
     """
 
-    def __init__(self, veh_desc, option, estimator=BaseEstimator()):
+    def __init__(self, veh_desc, option=2, estimator=BaseEstimator()):
         self.metadata = {'veh_desc': veh_desc}
         self._estimator = estimator
         self.errors = None
@@ -64,18 +64,13 @@ class Model:
 
         #training the models--> randomForest will have two options of feature selection
         #option 1: distance is not a feature and fc/dist is the target column, #option 2: distance is a feature, and fc is the target column
-        if (self.metadata['estimator'] == 'ExplicitBin') or ((self.metadata['estimator'] == 'RandomForest') and (self.option == 2) ) or ((self.metadata['estimator'] == 'XGBoost') and (self.option == 2) ):
+        if (self.metadata['estimator'] == 'ExplicitBin') or (self.option == 2):
             self._estimator.train(
                 x=train[train_features+[distance.name]],
                 y=train[energy.name],
             )
 
-        elif ((self.metadata['estimator'] == 'RandomForest') and (self.option == 1)):
-            self._estimator.train(
-                x=train[train_features],
-                y=train[energy.name + '_per_' + distance.name],
-            )
-        elif ((self.metadata['estimator'] == 'XGBoost') and (self.option == 1)):
+        else:
             self._estimator.train(
                 x=train[train_features],
                 y=train[energy.name + '_per_' + distance.name],
@@ -131,10 +126,10 @@ class Model:
 
         predict_features = [feat.name for feat in self.metadata['features']]
 
-        if (self.metadata['estimator'] == 'ExplicitBin') or ((self.metadata['estimator'] == 'RandomForest') and (self.option == 2)) or ((self.metadata['estimator'] == 'XGBoost') and (self.option == 2)):
+        if (self.metadata['estimator'] == 'ExplicitBin') or (self.option == 2):
             _energy_pred = self._estimator.predict(links_df[predict_features+[self.metadata['distance'].name]])
 
-        elif ((self.metadata['estimator'] == 'RandomForest') and (self.option == 1)) or ((self.metadata['estimator'] == 'XGBoost') and (self.option == 1)):
+        else:
             _energy_pred_rates = self._estimator.predict(links_df[predict_features])
             _energy_pred = _energy_pred_rates * links_df[self.metadata['distance'].name]
 

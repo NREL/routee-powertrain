@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from routee.estimators.base import BaseEstimator
+from powertrain.estimators.base import BaseEstimator
 
 from sklearn.ensemble import RandomForestRegressor
 
