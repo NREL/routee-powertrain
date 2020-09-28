@@ -1,14 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 
-from routee.estimators.base import BaseEstimator
+from powertrain.estimators.base import BaseEstimator
 
-import xgboost as xgb
+from sklearn.ensemble import RandomForestRegressor
 
 
-class XGBoost(BaseEstimator):
-    """This estimator uses a xgboost tree to select an optimal decision tree,
+class RandomForest(BaseEstimator):
+    """This estimator uses a random forest to select an optimal decision tree,
     meant to serve as an automated construction of a lookup table.
 
     Example application:
@@ -55,28 +54,40 @@ class XGBoost(BaseEstimator):
                 Dictionary with error metrics.
                 
         """
+        
+        # Number of trees in random forest
+        n_estimators = [int(est) for est in np.linspace(start=50, stop=1000, num=10)]
 
-        regmod = xgb.XGBRegressor(
-            n_estimators=100,
-            reg_lambda=1,
-            gamma=0,
-            max_depth=3
-        )
+        # Maximum number of levels in tree
+        max_depth = [int(d) for d in np.linspace(10, 110, num=11)]
+        max_depth.append(None)
 
-        self.model = regmod.fit(np.array(x), np.array(y)) #trained regressor model
+        # Minimum number of samples required to split a node
+        min_samples_split = [2, 5, 10]
 
+        # Minimum number of samples required at each leaf node
+        min_samples_leaf = [1, 2, 4]
 
-    #add feature importance
+        random_grid = {'n_estimators': n_estimators,
+                       'max_depth': max_depth,
+                       'min_samples_split': min_samples_split,
+                       'min_samples_leaf': min_samples_leaf}
+
+        regmod = RandomForestRegressor(n_estimators=20,
+                                       max_features='auto',
+                                       max_depth=10,
+                                       min_samples_split=10,
+                                       n_jobs=self.cores,
+                                       random_state=52)
+
+        self.model = regmod.fit(np.array(x), np.array(y))
+
+        #add feature importance
     def feature_importance(self):
         return self.model.feature_importances_
-        
+    
     def plot_feature_importance(self, features = None):
         self.model.feature_names = features
-        xgb.plot_importance(self.model)
-        plt.rcParams['figure.figsize'] = [5, 5]
+        plt.barh(self.model.feature_names, self.model.feature_importances_)
+        plt.xlabel('Importance [0~1]')
         plt.show()
-        
-        
-        (pd.Series(self.model.feature_importances_, index=features)
-        .nlargest(10)
-        .plot(kind='barh'))

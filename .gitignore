@@ -1,11 +1,13 @@
-functional_tests/data/*
+tests/routee-powertrain-test-data/
 .DS_Store
 *.pyc
 *.*.pyc
 .vscode/
-routee/trained_models/
+powertrain/trained_models/
 data/
+*.code-workspace
 .idea/
+*.egg-info/
 
 .ipynb_checkpoints
 __pycache__

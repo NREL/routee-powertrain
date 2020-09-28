@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import copy
 
-from routee.estimators.base import BaseEstimator
+from powertrain.estimators.base import BaseEstimator
 
 
 class ExplicitBin(BaseEstimator):

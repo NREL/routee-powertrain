@@ -1,4 +1,4 @@
-name: routee
+name: routee-powertrain
 channels:
   - conda-forge
   - defaults

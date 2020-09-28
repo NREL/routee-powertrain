@@ -26,14 +26,14 @@ consumption models or choose from the catalog of models pre-trained by NREL usin
 ## Setup
 Clone (or download) the RouteE repository and create a compatible python environment to ensure package compatibility.
 
-`git clone https://github.nrel.gov/MBAP/routee.git`
+`git clone https://github.nrel.gov/MBAP/routee-powertrain.git`
 
 
 The `environment.yml` file is where the package dependencies reside. If you are using [conda](https://conda.io/docs/) 
 as your package manager, simply run:
 ```
 conda env create -f environment.yml
-conda activate routee
+conda activate routee-powertrain
 ```
 This will create a new conda environment that is compatible with the routee project.
 
@@ -48,20 +48,28 @@ or if you're already in the routee root directory then:
 pip install .
 ```
 
-Once the repo is cloned and environment created, you will be able to import the RouteE module within your code: 
-
+Once the repo is cloned and environment created, you can also install routee-powertrain into your environment with pip:
 ```
-import routee as rte
+pip install -e routee-powertrain
+```
+
+You will now be able to import routee-powertrain in your code with:
+```
+import powertrain
 ```
 
 ## Pre-Trained Models
-The standard library of pretrained RouteE models is available on [Box](https://app.box.com/s/cwfqgkvxssoxnc4k6sghvqfjg19f4clb). From that link, you can download the standard library manually. It is then recommended that you create a directory in this repo.
+The standard library of pretrained RouteE models is available on [Box](https://app.box.com/s/cwfqgkvxssoxnc4k6sghvqfjg19f4clb). From that link, you can download the standard library manually. It is recommended that you create a directory for the downloaded data by following these steps: 
 ```
 cd <path-to-routee-powertrain>
-mkdir routee/trained_models
+mkdir powertrain/trained_models
 ```
-Then move the downloaded and unzipped "standard" directory of pre-trained routee-powertrain models into ```routee/trained_models/```.
+Then move the downloaded and unzipped "standard" directory of pre-trained routee-powertrain models into ```powertrain/trained_models/```.
 
+## Test Data
+If you are developing on the routee-powertrain projects and plan to run any of the tests, you will need to also download the test data from [Box](https://app.box.com/s/dm5w4mo56ej9jfmyo404kz98roz7jat7). 
+
+It is recommended that you move the downloaded and unzipped "routee-powertrain-test-data" directory into ```powertrain/tests/```.
 
 ## Getting Started
 

@@ -8,7 +8,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name="routee",
+    name="route-powertrain",
     version="0.3.1",
     description=
     "RouteE is a tool for predicting energy usage over a set of road links.",
