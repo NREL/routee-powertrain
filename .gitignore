@@ -5,6 +5,7 @@ functional_tests/data/*
 .vscode/
 powertrain/trained_models/
 data/
+*.code-workspace
 .idea/
 
 .ipynb_checkpoints
