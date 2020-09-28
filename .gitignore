@@ -1,4 +1,4 @@
-powertrain/tests/routee-powertrain-test-data/
+tests/routee-powertrain-test-data/
 .DS_Store
 *.pyc
 *.*.pyc
