@@ -26,14 +26,14 @@ consumption models or choose from the catalog of models pre-trained by NREL usin
 ## Setup
 Clone (or download) the RouteE repository and create a compatible python environment to ensure package compatibility.
 
-`git clone https://github.nrel.gov/MBAP/routee.git`
+`git clone https://github.nrel.gov/MBAP/routee-powertrain.git`
 
 
 The `environment.yml` file is where the package dependencies reside. If you are using [conda](https://conda.io/docs/) 
 as your package manager, simply run:
 ```
 conda env create -f environment.yml
-conda activate routee
+conda activate routee-powertrain
 ```
 This will create a new conda environment that is compatible with the routee project.
 
@@ -48,10 +48,14 @@ or if you're already in the routee root directory then:
 pip install .
 ```
 
-Once the repo is cloned and environment created, you will be able to import the RouteE module within your code: 
-
+Once the repo is cloned and environment created, you can also install routee-powertrain into your environment with pip:
 ```
-import routee as rte
+pip install -e routee-powertrain
+```
+
+You will now be able to import routee-powertrain in your code with:
+```
+import powertrain
 ```
 
 ## Pre-Trained Models
