@@ -3,7 +3,7 @@ functional_tests/data/*
 *.pyc
 *.*.pyc
 .vscode/
-routee/trained_models/
+powertrain/trained_models/
 data/
 .idea/
 
