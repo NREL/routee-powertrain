@@ -55,13 +55,17 @@ import routee as rte
 ```
 
 ## Pre-Trained Models
-The standard library of pretrained RouteE models is available on [Box](https://app.box.com/s/cwfqgkvxssoxnc4k6sghvqfjg19f4clb). From that link, you can download the standard library manually. It is then recommended that you create a directory in this repo.
+The standard library of pretrained RouteE models is available on [Box](https://app.box.com/s/cwfqgkvxssoxnc4k6sghvqfjg19f4clb). From that link, you can download the standard library manually. It is recommended that you create a directory for the downloaded data by following these steps: 
 ```
 cd <path-to-routee-powertrain>
-mkdir routee/trained_models
+mkdir powertrain/trained_models
 ```
-Then move the downloaded and unzipped "standard" directory of pre-trained routee-powertrain models into ```routee/trained_models/```.
+Then move the downloaded and unzipped "standard" directory of pre-trained routee-powertrain models into ```powertrain/trained_models/```.
 
+## Test Data
+If you are developing on the routee-powertrain projects and plan to run any of the tests, you will need to also download the test data from [Box](https://app.box.com/s/dm5w4mo56ej9jfmyo404kz98roz7jat7). 
+
+It is recommended that you move the downloaded and unzipped "routee-powertrain-test-data" directory into ```powertrain/tests/```.
 
 ## Getting Started
 
