@@ -12,7 +12,7 @@ Example:
 
 import pickle
 
-from routee.core.model import Model
+from powertrain.core.model import Model
 
 def read_model(infile):
     """Function to read model from file.

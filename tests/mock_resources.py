@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from routee import read_model
+from powertrain import read_model
 
 
 def mock_route() -> pd.DataFrame:

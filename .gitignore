@@ -7,6 +7,7 @@ powertrain/trained_models/
 data/
 *.code-workspace
 .idea/
+*.egg-info/
 
 .ipynb_checkpoints
 __pycache__
