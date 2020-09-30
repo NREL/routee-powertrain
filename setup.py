@@ -31,7 +31,6 @@ setup(
         "scikit-learn",
         "scipy",
         "xgboost",
-        "matplotlib",
     ],
     extras_require={
         "optional": [
