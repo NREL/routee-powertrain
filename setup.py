@@ -20,16 +20,18 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: Other/Proprietary License",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Scientific/Engineering"
     ],
     packages=find_packages(),
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_requires=[
-        "pandas==0.24",
-        "numpy==1.16",
-        "scikit-learn==0.21",
-        "scipy==1.2",
+        "pandas",
+        "numpy",
+        "scikit-learn",
+        "scipy",
+        "xgboost",
+        "matplotlib",
     ],
     extras_require={
         "optional": [
