@@ -1,15 +1,12 @@
-import sqlite3
-import pandas as pd
-import sys
 import glob
 import os
-import pickle
+import sqlite3
 
-sys.path.append('..')
-import routee as rte
+import pandas as pd
 
-from routee.estimators import RandomForest, ExplicitBin
-from routee.core.model import Feature, Distance, Energy
+import powertrain
+from powertrain.core.model import Feature, Distance, Energy
+from powertrain.estimators import RandomForest, ExplicitBin
 
 RAW_DATA_PATH = "/data/fastsim-results/2020_03_27_routee_library/routee_fastsim_veh_db/*.db"
 PICKLE_OUT_PATH = "../routee/trained_models/"
@@ -39,13 +36,14 @@ def train_model(file):
     elif df.esskwhoutach.sum() > 0:
         energy = Energy('esskwhoutach', units='kwh')
     else:
-        raise RuntimeError('There is no energy reported in this data file..')
+        raise RuntimeError('There is no energy in this data file..')
 
     train_df = df[['miles', 'gpsspeed', 'grade', energy.name]].dropna()
 
-    ln_model = rte.Model(vehicle_name)
-    rf_model = rte.Model(vehicle_name, estimator=RandomForest(cores=4))
-    eb_model = rte.Model(vehicle_name, estimator=ExplicitBin(features=features, distance=distance, energy=energy))
+    ln_model = powertrain.Model(vehicle_name)
+    rf_model = powertrain.Model(vehicle_name, estimator=RandomForest(cores=4))
+    eb_model = powertrain.Model(vehicle_name,
+                                estimator=ExplicitBin(features=features, distance=distance, energy=energy))
 
     models = {
         'Linear': ln_model,
@@ -54,17 +52,17 @@ def train_model(file):
     }
 
     for name, model in models.items():
-        model.train(train_df, feature_pack=features, distance=distance, energy=energy)
-        model.dump_model(PICKLE_OUT_PATH + vehicle_name + '_' + name.replace(' ','_') + ".pickle")
-        
+        model.train(train_df, features=features, distance=distance, energy=energy)
+        model.dump_model(PICKLE_OUT_PATH + vehicle_name + '_' + name.replace(' ', '_') + ".pickle")
+
+
 #     with open(PICKLE_OUT_PATH + vehicle_name + "_errors.pickle", 'wb') as f:
 #         pickle.dump(model_errors, f)
 
 
 from multiprocessing import Pool
 
-num_cores = 6 
+num_cores = 6
 
 with Pool(num_cores) as p:
     p.map(train_model, raw_files)
-

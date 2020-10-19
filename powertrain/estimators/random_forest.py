@@ -1,8 +1,7 @@
 from typing import Union
 
-import matplotlib.pyplot as plt
-from pandas import DataFrame, Series
 from numpy import clip
+from pandas import DataFrame, Series
 from sklearn.ensemble import RandomForestRegressor
 
 from powertrain.core.features import PredictType, FeaturePack
@@ -115,9 +114,3 @@ class RandomForest(EstimatorInterface):
 
     def feature_importance(self):
         return self.model.feature_importances_
-
-    def plot_feature_importance(self, features=None):
-        self.model.feature_names = features
-        plt.barh(self.model.feature_names, self.model.feature_importances_)
-        plt.xlabel('Importance [0~1]')
-        plt.show()

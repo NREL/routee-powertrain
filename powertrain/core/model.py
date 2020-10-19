@@ -1,13 +1,11 @@
 import pickle
+
 import numpy as np
-import matplotlib.pyplot as plt
 
 from powertrain import __version__
-from powertrain.validation import errors
 from powertrain.core.utils import test_train_split
 from powertrain.estimators.base import BaseEstimator
-from powertrain.core.features import Feature, Distance, Energy
-
+from powertrain.validation import errors
 
 
 class Model:
@@ -60,20 +58,20 @@ class Model:
         pass_data = data[train_features + [distance.name] + [energy.name]].copy()
 
         # convert absolute consumption for FC RATE
-        pass_data[energy.name + '_per_' + distance.name] = (pass_data[energy.name]/pass_data[distance.name])
+        pass_data[energy.name + '_per_' + distance.name] = (pass_data[energy.name] / pass_data[distance.name])
 
         pass_data = pass_data[~pass_data.isin([np.nan, np.inf, -np.inf]).any(1)]
 
         # splitting test data between train and validate --> 20% here
         train, test = test_train_split(pass_data.dropna(), 0.2)
 
-        #training the models--> randomForest will have two options of feature selection
+        # training the models--> randomForest will have two options of feature selection
 
         # option 1: distance is not a feature and fc/dist is the target column,
         # option 2: distance is a feature, and fc is the target column
         if (self.metadata['estimator'] == 'ExplicitBin') or (self.option == 2):
             self._estimator.train(
-                x=train[train_features+[distance.name]],
+                x=train[train_features + [distance.name]],
                 y=train[energy.name],
             )
 
@@ -85,17 +83,9 @@ class Model:
 
         self.validate(test)
 
-        #saving feature_importance
-        if (self.metadata['estimator']=='RandomForest') or (self.metadata['estimator']=='XGBoost'):
+        # saving feature_importance
+        if (self.metadata['estimator'] == 'RandomForest') or (self.metadata['estimator'] == 'XGBoost'):
             self.metadata['feature_importance'] = self._estimator.feature_importance()
-
-    def plot_feature_importance(self):
-        if (self.metadata['estimator'] == 'ExplicitBin'):
-            print ("Feature importance not available for visualization.")
-        else:
-            features = [feat.name for feat in self.metadata['features']]
-            if self.option == 2: features.append(self.metadata['distance'].name)
-            self._estimator.plot_feature_importance(features)
 
     def validate(self, test):
         """Validate the accuracy of the estimator.
@@ -134,7 +124,7 @@ class Model:
         predict_features = [feat.name for feat in self.metadata['features']]
 
         if (self.metadata['estimator'] == 'ExplicitBin') or (self.option == 2):
-            _energy_pred = self._estimator.predict(links_df[predict_features+[self.metadata['distance'].name]])
+            _energy_pred = self._estimator.predict(links_df[predict_features + [self.metadata['distance'].name]])
 
         else:
             _energy_pred_rates = self._estimator.predict(links_df[predict_features])
