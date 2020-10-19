@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import ast
 from typing import Union
 
 import numpy as np
@@ -51,6 +54,7 @@ class ExplicitBin(EstimatorInterface):
             self,
             feature_pack: FeaturePack,
             predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW,
+            model: pd.DataFrame = pd.DataFrame(),
     ):
         if isinstance(predict_type, str):
             ptype = PredictType.from_string(predict_type)
@@ -67,7 +71,7 @@ class ExplicitBin(EstimatorInterface):
         self.predict_type = ptype
         self.bin_lims: dict = {}
         self.bin_labels: dict = {}
-        self.model: pd.DataFrame = pd.DataFrame()
+        self.model = model
         self.feature_pack: FeaturePack = feature_pack
         self.energy_rate_target: str = feature_pack.energy.name + '_per_100' + feature_pack.distance.name
 
@@ -195,6 +199,27 @@ class ExplicitBin(EstimatorInterface):
                   'records set to zero because of nan values from table lookup process')
 
         return links_df[self.feature_pack.energy.name].fillna(0)
+
+    def to_json(self) -> dict:
+        out_json = {
+            'model': self.model.to_json(orient="index"),
+            'feature_pack': self.feature_pack.to_json(),
+            'predict_type': self.predict_type.name
+        }
+
+        return out_json
+
+    @classmethod
+    def from_json(cls, json: dict) -> ExplicitBin:
+        predict_type = PredictType.from_string(json['predict_type'])
+        feature_pack = FeaturePack.from_json(json['feature_pack'])
+        model_df = pd.read_json(json['model'], orient="index")
+        model_df.index = pd.MultiIndex.from_tuples(
+            [ast.literal_eval(i) for i in model_df.index],
+            names=("speed_bins", "grade_bins")
+        )
+
+        return ExplicitBin(feature_pack=feature_pack, predict_type=predict_type, model=model_df)
 
     def dump_csv(self, fileout):
         """Dump CSV file of table ONLY. No associated metadata.

@@ -1,4 +1,7 @@
+from __future__ import annotations
 from typing import Union
+
+import numpy as np
 
 from numpy import clip
 from pandas import DataFrame, Series
@@ -19,7 +22,9 @@ class BaseEstimator(EstimatorInterface):
     def __init__(
             self,
             feature_pack: FeaturePack,
-            predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW):
+            predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW,
+            model: linear_model.LinearRegression = linear_model.LinearRegression()
+    ):
         if isinstance(predict_type, str):
             ptype = PredictType.from_string(predict_type)
         elif isinstance(predict_type, int):
@@ -31,7 +36,7 @@ class BaseEstimator(EstimatorInterface):
 
         self.predict_type = ptype
         self.feature_pack = feature_pack
-        self.model: linear_model.LinearRegression = linear_model.LinearRegression()
+        self.model = model
 
     def train(self,
               data: DataFrame,
@@ -82,6 +87,39 @@ class BaseEstimator(EstimatorInterface):
         else:
             raise NotImplemented(f"{self.predict_type} not supported by BaseEstimator")
 
-        energy_pred = Series(clip(_energy_pred, a_min=0), name=self.predict_type.name)
+        energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.predict_type.name)
 
         return energy_pred
+
+    def to_json(self) -> dict:
+        serialized_model = {
+            'meta': self.model.__class__.__name__,
+            'coef_': self.model.coef_.tolist(),
+            'intercept_': self.model.intercept_.tolist(),
+            'params': self.model.get_params()
+        }
+        out_json = {
+            'model': serialized_model,
+            'feature_pack': self.feature_pack.to_json(),
+            'predict_type': self.predict_type.name
+        }
+
+        return out_json
+
+    @classmethod
+    def from_json(cls, json: dict) -> BaseEstimator:
+        model_dict = json['model']
+        model = linear_model.LinearRegression(model_dict['params'])
+        model.coef_ = np.array(model_dict['coef_'])
+        model.intercept_ = np.array(model_dict['intercept_'])
+
+        predict_type = PredictType.from_string(json['predict_type'])
+        feature_pack = FeaturePack.from_json(json['feature_pack'])
+
+        return BaseEstimator(feature_pack=feature_pack, predict_type=predict_type, model=model)
+
+
+
+
+
+

@@ -1,11 +1,34 @@
-import pickle
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Optional
+
+import json
 
 import numpy as np
 from pandas import DataFrame
 
-from powertrain.core.utils import test_train_split, get_version
-from powertrain.estimators.estimator_interface import EstimatorInterface
+from powertrain.core.core_utils import test_train_split
+from powertrain.utils.fs import get_version
 from powertrain.validation import errors
+from powertrain.estimators.estimator_interface import EstimatorInterface
+from powertrain.estimators.base import BaseEstimator
+from powertrain.estimators.explicit_bin import ExplicitBin
+from powertrain.estimators.random_forest import RandomForest
+
+_registered_estimators = {
+    'BaseEstimator': BaseEstimator,
+    'ExplicitBin': ExplicitBin,
+    'RandomForest': RandomForest,
+}
+
+def _load_estimator(name: str, json: dict) -> EstimatorInterface:
+    if name not in _registered_estimators:
+        raise TypeError(f"{name} estimator not registered with routee-powertrain")
+
+    e = _registered_estimators[name]
+
+    return e.from_json(json)
 
 
 class Model:
@@ -19,10 +42,13 @@ class Model:
             
     """
 
-    def __init__(self, veh_desc: str, estimator: EstimatorInterface):
-        self.metadata = {'veh_desc': veh_desc}
+    def __init__(self, estimator: EstimatorInterface, veh_desc: Optional[str] = None):
+        self.metadata = {
+            'veh_desc': veh_desc,
+            'estimator': estimator.__class__.__name__,
+        }
+
         self._estimator = estimator
-        self.errors = None
 
     def train(
             self,
@@ -39,8 +65,7 @@ class Model:
         """
         print(f"training estimator {self._estimator} with option {self._estimator.predict_type}.")
 
-        self.metadata['estimator'] = self._estimator.__class__.__name__
-        self.metadata['routee_version'] = get_version("powertrain/__init__.py")
+        self.metadata['routee_version'] = get_version()
 
         pass_data = data.copy(deep=True)
         pass_data = pass_data[~pass_data.isin([np.nan, np.inf, -np.inf]).any(1)]
@@ -63,7 +88,7 @@ class Model:
 
         _target_pred = self.predict(test)
         test['target_pred'] = _target_pred
-        self.errors = errors.all_error(
+        self.metadata['errors'] = errors.all_error(
             test[self._estimator.feature_pack.energy.name],
             _target_pred,
             test[self._estimator.feature_pack.distance.name],
@@ -84,8 +109,8 @@ class Model:
         """
         return self._estimator.predict(links_df)
 
-    def dump_model(self, outfile):
-        """Dumps a routee.Model to a pickle file for persistance and sharing.
+    def to_json(self, outfile: Path):
+        """Dumps a routee.Model to a json file for persistance and sharing.
 
         Args:
             outfile (str):
@@ -94,8 +119,20 @@ class Model:
         """
         out_dict = {
             'metadata': self.metadata,
-            'estimator': self._estimator,
-            'errors': self.errors,
+            '_estimator_json': self._estimator.to_json(),
         }
+        with open(outfile, 'w', encoding='utf-8') as f:
+            json.dump(out_dict, f, ensure_ascii=False, indent=4)
 
-        pickle.dump(out_dict, open(outfile, 'wb'))
+    @classmethod
+    def from_json(cls, infile: Path) -> Model:
+        with infile.open('r', encoding='utf-8') as f:
+            in_json = json.load(f)
+            metadata = in_json['metadata']
+            estimator = _load_estimator(metadata['estimator'], json=in_json['_estimator_json'])
+
+            m = Model(estimator=estimator)
+            m.metadata = metadata
+
+            return m
+

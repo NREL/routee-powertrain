@@ -85,7 +85,7 @@ class XGBoost(EstimatorInterface):
         else:
             raise NotImplemented(f"{self.predict_type} not supported by XGBoost")
 
-        energy_pred = Series(clip(_energy_pred, a_min=0), name=self.predict_type.name)
+        energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.predict_type.name)
 
         return energy_pred
 

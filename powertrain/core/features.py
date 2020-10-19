@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum
 from typing import NamedTuple, Tuple, List
 
@@ -5,6 +7,10 @@ from typing import NamedTuple, Tuple, List
 class Feature(NamedTuple):
     name: str
     units: str
+
+    @classmethod
+    def from_dict(cls, d: dict) -> Feature:
+        return Feature(name=d['name'], units=d['units'])
 
 
 class FeaturePack(NamedTuple):
@@ -15,6 +21,20 @@ class FeaturePack(NamedTuple):
     @property
     def feature_list(self) -> List[str]:
         return [f.name for f in self.features]
+
+    def to_json(self) -> dict:
+        return {
+            'features': [f._asdict() for f in self.features],
+            'distance': self.distance._asdict(),
+            'energy': self.energy._asdict(),
+        }
+
+    @classmethod
+    def from_json(cls, json: dict) -> FeaturePack:
+        features = tuple(Feature.from_dict(d) for d in json['features'])
+        distance = Feature.from_dict(json['distance'])
+        energy = Feature.from_dict(json['energy'])
+        return FeaturePack(features, distance, energy)
 
 
 class PredictType(Enum):
@@ -29,9 +49,9 @@ class PredictType(Enum):
 
     @classmethod
     def from_string(cls, string: str):
-        if string in ['raw_energy', 'energy_raw']:
+        if string.lower() in ['raw_energy', 'energy_raw']:
             return PredictType.ENERGY_RAW
-        elif string in ['rate_energy', 'energy_rate']:
+        elif string.lower() in ['rate_energy', 'energy_rate']:
             return PredictType.ENERGY_RATE
         else:
             raise TypeError(f"{string} not a supported predict type.")

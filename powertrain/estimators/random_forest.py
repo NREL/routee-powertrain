@@ -1,9 +1,12 @@
-from typing import Union
+from __future__ import annotations
+
+from typing import Union, Optional
 
 from numpy import clip
 from pandas import DataFrame, Series
 from sklearn.ensemble import RandomForestRegressor
 
+from powertrain.core.core_utils import serialize_random_forest, deserialize_random_forest
 from powertrain.core.features import PredictType, FeaturePack
 from powertrain.estimators.estimator_interface import EstimatorInterface
 
@@ -23,6 +26,7 @@ class RandomForest(EstimatorInterface):
             feature_pack: FeaturePack,
             cores: int = 2,
             predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW,
+            model: Optional[RandomForestRegressor] = None,
     ):
         if isinstance(predict_type, str):
             ptype = PredictType.from_string(predict_type)
@@ -34,15 +38,18 @@ class RandomForest(EstimatorInterface):
             raise TypeError(f"predict_type {predict_type} of python type {type(predict_type)} not supported")
         self.predict_type: PredictType = ptype
 
-        mod = RandomForestRegressor(n_estimators=20,
-                                    max_features='auto',
-                                    max_depth=10,
-                                    min_samples_split=10,
-                                    n_jobs=cores,
-                                    random_state=52)
-        self.model: RandomForestRegressor = mod
+        if not model:
+            model = RandomForestRegressor(n_estimators=20,
+                                          max_features='auto',
+                                          max_depth=10,
+                                          min_samples_split=10,
+                                          n_jobs=cores,
+                                          random_state=52)
+
+        self.model: RandomForestRegressor = model
 
         self.feature_pack: FeaturePack = feature_pack
+        self.cores = cores
 
     def train(self, data: DataFrame):
         """
@@ -91,9 +98,33 @@ class RandomForest(EstimatorInterface):
         else:
             raise NotImplemented(f"{self.predict_type} not supported by RandomForest")
 
-        energy_pred = Series(clip(_energy_pred, a_min=0), name=self.predict_type.name)
+        energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.predict_type.name)
 
         return energy_pred
 
-    def feature_importance(self):
-        return self.model.feature_importances_
+    def to_json(self) -> dict:
+        out_json = {
+            'model': serialize_random_forest(self.model),
+            'feature_pack': self.feature_pack.to_json(),
+            'predict_type': self.predict_type.name,
+            'cores': self.cores
+        }
+
+        return out_json
+
+    @classmethod
+    def from_json(cls, json: dict) -> RandomForest:
+        model_dict = json['model']
+        model = deserialize_random_forest(model_dict)
+
+        predict_type = PredictType.from_string(json['predict_type'])
+        feature_pack = FeaturePack.from_json(json['feature_pack'])
+        cores = json['cores']
+
+        e = RandomForest(
+            feature_pack=feature_pack,
+            predict_type=predict_type,
+            cores=cores,
+            model=model
+        )
+        return e

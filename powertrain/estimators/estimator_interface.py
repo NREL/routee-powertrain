@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pandas import DataFrame, Series
 
 from abc import abstractmethod
@@ -42,6 +44,23 @@ class EstimatorInterface(metaclass=ABCMeta):
         Args:
             data:
 
+        Returns:
+
+        """
+
+    @abstractmethod
+    def to_json(self) -> dict:
+        """
+        method to serialize all necessary data to json from model persistence
+        Returns:
+
+        """
+
+    @classmethod
+    @abstractmethod
+    def from_json(cls, json: dict) -> EstimatorInterface:
+        """
+        method to serialize all necessary data to json from model persistence
         Returns:
 
         """
