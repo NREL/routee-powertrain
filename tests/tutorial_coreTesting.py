@@ -128,7 +128,7 @@ option = 1 # or provide 2. Explicit bin module has no dependence on the 'option'
 eb_model = routee.Model(scenario_name, option, estimator=ExplicitBin(features=features, distance=distance, energy=energy))
 
 #training model with data (also does validation with test data and calculates error metrics)
-eb_model.train(df_mod, features=features, distance=distance, energy=energy)
+eb_model.train(df_mod, feature_pack=features, distance=distance, energy=energy)
 
 print(eb_model.metadata)
 print(eb_model.errors)
@@ -147,7 +147,7 @@ option = 2 #going for fc/dist option
 xgb_model = routee.Model(scenario_name, option, estimator=XGBoost(cores=4))
 
 #training model with data (also does validation with test data and calculates error metrics)
-xgb_model.train(df_mod, features=features, distance=distance, energy=energy)
+xgb_model.train(df_mod, feature_pack=features, distance=distance, energy=energy)
 
 print(xgb_model.metadata)
 print(xgb_model.errors)
@@ -167,7 +167,7 @@ option = 2 #going for fc/dist option
 
 rf_model = routee.Model(scenario_name, option, estimator=RandomForest(cores=4))
 #training model with data (also does validation with test data and calculates error metrics)
-rf_model.train(df_mod, features=features, distance=distance, energy=energy)
+rf_model.train(df_mod, feature_pack=features, distance=distance, energy=energy)
 print(rf_model.errors)
 rf_model.plot_feature_importance()
 
@@ -301,9 +301,9 @@ rf_model = routee.Model(scenario_name, option, estimator=RandomForest(cores=4))
 xgb_model = routee.Model(scenario_name, option, estimator=XGBoost(cores=4))
 
 #training model with data (also does validation with test data and calculates error metrics)
-eb_model.train(df_mod, features=features, distance=distance, energy=energy)
-rf_model.train(df_mod, features=features, distance=distance, energy=energy)
-xgb_model.train(df_mod, features=features, distance=distance, energy=energy)
+eb_model.train(df_mod, feature_pack=features, distance=distance, energy=energy)
+rf_model.train(df_mod, feature_pack=features, distance=distance, energy=energy)
+xgb_model.train(df_mod, feature_pack=features, distance=distance, energy=energy)
 
 #We predict the energy consumption by providing the artifically create route, and visualize the results.
 xgboost_output= xgb_model.predict(links_df)

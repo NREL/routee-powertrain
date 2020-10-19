@@ -54,7 +54,7 @@ def train_model(file):
     }
 
     for name, model in models.items():
-        model.train(train_df, features=features, distance=distance, energy=energy)
+        model.train(train_df, feature_pack=features, distance=distance, energy=energy)
         model.dump_model(PICKLE_OUT_PATH + vehicle_name + '_' + name.replace(' ','_') + ".pickle")
         
 #     with open(PICKLE_OUT_PATH + vehicle_name + "_errors.pickle", 'wb') as f:

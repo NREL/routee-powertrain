@@ -174,8 +174,8 @@ base_model = routee.Model('class_8_linehaul')
 rf_model = routee.Model('class_8_linehaul', estimator = RandomForest(cores = 12))
 
 
-base_model.train(df_links_fltr, features=features, distance=distance, energy=energy)
-rf_model.train(df_links_fltr, features=features, distance=distance, energy=energy)
+base_model.train(df_links_fltr, feature_pack=features, distance=distance, energy=energy)
+rf_model.train(df_links_fltr, feature_pack=features, distance=distance, energy=energy)
 
 
 rf_model.dump_model('../../test_data/trained_models/class_8_linehaul_diesel.pickle')

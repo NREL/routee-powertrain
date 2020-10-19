@@ -2,6 +2,8 @@ from os import path
 
 from setuptools import setup, find_packages
 
+__version__ = "0.3.1"
+
 # Get the long description from the README file
 here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
@@ -9,7 +11,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="route-powertrain",
-    version="0.3.1",
+    version=__version__,
     description=
     "RouteE is a tool for predicting energy usage over a set of road links.",
     long_description=long_description,

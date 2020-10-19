@@ -1,11 +1,13 @@
-import pandas as pd
+from typing import Union, Optional
+
 import numpy as np
-import copy
+import pandas as pd
 
-from powertrain.estimators.base import BaseEstimator
+from powertrain.core.features import FeaturePack, PredictType
+from powertrain.estimators.estimator_interface import EstimatorInterface
 
 
-class ExplicitBin(BaseEstimator):
+class ExplicitBin(EstimatorInterface):
     """Energy consumption rates matrix with same dimensions as link features.
 
     The energy rates models are trained and used to predict energy consumption
@@ -44,40 +46,46 @@ class ExplicitBin(BaseEstimator):
             Name of column representing the energy column (e.g. GGE or kWh).
         
     """
-    
 
-    def __init__(self, features, distance, energy):
-        self.metadata = {}
-        self.metadata['features'] = [feat.name for feat in features]
-        self.metadata['distance'] = distance.name
-        self.metadata['energy'] = energy.name
+    def __init__(self, predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW):
+        if isinstance(predict_type, str):
+            ptype = PredictType.from_string(predict_type)
+        elif isinstance(predict_type, int):
+            ptype = PredictType.from_int(predict_type)
+        elif isinstance(predict_type, PredictType):
+            ptype = predict_type
+        else:
+            raise TypeError(f"predict_type {predict_type} of python type {type(predict_type)} not supported")
 
-    def train(self, x, y):
-        """Method to train the estimator over a specific dataset. 
-        Overrides BaseEstimator train method.
+        if ptype != PredictType.ENERGY_RAW:
+            raise NotImplemented(f"{self.predict_type} not supported by ExplicitBin")
 
+        self.predict_type = ptype
+        self.bin_lims: dict = {}
+        self.bin_labels: dict = {}
+        self.model: Optional[pd.DataFrame] = None
+        self.feature_pack: Optional[FeaturePack] = None
+        self.energy_rate_target: Optional[str] = None
+
+    def train(self,
+              data: pd.DataFrame,
+              feature_pack: FeaturePack,
+              ):
+        """
+        train method for the base estimator (linear regression)
         Args:
-            train (pandas.DataFrame):
-                Data frame of the training data including features and target.
-            test (pandas.DataFrame):
-                Data frame of testing data for validation and error calculation.
-            metadata (dict):
-                Dictionary of metadata including features, target, distance column,
-                energy column, and trip_ids column.
+            data:
+            feature_pack:
 
         Returns:
-            errors (dict):
-                Dictionary with error metrics.
-                
+
         """
 
-        # Combine x and y
-        x = x.astype(float)
-
+        x = data[feature_pack.feature_list + [feature_pack.distance_name]].astype(float)
+        y = data[feature_pack.energy_name].astype(float)
         df = pd.concat([x, y], axis=1, ignore_index=True, sort=False)
-        df.columns = self.metadata['features'] + [self.metadata['distance']] + [self.metadata['energy']]
 
-        # df = df.astype(float)
+        df.columns = feature_pack.feature_list + [feature_pack.distance_name] + [feature_pack.energy_name]
 
         # Set min and max bins using 95% interval (can also try 99%)
         # _mins = x.quantile(q=0.025)
@@ -85,30 +93,32 @@ class ExplicitBin(BaseEstimator):
         _maxs = x.quantile(q=.975)
 
         # TODO: Build a grid of bin limit permutations using 5,10,15,20 bins on each feature
-        
+
         # Default bin limits and labels for grade and speed
         # format: {<keyword>: ([limits], [labels])}
-        
+
         bin_defaults = {
-            'grade':([-15,-5.5,-4.5,-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5,4.5,5.5,15], [-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6]),
-            'speed':([0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,100], [0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80])
-                        }
+            'grade': (
+                [-15, -5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 15],
+                [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6],
+            ),
+            'speed': (
+                [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 100],
+                [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80],
+            )
+        }
 
-        self.bin_lims = {}
-        self.bin_labels = {}
-
-        # just one for testing
-        for f_i in self.metadata['features']:
+        for f_i in feature_pack.feature_list:
             _unique_vals = len(df[f_i].unique())
 
             if _unique_vals <= 10:
                 df.loc[:, f_i + '_bins'] = df.loc[:, f_i]
-                
+
             elif list(bin_defaults.keys())[0] in f_i:
                 self.bin_lims[f_i] = bin_defaults[list(bin_defaults.keys())[0]][0]
                 self.bin_labels[f_i] = bin_defaults[list(bin_defaults.keys())[0]][1]
                 df.loc[:, f_i + '_bins'] = pd.cut(df[f_i], self.bin_lims[f_i], labels=self.bin_labels[f_i])
-            
+
             elif list(bin_defaults.keys())[1] in f_i:
                 self.bin_lims[f_i] = bin_defaults[list(bin_defaults.keys())[1]][0]
                 self.bin_labels[f_i] = bin_defaults[list(bin_defaults.keys())[1]][1]
@@ -126,23 +136,24 @@ class ExplicitBin(BaseEstimator):
         # TODO: Need special checks for cumulative vs rates inputs on target variable
 
         # train rates table - groupby bin columns
-        _bin_cols = [i + '_bins' for i in self.metadata['features']]
-        _agg_funs = {self.metadata['distance']: sum, self.metadata['energy']: sum}
+        _bin_cols = [i + '_bins' for i in feature_pack.feature_list]
+        _agg_funs = {feature_pack.distance_name: sum, feature_pack.energy_name: sum}
 
         self.model = df.dropna(subset=_bin_cols). \
             groupby(_bin_cols).agg(_agg_funs)
 
         # rate is dependent on the energy and distance units provided (*100)
-        self.metadata['target'] = self.metadata['energy'] + '_per_100' + self.metadata['distance']
+        self.energy_rate_target = feature_pack.energy_name + '_per_100' + feature_pack.distance_name
 
-        self.model.loc[:, self.metadata['target']] = 100.0 * self.model[self.metadata['energy']] / \
-                                                     self.model[self.metadata['distance']]
+        energy_rate = 100.0 * self.model[feature_pack.energy_name] / self.model[feature_pack.distance_name]
+        self.model.loc[:, self.energy_rate_target] = energy_rate
+        self.feature_pack = feature_pack
 
-    def predict(self, links_df):
+    def predict(self, data: pd.DataFrame) -> pd.Series:
         """Applies the estimator to to predict consumption.
 
         Args:
-            links_df (pandas.DataFrame):
+            data (pandas.DataFrame):
                 Columns that match self.features and self.distance that describe
                 vehicle passes over links in the road network.
 
@@ -150,10 +161,10 @@ class ExplicitBin(BaseEstimator):
             target_pred (float): 
                 Predicted target for every row in links_df
         """
-        links_df = links_df.astype(float)
+        links_df = data.astype(float)
 
         # Cut and label each attribute - manual
-        for f_i in self.metadata['features']:
+        for f_i in self.feature_pack.feature_list:
 
             _unique_vals = len(links_df[f_i].unique())
             if _unique_vals <= 10:
@@ -169,24 +180,20 @@ class ExplicitBin(BaseEstimator):
                 links_df.loc[:, f_i + '_bins'] = pd.cut(links_df[f_i], bin_lims, labels=bin_labels)
 
         # merge energy rates from grouped table to link/route df
-        bin_cols = [i + '_bins' for i in self.metadata['features']]
-        links_df = pd.merge(links_df, self.model[[self.metadata['target']]], \
+        bin_cols = [i + '_bins' for i in self.feature_pack.feature_list]
+        links_df = pd.merge(links_df, self.model[[self.energy_rate_target]],
                             how='left', left_on=bin_cols, right_index=True)
 
-        links_df.loc[:, self.metadata['energy']] = (
-                    links_df[self.metadata['target']] * links_df[self.metadata['distance']] / 100.0)
-
-        # print(links_df[links_df.isna().any(axis=1)])
-
-        # links_df.dropna(how='any', inplace=True)
-        # links_df.fillna(method='bfill', axis=1, inplace=True)
+        links_df.loc[:, self.feature_pack.energy_name] = (
+                links_df[self.energy_rate_target] * links_df[self.feature_pack.distance_name] / 100.0)
 
         # TODO: more robust method to deal with missing bin values
         _nan_count = len(links_df) - len(links_df.dropna(how='any'))
-        if _nan_count>0:
-            print('    WARNING: prediction for %d/%d records set to zero because of nan values from table lookup process' % (_nan_count, len(links_df)))
+        if _nan_count > 0:
+            print(f'WARNING: prediction for {_nan_count}/{len(links_df)} '
+                  'records set to zero because of nan values from table lookup process')
 
-        return np.array(links_df[self.metadata['energy']].fillna(0))
+        return links_df[self.feature_pack.energy_name].fillna(0)
 
     def dump_csv(self, fileout):
         """Dump CSV file of table ONLY. No associated metadata.

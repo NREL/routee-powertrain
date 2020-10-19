@@ -2,15 +2,12 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 
+from powertrain import __version__
 from powertrain.validation import errors
 from powertrain.core.utils import test_train_split
 from powertrain.estimators.base import BaseEstimator
+from powertrain.core.features import Feature, Distance, Energy
 
-from collections import namedtuple
-
-Feature = namedtuple('Feature', ['name', 'units'])
-Distance = namedtuple('Distance', ['name', 'units'])
-Energy = namedtuple('Energy', ['name', 'units'])
 
 
 class Model:
@@ -30,18 +27,24 @@ class Model:
         self.errors = None
         self.option = option
 
-    def train(self, data, features, distance, energy):
-        """Train an energy consumption model based on energy use data.
+    def train(
+            self,
+            data,
+            features,
+            distance,
+            energy,
+    ):
+        """
+        Train a model
 
         Args:
-        
-            fc_data (pandas.DataFrame):
-                Link level energy consumption information and associated link attributes.
-            energy (str):
-                Name/units of the target energy consumption column.
-            distance (str):
-                Name/units of the distance column.
-                
+            data:
+            features:
+            distance:
+            energy:
+
+        Returns:
+
         """
         print(f"training estimator {self._estimator} with option {self.option}.")
 
@@ -49,21 +52,25 @@ class Model:
         self.metadata['distance'] = distance
         self.metadata['energy'] = energy
         self.metadata['estimator'] = self._estimator.__class__.__name__
-        self.metadata['routee_version'] = 'v0.3.0'
+        self.metadata['routee_version'] = __version__
 
         train_features = [feat.name for feat in features]
 
-        pass_data = data[train_features + [distance.name] + [energy.name]].copy() #reduced local copy of the data based on features
+        # reduced local copy of the data based on features
+        pass_data = data[train_features + [distance.name] + [energy.name]].copy()
 
         # convert absolute consumption for FC RATE
-        pass_data[energy.name + '_per_' + distance.name] = (pass_data[energy.name]/pass_data[distance.name]) #converting to energy/distance val
+        pass_data[energy.name + '_per_' + distance.name] = (pass_data[energy.name]/pass_data[distance.name])
 
         pass_data = pass_data[~pass_data.isin([np.nan, np.inf, -np.inf]).any(1)]
 
-        train, test = test_train_split(pass_data.dropna(), 0.2) #splitting test data between train and validate --> 20% here
+        # splitting test data between train and validate --> 20% here
+        train, test = test_train_split(pass_data.dropna(), 0.2)
 
         #training the models--> randomForest will have two options of feature selection
-        #option 1: distance is not a feature and fc/dist is the target column, #option 2: distance is a feature, and fc is the target column
+
+        # option 1: distance is not a feature and fc/dist is the target column,
+        # option 2: distance is a feature, and fc is the target column
         if (self.metadata['estimator'] == 'ExplicitBin') or (self.option == 2):
             self._estimator.train(
                 x=train[train_features+[distance.name]],
@@ -81,7 +88,7 @@ class Model:
         #saving feature_importance
         if (self.metadata['estimator']=='RandomForest') or (self.metadata['estimator']=='XGBoost'):
             self.metadata['feature_importance'] = self._estimator.feature_importance()
-           
+
     def plot_feature_importance(self):
         if (self.metadata['estimator'] == 'ExplicitBin'):
             print ("Feature importance not available for visualization.")
