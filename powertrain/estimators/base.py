@@ -87,7 +87,7 @@ class BaseEstimator(EstimatorInterface):
         else:
             raise NotImplemented(f"{self.predict_type} not supported by BaseEstimator")
 
-        energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.predict_type.name)
+        energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.feature_pack.energy.name)
 
         return energy_pred
 
@@ -109,7 +109,7 @@ class BaseEstimator(EstimatorInterface):
     @classmethod
     def from_json(cls, json: dict) -> BaseEstimator:
         model_dict = json['model']
-        model = linear_model.LinearRegression(model_dict['params'])
+        model = linear_model.LinearRegression(**model_dict['params'])
         model.coef_ = np.array(model_dict['coef_'])
         model.intercept_ = np.array(model_dict['intercept_'])
 

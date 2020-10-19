@@ -6,7 +6,7 @@ from numpy import clip
 from pandas import DataFrame, Series
 from sklearn.ensemble import RandomForestRegressor
 
-from powertrain.core.core_utils import serialize_random_forest, deserialize_random_forest
+from powertrain.core.core_utils import serialize_random_forest_regressor, deserialize_random_forest_regressor
 from powertrain.core.features import PredictType, FeaturePack
 from powertrain.estimators.estimator_interface import EstimatorInterface
 
@@ -98,13 +98,13 @@ class RandomForest(EstimatorInterface):
         else:
             raise NotImplemented(f"{self.predict_type} not supported by RandomForest")
 
-        energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.predict_type.name)
+        energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.feature_pack.energy.name)
 
         return energy_pred
 
     def to_json(self) -> dict:
         out_json = {
-            'model': serialize_random_forest(self.model),
+            'model': serialize_random_forest_regressor(self.model),
             'feature_pack': self.feature_pack.to_json(),
             'predict_type': self.predict_type.name,
             'cores': self.cores
@@ -115,7 +115,7 @@ class RandomForest(EstimatorInterface):
     @classmethod
     def from_json(cls, json: dict) -> RandomForest:
         model_dict = json['model']
-        model = deserialize_random_forest(model_dict)
+        model = deserialize_random_forest_regressor(model_dict)
 
         predict_type = PredictType.from_string(json['predict_type'])
         feature_pack = FeaturePack.from_json(json['feature_pack'])

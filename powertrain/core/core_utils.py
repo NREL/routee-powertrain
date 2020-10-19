@@ -1,6 +1,6 @@
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.tree._tree import Tree
 
 
@@ -14,7 +14,7 @@ def test_train_split(df, test_perc):
 
 def serialize_tree(tree):
     serialized_tree = tree.__getstate__()
-
+    # serialized_tree['nodes_dtype'] = serialized_tree['nodes'].dtype
     dtypes = serialized_tree['nodes'].dtype
     serialized_tree['nodes'] = serialized_tree['nodes'].tolist()
     serialized_tree['values'] = serialized_tree['values'].tolist()
@@ -25,15 +25,8 @@ def serialize_tree(tree):
 def deserialize_tree(tree_dict, n_features, n_classes, n_outputs):
     tree_dict['nodes'] = [tuple(lst) for lst in tree_dict['nodes']]
 
-    names = [
-        'left_child',
-        'right_child',
-        'feature',
-        'threshold',
-        'impurity',
-        'n_node_samples',
-        'weighted_n_node_samples',
-    ]
+    names = ['left_child', 'right_child', 'feature', 'threshold', 'impurity', 'n_node_samples',
+             'weighted_n_node_samples']
     tree_dict['nodes'] = np.array(tree_dict['nodes'],
                                   dtype=np.dtype({'names': names, 'formats': tree_dict['nodes_dtype']}))
     tree_dict['values'] = np.array(tree_dict['values'])
@@ -44,19 +37,18 @@ def deserialize_tree(tree_dict, n_features, n_classes, n_outputs):
     return tree
 
 
-def serialize_decision_tree(model):
+def serialize_decision_tree_regressor(model):
     tree, dtypes = serialize_tree(model.tree_)
     serialized_model = {
-        'meta': 'decision-tree',
+        'meta': 'decision-tree-regression',
         'feature_importances_': model.feature_importances_.tolist(),
         'max_features_': model.max_features_,
-        'n_classes_': int(model.n_classes_),
         'n_features_': model.n_features_,
         'n_outputs_': model.n_outputs_,
-        'tree_': tree,
-        'classes_': model.classes_.tolist(),
-        'params': model.get_params()
+        'tree_': tree
     }
+
+    # serialized_model.
 
     tree_dtypes = []
     for i in range(0, len(dtypes)):
@@ -67,25 +59,22 @@ def serialize_decision_tree(model):
     return serialized_model
 
 
-def deserialize_decision_tree(model_dict):
-    deserialized_model = DecisionTreeClassifier(**model_dict['params'])
+def deserialize_decision_tree_regressor(model_dict):
+    deserialized_decision_tree = DecisionTreeRegressor()
 
-    deserialized_model.classes_ = np.array(model_dict['classes_'])
-    deserialized_model.max_features_ = model_dict['max_features_']
-    deserialized_model.n_classes_ = model_dict['n_classes_']
-    deserialized_model.n_features_ = model_dict['n_features_']
-    deserialized_model.n_outputs_ = model_dict['n_outputs_']
+    deserialized_decision_tree.max_features_ = model_dict['max_features_']
+    deserialized_decision_tree.n_features_ = model_dict['n_features_']
+    deserialized_decision_tree.n_outputs_ = model_dict['n_outputs_']
 
-    tree = deserialize_tree(model_dict['tree_'], model_dict['n_features_'], model_dict['n_classes_'],
-                            model_dict['n_outputs_'])
-    deserialized_model.tree_ = tree
+    tree = deserialize_tree(model_dict['tree_'], model_dict['n_features_'], 1, model_dict['n_outputs_'])
+    deserialized_decision_tree.tree_ = tree
 
-    return deserialized_model
+    return deserialized_decision_tree
 
 
-def serialize_random_forest(model):
+def serialize_random_forest_regressor(model):
     serialized_model = {
-        'meta': 'rf',
+        'meta': 'rf-regression',
         'max_depth': model.max_depth,
         'min_samples_split': model.min_samples_split,
         'min_samples_leaf': model.min_samples_leaf,
@@ -96,30 +85,23 @@ def serialize_random_forest(model):
         'min_impurity_split': model.min_impurity_split,
         'n_features_': model.n_features_,
         'n_outputs_': model.n_outputs_,
-        'classes_': model.classes_.tolist(),
-        'estimators_': [serialize_decision_tree(decision_tree) for decision_tree in model.estimators_],
+        'estimators_': [serialize_decision_tree_regressor(decision_tree) for decision_tree in model.estimators_],
         'params': model.get_params()
     }
 
     if 'oob_score_' in model.__dict__:
         serialized_model['oob_score_'] = model.oob_score_
     if 'oob_decision_function_' in model.__dict__:
-        serialized_model['oob_decision_function_'] = model.oob_decision_function_.tolist()
-
-    if isinstance(model.n_classes_, int):
-        serialized_model['n_classes_'] = model.n_classes_
-    else:
-        serialized_model['n_classes_'] = model.n_classes_.tolist()
+        serialized_model['oob_prediction_'] = model.oob_prediction_.tolist()
 
     return serialized_model
 
 
-def deserialize_random_forest(model_dict):
-    model = RandomForestClassifier(**model_dict['params'])
-    estimators = [deserialize_decision_tree(decision_tree) for decision_tree in model_dict['estimators_']]
+def deserialize_random_forest_regressor(model_dict):
+    model = RandomForestRegressor(**model_dict['params'])
+    estimators = [deserialize_decision_tree_regressor(decision_tree) for decision_tree in model_dict['estimators_']]
     model.estimators_ = np.array(estimators)
 
-    model.classes_ = np.array(model_dict['classes_'])
     model.n_features_ = model_dict['n_features_']
     model.n_outputs_ = model_dict['n_outputs_']
     model.max_depth = model_dict['max_depth']
@@ -133,12 +115,7 @@ def deserialize_random_forest(model_dict):
 
     if 'oob_score_' in model_dict:
         model.oob_score_ = model_dict['oob_score_']
-    if 'oob_decision_function_' in model_dict:
-        model.oob_decision_function_ = model_dict['oob_decision_function_']
-
-    if isinstance(model_dict['n_classes_'], list):
-        model.n_classes_ = np.array(model_dict['n_classes_'])
-    else:
-        model.n_classes_ = model_dict['n_classes_']
+    if 'oob_prediction_' in model_dict:
+        model.oob_prediction_ = np.array(model_dict['oob_prediction_'])
 
     return model
