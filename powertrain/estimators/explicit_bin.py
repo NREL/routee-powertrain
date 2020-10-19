@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -48,7 +48,7 @@ class ExplicitBin(EstimatorInterface):
     """
 
     def __init__(
-            self, 
+            self,
             feature_pack: FeaturePack,
             predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW,
     ):
@@ -67,9 +67,9 @@ class ExplicitBin(EstimatorInterface):
         self.predict_type = ptype
         self.bin_lims: dict = {}
         self.bin_labels: dict = {}
-        self.model: pd.DataFrame = pd.DataFrame() 
+        self.model: pd.DataFrame = pd.DataFrame()
         self.feature_pack: FeaturePack = feature_pack
-        self.energy_rate_target: str = feature_pack.energy_name + '_per_100' + feature_pack.distance_name
+        self.energy_rate_target: str = feature_pack.energy.name + '_per_100' + feature_pack.distance.name
 
     def train(self,
               data: pd.DataFrame,
@@ -85,11 +85,12 @@ class ExplicitBin(EstimatorInterface):
         if self.predict_type != PredictType.ENERGY_RAW:
             raise NotImplemented(f"{self.predict_type} not supported by ExplicitBin")
 
-        x = data[self.feature_pack.feature_list + [self.feature_pack.distance_name]].astype(float)
-        y = data[self.feature_pack.energy_name].astype(float)
+        x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]].astype(float)
+        y = data[self.feature_pack.energy.name].astype(float)
         df = pd.concat([x, y], axis=1, ignore_index=True, sort=False)
 
-        df.columns = self.feature_pack.feature_list + [self.feature_pack.distance_name] + [self.feature_pack.energy_name]
+        df.columns = self.feature_pack.feature_list + [self.feature_pack.distance.name] + [
+            self.feature_pack.energy.name]
 
         # Set min and max bins using 95% interval (can also try 99%)
         # _mins = x.quantile(q=0.025)
@@ -141,12 +142,12 @@ class ExplicitBin(EstimatorInterface):
 
         # train rates table - groupby bin columns
         _bin_cols = [i + '_bins' for i in self.feature_pack.feature_list]
-        _agg_funs = {self.feature_pack.distance_name: sum, self.feature_pack.energy_name: sum}
+        _agg_funs = {self.feature_pack.distance.name: sum, self.feature_pack.energy.name: sum}
 
         self.model = df.dropna(subset=_bin_cols). \
             groupby(_bin_cols).agg(_agg_funs)
 
-        energy_rate = 100.0 * self.model[self.feature_pack.energy_name] / self.model[self.feature_pack.distance_name]
+        energy_rate = 100.0 * self.model[self.feature_pack.energy.name] / self.model[self.feature_pack.distance.name]
         self.model.loc[:, self.energy_rate_target] = energy_rate
 
     def predict(self, data: pd.DataFrame) -> pd.Series:
@@ -184,8 +185,8 @@ class ExplicitBin(EstimatorInterface):
         links_df = pd.merge(links_df, self.model[[self.energy_rate_target]],
                             how='left', left_on=bin_cols, right_index=True)
 
-        links_df.loc[:, self.feature_pack.energy_name] = (
-                links_df[self.energy_rate_target] * links_df[self.feature_pack.distance_name] / 100.0)
+        links_df.loc[:, self.feature_pack.energy.name] = (
+                links_df[self.energy_rate_target] * links_df[self.feature_pack.distance.name] / 100.0)
 
         # TODO: more robust method to deal with missing bin values
         _nan_count = len(links_df) - len(links_df.dropna(how='any'))
@@ -193,7 +194,7 @@ class ExplicitBin(EstimatorInterface):
             print(f'WARNING: prediction for {_nan_count}/{len(links_df)} '
                   'records set to zero because of nan values from table lookup process')
 
-        return links_df[self.feature_pack.energy_name].fillna(0)
+        return links_df[self.feature_pack.energy.name].fillna(0)
 
     def dump_csv(self, fileout):
         """Dump CSV file of table ONLY. No associated metadata.

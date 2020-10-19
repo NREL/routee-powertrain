@@ -9,10 +9,8 @@ class Feature(NamedTuple):
 
 class FeaturePack(NamedTuple):
     features: Tuple[Feature]
-    distance_name: str
-    distance_units: str
-    energy_name: str
-    energy_units: str
+    distance: Feature
+    energy: Feature
 
     @property
     def feature_list(self) -> List[str]:

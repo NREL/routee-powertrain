@@ -12,26 +12,9 @@ class RandomForest(EstimatorInterface):
     """This estimator uses a random forest to select an optimal decision tree,
     meant to serve as an automated construction of a lookup table.
 
-    Example application:
-        > import powertrain
-        > from routee.estimators import RandomForest
-        >
-        >
-        > model_rf = routee.Model(
-        >                '2016 Ford Explorer',
-        >                estimator = RandomForest(cores = 2),
-        >                )
-        >
-        > model_rf.train(fc_data, # fc_data = link attributes + fuel consumption
-        >               energy='gallons',
-        >               distance='miles',
-        >               trip_ids='trip_ids')
-        >
-        > model_rf.predict(route1) # returns route1 with energy appended to each link
-        
     Args:
         cores (int):
-            Number of cores to use during traing.
+            Number of cores to use during training.
             
     """
 
@@ -72,15 +55,15 @@ class RandomForest(EstimatorInterface):
         """
 
         if self.predict_type == PredictType.ENERGY_RATE:  # convert absolute consumption to rate consumption
-            energy_rate_name = self.feature_pack.energy_name + "_per_" + self.feature_pack.distance_name
-            energy_rate = data[self.feature_pack.energy_name] / data[self.feature_pack.distance_name]
+            energy_rate_name = self.feature_pack.energy.name + "_per_" + self.feature_pack.distance.name
+            energy_rate = data[self.feature_pack.energy.name] / data[self.feature_pack.distance.name]
             data[energy_rate_name] = energy_rate
 
             x = data[self.feature_pack.feature_list]
             y = data[energy_rate_name]
         elif self.predict_type == PredictType.ENERGY_RAW:
-            x = data[self.feature_pack.feature_list + [self.feature_pack.distance_name]]
-            y = data[self.feature_pack.energy_name]
+            x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]]
+            y = data[self.feature_pack.energy.name]
         else:
             raise NotImplemented(f"{self.predict_type} not supported by RandomForest")
         self.model = self.model.fit(x.values, y.values)
@@ -101,9 +84,9 @@ class RandomForest(EstimatorInterface):
         if self.predict_type == PredictType.ENERGY_RATE:
             x = data[self.feature_pack.feature_list]
             _energy_pred_rates = self.model.predict(x.values)
-            _energy_pred = _energy_pred_rates * data[self.feature_pack.distance_name]
+            _energy_pred = _energy_pred_rates * data[self.feature_pack.distance.name]
         elif self.predict_type == PredictType.ENERGY_RAW:
-            x = data[self.feature_pack.feature_list + [self.feature_pack.distance_name]]
+            x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]]
             _energy_pred = self.model.predict(x.values)
         else:
             raise NotImplemented(f"{self.predict_type} not supported by RandomForest")

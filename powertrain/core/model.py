@@ -1,10 +1,10 @@
 import pickle
 
 import numpy as np
+from pandas import DataFrame
 
-from powertrain import __version__
-from powertrain.core.utils import test_train_split
-from powertrain.estimators.base import BaseEstimator
+from powertrain.core.utils import test_train_split, get_version
+from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.validation import errors
 
 
@@ -19,73 +19,38 @@ class Model:
             
     """
 
-    def __init__(self, veh_desc, option=2, estimator=BaseEstimator()):
+    def __init__(self, veh_desc: str, estimator: EstimatorInterface):
         self.metadata = {'veh_desc': veh_desc}
         self._estimator = estimator
         self.errors = None
-        self.option = option
 
     def train(
             self,
-            data,
-            features,
-            distance,
-            energy,
+            data: DataFrame,
     ):
         """
         Train a model
 
         Args:
             data:
-            features:
-            distance:
-            energy:
 
         Returns:
 
         """
-        print(f"training estimator {self._estimator} with option {self.option}.")
+        print(f"training estimator {self._estimator} with option {self._estimator.predict_type}.")
 
-        self.metadata['features'] = features
-        self.metadata['distance'] = distance
-        self.metadata['energy'] = energy
         self.metadata['estimator'] = self._estimator.__class__.__name__
-        self.metadata['routee_version'] = __version__
+        self.metadata['routee_version'] = get_version("powertrain/__init__.py")
 
-        train_features = [feat.name for feat in features]
-
-        # reduced local copy of the data based on features
-        pass_data = data[train_features + [distance.name] + [energy.name]].copy()
-
-        # convert absolute consumption for FC RATE
-        pass_data[energy.name + '_per_' + distance.name] = (pass_data[energy.name] / pass_data[distance.name])
-
+        pass_data = data.copy(deep=True)
         pass_data = pass_data[~pass_data.isin([np.nan, np.inf, -np.inf]).any(1)]
 
         # splitting test data between train and validate --> 20% here
         train, test = test_train_split(pass_data.dropna(), 0.2)
 
-        # training the models--> randomForest will have two options of feature selection
-
-        # option 1: distance is not a feature and fc/dist is the target column,
-        # option 2: distance is a feature, and fc is the target column
-        if (self.metadata['estimator'] == 'ExplicitBin') or (self.option == 2):
-            self._estimator.train(
-                x=train[train_features + [distance.name]],
-                y=train[energy.name],
-            )
-
-        else:
-            self._estimator.train(
-                x=train[train_features],
-                y=train[energy.name + '_per_' + distance.name],
-            )
+        self._estimator.train(pass_data)
 
         self.validate(test)
-
-        # saving feature_importance
-        if (self.metadata['estimator'] == 'RandomForest') or (self.metadata['estimator'] == 'XGBoost'):
-            self.metadata['feature_importance'] = self._estimator.feature_importance()
 
     def validate(self, test):
         """Validate the accuracy of the estimator.
@@ -99,9 +64,9 @@ class Model:
         _target_pred = self.predict(test)
         test['target_pred'] = _target_pred
         self.errors = errors.all_error(
-            test[self.metadata['energy'].name],
+            test[self._estimator.feature_pack.energy.name],
             _target_pred,
-            test[self.metadata['distance'].name],
+            test[self._estimator.feature_pack.distance.name],
         )
 
     def predict(self, links_df):
@@ -117,20 +82,7 @@ class Model:
                 Predicted energy consumption for every row in links_df.
                 
         """
-
-        for feat in self.metadata['features']:
-            assert feat.name in links_df.columns, f"Missing expected column {feat.name} in links input"
-
-        predict_features = [feat.name for feat in self.metadata['features']]
-
-        if (self.metadata['estimator'] == 'ExplicitBin') or (self.option == 2):
-            _energy_pred = self._estimator.predict(links_df[predict_features + [self.metadata['distance'].name]])
-
-        else:
-            _energy_pred_rates = self._estimator.predict(links_df[predict_features])
-            _energy_pred = _energy_pred_rates * links_df[self.metadata['distance'].name]
-
-        return _energy_pred
+        return self._estimator.predict(links_df)
 
     def dump_model(self, outfile):
         """Dumps a routee.Model to a pickle file for persistance and sharing.
@@ -144,7 +96,6 @@ class Model:
             'metadata': self.metadata,
             'estimator': self._estimator,
             'errors': self.errors,
-            'option': self.option,
         }
 
         pickle.dump(out_dict, open(outfile, 'wb'))
