@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 
 from pandas import DataFrame, Series
 
-from powertrain.core.features import FeaturePack
-
 
 class EstimatorInterface(ABC):
     """
@@ -11,13 +9,12 @@ class EstimatorInterface(ABC):
     """
 
     @abstractmethod
-    def train(self, data: DataFrame, feature_pack: FeaturePack):
+    def train(self, data: DataFrame):
         """
         abstract train method
 
         Args:
             data:
-            feature_pack:
 
         Returns:
 

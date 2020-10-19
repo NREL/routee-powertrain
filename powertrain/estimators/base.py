@@ -1,7 +1,7 @@
-from typing import Union, Optional
+from typing import Union
 
-from pandas import DataFrame, Series
 from numpy import clip
+from pandas import DataFrame, Series
 from sklearn import linear_model
 
 from powertrain.core.features import FeaturePack, PredictType
@@ -16,7 +16,10 @@ class BaseEstimator(EstimatorInterface):
     
     """
 
-    def __init__(self, predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW):
+    def __init__(
+            self,
+            feature_pack: FeaturePack,
+            predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW):
         if isinstance(predict_type, str):
             ptype = PredictType.from_string(predict_type)
         elif isinstance(predict_type, int):
@@ -27,39 +30,34 @@ class BaseEstimator(EstimatorInterface):
             raise TypeError(f"predict_type {predict_type} of python type {type(predict_type)} not supported")
 
         self.predict_type = ptype
-        self.model: Optional[linear_model.LinearRegression] = None
-        self.feature_pack: Optional[FeaturePack] = None
+        self.feature_pack = feature_pack
+        self.model: linear_model.LinearRegression = linear_model.LinearRegression()
 
     def train(self,
               data: DataFrame,
-              feature_pack: FeaturePack,
               ):
         """
         train method for the base estimator (linear regression)
         Args:
             data:
-            feature_pack:
 
         Returns:
 
         """
-        regmod = linear_model.LinearRegression()
-        if self.predict_type == PredictType.ENERGY_RATE:
-            # convert absolute consumption to rate consumption
-            energy_rate_name = feature_pack.energy_name + "_per_" + feature_pack.distance_name
-            energy_rate = data[feature_pack.energy_name] / data[feature_pack.distance_name]
+        if self.predict_type == PredictType.ENERGY_RATE:  # convert absolute consumption to rate consumption
+            energy_rate_name = self.feature_pack.energy_name + "_per_" + self.feature_pack.distance_name
+            energy_rate = data[self.feature_pack.energy_name] / data[self.feature_pack.distance_name]
             data[energy_rate_name] = energy_rate
 
-            x = data[feature_pack.feature_list]
+            x = data[self.feature_pack.feature_list]
             y = data[energy_rate_name]
         elif self.predict_type == PredictType.ENERGY_RAW:
-            x = data[feature_pack.feature_list + [feature_pack.distance_name]]
-            y = data[feature_pack.energy_name]
+            x = data[self.feature_pack.feature_list + [self.feature_pack.distance_name]]
+            y = data[self.feature_pack.energy_name]
         else:
             raise NotImplemented(f"{self.predict_type} not supported by BaseEstimator")
 
-        self.model = regmod.fit(x, y)
-        self.feature_pack = feature_pack
+        self.model = self.model.fit(x.values, y.values)
 
     def predict(self, data: DataFrame) -> Series:
         """Apply the estimator to to predict consumption.

@@ -1,17 +1,20 @@
-import numpy as np
+from typing import Union
+
 import matplotlib.pyplot as plt
-
-from powertrain.estimators.base import BaseEstimator
-
+from pandas import DataFrame, Series
+from numpy import clip
 from sklearn.ensemble import RandomForestRegressor
 
+from powertrain.core.features import PredictType, FeaturePack
+from powertrain.estimators.estimator_interface import EstimatorInterface
 
-class RandomForest(BaseEstimator):
+
+class RandomForest(EstimatorInterface):
     """This estimator uses a random forest to select an optimal decision tree,
     meant to serve as an automated construction of a lookup table.
 
     Example application:
-        > import routee
+        > import powertrain
         > from routee.estimators import RandomForest
         >
         >
@@ -33,60 +36,87 @@ class RandomForest(BaseEstimator):
             
     """
 
-    def __init__(self, cores):
-        self.cores = cores
+    def __init__(
+            self,
+            feature_pack: FeaturePack,
+            cores: int = 2,
+            predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW,
+    ):
+        if isinstance(predict_type, str):
+            ptype = PredictType.from_string(predict_type)
+        elif isinstance(predict_type, int):
+            ptype = PredictType.from_int(predict_type)
+        elif isinstance(predict_type, PredictType):
+            ptype = predict_type
+        else:
+            raise TypeError(f"predict_type {predict_type} of python type {type(predict_type)} not supported")
+        self.predict_type: PredictType = ptype
 
-    def train(self, x, y):
-        """Method to train the estimator over a specific dataset.
-        Overrides BaseEstimatortrain method.
+        mod = RandomForestRegressor(n_estimators=20,
+                                    max_features='auto',
+                                    max_depth=10,
+                                    min_samples_split=10,
+                                    n_jobs=cores,
+                                    random_state=52)
+        self.model: RandomForestRegressor = mod
+
+        self.feature_pack: FeaturePack = feature_pack
+
+    def train(self, data: DataFrame):
+        """
+        train method for the base estimator (linear regression)
+        Args:
+            data:
+
+        Returns:
+
+        """
+
+        if self.predict_type == PredictType.ENERGY_RATE:  # convert absolute consumption to rate consumption
+            energy_rate_name = self.feature_pack.energy_name + "_per_" + self.feature_pack.distance_name
+            energy_rate = data[self.feature_pack.energy_name] / data[self.feature_pack.distance_name]
+            data[energy_rate_name] = energy_rate
+
+            x = data[self.feature_pack.feature_list]
+            y = data[energy_rate_name]
+        elif self.predict_type == PredictType.ENERGY_RAW:
+            x = data[self.feature_pack.feature_list + [self.feature_pack.distance_name]]
+            y = data[self.feature_pack.energy_name]
+        else:
+            raise NotImplemented(f"{self.predict_type} not supported by RandomForest")
+        self.model = self.model.fit(x.values, y.values)
+
+    def predict(self, data: DataFrame) -> Series:
+        """Apply the estimator to to predict consumption.
 
         Args:
-            train (pandas.DataFrame):
-                Data frame of the training data including features and target.
-            test (pandas.DataFrame):
-                Data frame of testing data for validation and error calculation.
-            metadata (dict):
-                Dictionary of metadata including features, target, distance column,
-                energy column, and trip_ids column.
+        data (pandas.DataFrame):
+            Columns that match self.features and self.distance that
+            describe vehicle passes over links in the road network.
 
-        Returns
-            errors (dict):
-                Dictionary with error metrics.
-                
+        Returns:
+            target_pred (float):
+                Predicted target for every row in links_df.
+
         """
-        
-        # Number of trees in random forest
-        n_estimators = [int(est) for est in np.linspace(start=50, stop=1000, num=10)]
+        if self.predict_type == PredictType.ENERGY_RATE:
+            x = data[self.feature_pack.feature_list]
+            _energy_pred_rates = self.model.predict(x.values)
+            _energy_pred = _energy_pred_rates * data[self.feature_pack.distance_name]
+        elif self.predict_type == PredictType.ENERGY_RAW:
+            x = data[self.feature_pack.feature_list + [self.feature_pack.distance_name]]
+            _energy_pred = self.model.predict(x.values)
+        else:
+            raise NotImplemented(f"{self.predict_type} not supported by RandomForest")
 
-        # Maximum number of levels in tree
-        max_depth = [int(d) for d in np.linspace(10, 110, num=11)]
-        max_depth.append(None)
+        energy_pred = Series(clip(_energy_pred, a_min=0), name=self.predict_type.name)
 
-        # Minimum number of samples required to split a node
-        min_samples_split = [2, 5, 10]
+        return energy_pred
 
-        # Minimum number of samples required at each leaf node
-        min_samples_leaf = [1, 2, 4]
-
-        random_grid = {'n_estimators': n_estimators,
-                       'max_depth': max_depth,
-                       'min_samples_split': min_samples_split,
-                       'min_samples_leaf': min_samples_leaf}
-
-        regmod = RandomForestRegressor(n_estimators=20,
-                                       max_features='auto',
-                                       max_depth=10,
-                                       min_samples_split=10,
-                                       n_jobs=self.cores,
-                                       random_state=52)
-
-        self.model = regmod.fit(np.array(x), np.array(y))
-
-        #add feature importance
     def feature_importance(self):
         return self.model.feature_importances_
-    
-    def plot_feature_importance(self, features = None):
+
+    def plot_feature_importance(self, features=None):
         self.model.feature_names = features
         plt.barh(self.model.feature_names, self.model.feature_importances_)
         plt.xlabel('Importance [0~1]')

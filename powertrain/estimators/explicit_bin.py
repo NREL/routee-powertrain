@@ -47,7 +47,11 @@ class ExplicitBin(EstimatorInterface):
         
     """
 
-    def __init__(self, predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW):
+    def __init__(
+            self, 
+            feature_pack: FeaturePack,
+            predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW,
+    ):
         if isinstance(predict_type, str):
             ptype = PredictType.from_string(predict_type)
         elif isinstance(predict_type, int):
@@ -63,29 +67,29 @@ class ExplicitBin(EstimatorInterface):
         self.predict_type = ptype
         self.bin_lims: dict = {}
         self.bin_labels: dict = {}
-        self.model: Optional[pd.DataFrame] = None
-        self.feature_pack: Optional[FeaturePack] = None
-        self.energy_rate_target: Optional[str] = None
+        self.model: pd.DataFrame = pd.DataFrame() 
+        self.feature_pack: FeaturePack = feature_pack
+        self.energy_rate_target: str = feature_pack.energy_name + '_per_100' + feature_pack.distance_name
 
     def train(self,
               data: pd.DataFrame,
-              feature_pack: FeaturePack,
               ):
         """
         train method for the base estimator (linear regression)
         Args:
             data:
-            feature_pack:
 
         Returns:
 
         """
+        if self.predict_type != PredictType.ENERGY_RAW:
+            raise NotImplemented(f"{self.predict_type} not supported by ExplicitBin")
 
-        x = data[feature_pack.feature_list + [feature_pack.distance_name]].astype(float)
-        y = data[feature_pack.energy_name].astype(float)
+        x = data[self.feature_pack.feature_list + [self.feature_pack.distance_name]].astype(float)
+        y = data[self.feature_pack.energy_name].astype(float)
         df = pd.concat([x, y], axis=1, ignore_index=True, sort=False)
 
-        df.columns = feature_pack.feature_list + [feature_pack.distance_name] + [feature_pack.energy_name]
+        df.columns = self.feature_pack.feature_list + [self.feature_pack.distance_name] + [self.feature_pack.energy_name]
 
         # Set min and max bins using 95% interval (can also try 99%)
         # _mins = x.quantile(q=0.025)
@@ -108,7 +112,7 @@ class ExplicitBin(EstimatorInterface):
             )
         }
 
-        for f_i in feature_pack.feature_list:
+        for f_i in self.feature_pack.feature_list:
             _unique_vals = len(df[f_i].unique())
 
             if _unique_vals <= 10:
@@ -136,18 +140,14 @@ class ExplicitBin(EstimatorInterface):
         # TODO: Need special checks for cumulative vs rates inputs on target variable
 
         # train rates table - groupby bin columns
-        _bin_cols = [i + '_bins' for i in feature_pack.feature_list]
-        _agg_funs = {feature_pack.distance_name: sum, feature_pack.energy_name: sum}
+        _bin_cols = [i + '_bins' for i in self.feature_pack.feature_list]
+        _agg_funs = {self.feature_pack.distance_name: sum, self.feature_pack.energy_name: sum}
 
         self.model = df.dropna(subset=_bin_cols). \
             groupby(_bin_cols).agg(_agg_funs)
 
-        # rate is dependent on the energy and distance units provided (*100)
-        self.energy_rate_target = feature_pack.energy_name + '_per_100' + feature_pack.distance_name
-
-        energy_rate = 100.0 * self.model[feature_pack.energy_name] / self.model[feature_pack.distance_name]
+        energy_rate = 100.0 * self.model[self.feature_pack.energy_name] / self.model[self.feature_pack.distance_name]
         self.model.loc[:, self.energy_rate_target] = energy_rate
-        self.feature_pack = feature_pack
 
     def predict(self, data: pd.DataFrame) -> pd.Series:
         """Applies the estimator to to predict consumption.
