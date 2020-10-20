@@ -88,7 +88,3 @@ class XGBoost(EstimatorInterface):
         energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.predict_type.name)
 
         return energy_pred
-
-    # add feature importance
-    def feature_importance(self):
-        return self.model.feature_importances_

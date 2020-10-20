@@ -34,16 +34,19 @@ import pandas as pd
 
 warnings.filterwarnings('ignore')
 
-import powertrain
 
+from powertrain.core.model import Model
 from powertrain.estimators import ExplicitBin, RandomForest, XGBoost
-from powertrain.core.model import Feature, Distance, Energy
+from powertrain.core.features import Feature, FeaturePack
 from powertrain.plot.feature_importance import plot_feature_importance
 
 #################################################################
 '''
 2. Load FastSIM Data
-RouteE models rely on high resolution (1 Hz) vehicle energy consumption data (either simulated or measured) in order to train the various estimators to predict energy consumption for much lower resolution data. Typically, this training data comes from FASTSim results for various powertrain models over TSDC drive cycles (1 Hz "points" data).
+RouteE models rely on high resolution (1 Hz) vehicle energy consumption data (either simulated or measured) 
+in order to train the various estimators to predict energy consumption for much lower resolution data. 
+Typically, this training data comes from FASTSim results for various powertrain models over TSDC drive cycles 
+(1 Hz "points" data).
 
 Based on the repo location, activate either of the following paths:
 FASTSIM_RESULTS (local repo) = "C:/Users/amahbub/Documents/Data_RouteE/data_tomtom_new/2016_TOYOTA_Camry_4cyl_2WD_fs_results.csv"
@@ -54,7 +57,6 @@ Provide the # of samples to read. Provide "None" if all samples are to be read
 
 
 def get_df(nrows=None, feature_list=None):
-    # FASTSIM_RESULTS = "C:/Users/amahbub/Documents/Data_RouteE/data_tomtom_new/2016_TOYOTA_Camry_4cyl_2WD_fs_results.csv"
     FASTSIM_RESULTS = "/projects/aes4t/jholden/data/fastsim_results/2016_TOYOTA_Camry_4cyl_2WD_fs_results.csv"
     df = pd.read_csv(FASTSIM_RESULTS, nrows=nrows, usecols=feature_list)
     return df
@@ -91,11 +93,15 @@ User input: Provide the feature names (str) and units (str) to be used to train 
 
 Note: The "Distance" named-tuple, which represents the length of each link, can be incorporated as a feature in two ways.
 
-If option = 1 is selected, the 'distance' feature is not explicitely considered as a training feature. Rather, the target feature 'gge' is scaled as "energy per distance".
-If option = 2 is selected, the 'distance' feature is explicitely considered as a training feature. In this case, the target feature 'gge' remains unaltered.
+If option = 1 is selected, the 'distance' feature is not explicitely considered as a training feature. Rather, 
+the target feature 'gge' is scaled as "energy per distance".
+
+If option = 2 is selected, the 'distance' feature is explicitely considered as a training feature. In this case, 
+the target feature 'gge' remains unaltered.
+
 The parameter (1 or 2) of 'option' can be set before training individual models. See examples in later sections.
 '''
-features = [
+features = (
     Feature('gpsspeed', units='mph'),
     Feature('grade', units='ratio'),
     Feature('seconds', units='seconds'),
@@ -105,10 +111,12 @@ features = [
     Feature('speedcat', units='speed_cat'),
     Feature('frc', units='frc'),
     Feature('kph', units='kph'),
-    Feature('net2class', units='net2class')]  # list of namedtouples
+    Feature('net2class', units='net2class'),
+)
 
-distance = Distance('miles', units='mi')
-energy = Energy('gge', units='gallons')
+distance = Feature('miles', units='mi')
+energy = Feature('gge', units='gallons')
+feature_pack = FeaturePack(features, distance, energy)
 
 ##############################################################################
 '''
@@ -117,22 +125,25 @@ RouteE provides three different training capabilities.
 'ExplicitBin' enables the binning of feature values to create a look-up table.
 'RandomForest' enables the training of the model using scikit-learn's RandomForestRegressor.
 'XGBoost' enables the training of the model using mlxtend's xgboost decision tree regressor.
-The performance of the 'RandomForest' and 'XGBoost' decision tree models can be affected by setting 'option' values as stated previously. For example, the importance of features while training a decision tree regressor shows significant difference between the two 'option' settings.
+The performance of the 'RandomForest' and 'XGBoost' decision tree models can be affected by setting 'option' 
+values as stated previously. For example, the importance of features while training a decision tree regressor 
+shows significant difference between the two 'option' settings.
 '''
 
 # Example 1: ExplicitBin
 # creating estimator model
 scenario_name = "2016_audi_A3"
-option = 1  # or provide 2. Explicit bin module has no dependence on the 'option' setting
 
-eb_model = powertrain.Model(scenario_name, option,
-                        estimator=ExplicitBin(features=features, distance=distance, energy=energy))
+eb = ExplicitBin(feature_pack)
+eb_model = Model(
+    estimator=eb,
+    veh_desc=scenario_name
+)
 
 # training model with data (also does validation with test data and calculates error metrics)
-eb_model.train(df_mod, features=features, distance=distance, energy=energy)
+eb_model.train(df_mod)
 
 print(eb_model.metadata)
-print(eb_model.errors)
 
 '''
 Example 2: XGBoost module
@@ -145,13 +156,15 @@ To investigate the feature importance after the training, user can call the 'plo
 scenario_name = "2016_audi_A3"
 option = 2  # going for fc/dist option
 
-xgb_model = powertrain.Model(scenario_name, option, estimator=XGBoost(cores=4))
+xgb_model = Model(
+    estimator=XGBoost(feature_pack, predict_type=option),
+    veh_desc=scenario_name
+)
 
 # training model with data (also does validation with test data and calculates error metrics)
-xgb_model.train(df_mod, features=features, distance=distance, energy=energy)
+xgb_model.train(df_mod)
 
 print(xgb_model.metadata)
-print(xgb_model.errors)
 
 plot_feature_importance(xgb_model)
 
@@ -166,10 +179,13 @@ To investigate the feature importance after the training, user can call the 'plo
 scenario_name = "2016_audi_A3"
 option = 2  # going for fc/dist option
 
-rf_model = powertrain.Model(scenario_name, option, estimator=RandomForest(cores=4))
+rf_model = Model(
+    estimator=RandomForest(feature_pack, predict_type=option),
+    veh_desc=scenario_name
+)
 # training model with data (also does validation with test data and calculates error metrics)
-rf_model.train(df_mod, features=features, distance=distance, energy=energy)
-print(rf_model.errors)
+rf_model.train(df_mod)
+print(rf_model.metadata)
 plot_feature_importance(rf_model)
 
 ######################################################################################
@@ -293,26 +309,27 @@ plt.ylabel('speed [mph]')
 plt.grid()
 
 # We provide the limited features according to the artificial route generated above.
-features = [
+features = (
     Feature('gpsspeed', units='mph'),
-    Feature('grade', units='ratio')]  # list of namedtouples
+    Feature('grade', units='ratio')
+)
 
-distance = Distance('miles', units='mi')
-energy = Energy('gge', units='gallons')
+distance = Feature('miles', units='mi')
+energy = Feature('gge', units='gallons')
+feature_pack = FeaturePack(features, distance, energy)
 
 df_mod = df_passes[['gpsspeed', 'grade', 'gge', 'miles']]
 
 # We train new models based on the reduced feature list.
 option = 2
-eb_model = powertrain.Model(scenario_name, option,
-                        estimator=ExplicitBin(features=features, distance=distance, energy=energy))
-rf_model = powertrain.Model(scenario_name, option, estimator=RandomForest(cores=4))
-xgb_model = powertrain.Model(scenario_name, option, estimator=XGBoost(cores=4))
+eb_model = Model(estimator=ExplicitBin(feature_pack), veh_desc=scenario_name)
+rf_model = Model(estimator=RandomForest(feature_pack, predict_type=option), veh_desc=scenario_name)
+xgb_model = Model(estimator=XGBoost(feature_pack, predict_type=option), veh_desc=scenario_name)
 
 # training model with data (also does validation with test data and calculates error metrics)
-eb_model.train(df_mod, features=features, distance=distance, energy=energy)
-rf_model.train(df_mod, features=features, distance=distance, energy=energy)
-xgb_model.train(df_mod, features=features, distance=distance, energy=energy)
+eb_model.train(df_mod)
+rf_model.train(df_mod)
+xgb_model.train(df_mod)
 
 # We predict the energy consumption by providing the artifically create route, and visualize the results.
 xgboost_output = xgb_model.predict(links_df)

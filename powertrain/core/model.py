@@ -8,7 +8,7 @@ import numpy as np
 from pandas import DataFrame
 
 from powertrain.core.core_utils import test_train_split
-from powertrain.estimators.base import LinearRegression
+from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.random_forest import RandomForest

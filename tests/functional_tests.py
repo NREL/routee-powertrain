@@ -1,39 +1,37 @@
 import pandas as pd
-import sys
-import os
+import logging as log
 
-import powertrain
-from powertrain.estimators import RandomForest, ExplicitBin
-from powertrain.core.model import Feature, Distance, Energy
+from powertrain.estimators import RandomForest, ExplicitBin, LinearRegression
+from powertrain.core.model import Model
+from powertrain.core.features import Feature, FeaturePack
+from powertrain.utils.fs import root
 
-FILEPATH = os.path.join("routee-powertrain-test-data", "links_fastsim_2014mazda3.csv")
+FILEPATH = root() / "tests" / "routee-powertrain-test-data" / "links_fastsim_2014mazda3.csv"
+
 VEH_NAME = "FUNC TEST - 2014 Mazda 3"
-PICKLE_OUT_PATH = os.path.join("routee-powertrain-test-data")
 
 df = pd.read_csv(FILEPATH, index_col=False)
 df['grade'] = df.grade * 100.0
 df['speed_mph'] = df['gpsspeed']
 
-energy = Energy('gge', units='gallons')
-
-features = [
+features = (
     Feature('speed_mph', units='mph'),
     Feature('grade', units='decimal')
-]
-
-distance = Distance('miles', units='miles')
+)
+distance = Feature('miles', units='mi')
+energy = Feature('gge', units='gallons')
+feature_pack = FeaturePack(features, distance, energy)
 
 train_df = df[['miles', 'speed_mph', 'grade', energy.name]].dropna()
 
-train_df = train_df[train_df.miles>0]
+train_df = train_df[train_df.miles > 0]
 
-ln_model = powertrain.Model(VEH_NAME)
-rf_model = powertrain.Model(VEH_NAME, estimator=RandomForest(cores=4))
-eb_model = powertrain.Model(VEH_NAME, estimator=ExplicitBin(features=features, distance=distance, energy=energy))
+ln_e = LinearRegression(feature_pack=feature_pack)
+rf_e = RandomForest(feature_pack=feature_pack)
+eb_e = ExplicitBin(feature_pack=feature_pack)
 
-print('training models')
-ln_model.train(train_df, features=features, distance=distance, energy=energy)
-rf_model.train(train_df, features=features, distance=distance, energy=energy)
-eb_model.train(train_df, features=features, distance=distance, energy=energy)
+for e in (ln_e, rf_e, eb_e):
+    log.info(f"training estimator {e}..")
+    m = Model(e, veh_desc=VEH_NAME)
+    m.train(train_df)
 
-# print(rf_model.errors)

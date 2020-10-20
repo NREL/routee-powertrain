@@ -37,7 +37,6 @@ from sklearn.ensemble import RandomForestRegressor
 
 
 def get_df(nrows=None, feature_list=None):
-    # FASTSIM_RESULTS = "C:/Users/amahbub/Documents/Data_RouteE/data_tomtom_new/2016_TOYOTA_Camry_4cyl_2WD_fs_results.csv"
     FASTSIM_RESULTS = "/projects/aes4t/jholden/data/fastsim_results/2016_TOYOTA_Camry_4cyl_2WD_fs_results.csv"
     df = pd.read_csv(FASTSIM_RESULTS, nrows=nrows, usecols=feature_list)
     return df
