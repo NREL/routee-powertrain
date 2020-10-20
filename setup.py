@@ -22,9 +22,10 @@ def get_version(rel_path):
     else:
         raise RuntimeError("Unable to find version string.")
 
+
 setup(
     name="route-powertrain",
-    version=get_version("powertrain/__init__.py"),
+    version=get_version(os.path.join("powertrain", "__init__.py")),
     description=
     "RouteE is a tool for predicting energy usage over a set of road links.",
     long_description=long_description,
