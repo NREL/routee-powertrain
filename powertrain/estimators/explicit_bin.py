@@ -203,6 +203,8 @@ class ExplicitBin(EstimatorInterface):
     def to_json(self) -> dict:
         out_json = {
             'model': self.model.to_json(orient="index"),
+            'bin_lims': self.bin_lims,
+            'bin_labels': self.bin_labels,
             'feature_pack': self.feature_pack.to_json(),
             'predict_type': self.predict_type.name
         }
@@ -218,8 +220,11 @@ class ExplicitBin(EstimatorInterface):
             [ast.literal_eval(i) for i in model_df.index],
             names=("speed_bins", "grade_bins")
         )
+        eb = ExplicitBin(feature_pack=feature_pack, predict_type=predict_type, model=model_df)
+        eb.bin_lims = json['bin_lims']
+        eb.bin_labels = json['bin_labels']
 
-        return ExplicitBin(feature_pack=feature_pack, predict_type=predict_type, model=model_df)
+        return eb
 
     def dump_csv(self, fileout):
         """Dump CSV file of table ONLY. No associated metadata.

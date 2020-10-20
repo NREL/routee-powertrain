@@ -14,7 +14,6 @@ def test_train_split(df, test_perc):
 
 def serialize_tree(tree):
     serialized_tree = tree.__getstate__()
-    # serialized_tree['nodes_dtype'] = serialized_tree['nodes'].dtype
     dtypes = serialized_tree['nodes'].dtype
     serialized_tree['nodes'] = serialized_tree['nodes'].tolist()
     serialized_tree['values'] = serialized_tree['values'].tolist()
@@ -47,8 +46,6 @@ def serialize_decision_tree_regressor(model):
         'n_outputs_': model.n_outputs_,
         'tree_': tree
     }
-
-    # serialized_model.
 
     tree_dtypes = []
     for i in range(0, len(dtypes)):

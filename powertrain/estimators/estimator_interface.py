@@ -51,7 +51,7 @@ class EstimatorInterface(metaclass=ABCMeta):
     @abstractmethod
     def to_json(self) -> dict:
         """
-        method to serialize all necessary data to json from model persistence
+        method to serialize all necessary data to json for model persistence
         Returns:
 
         """
@@ -60,7 +60,7 @@ class EstimatorInterface(metaclass=ABCMeta):
     @abstractmethod
     def from_json(cls, json: dict) -> EstimatorInterface:
         """
-        method to serialize all necessary data to json from model persistence
+        method to serialize all necessary data to json for model persistence
         Returns:
 
         """

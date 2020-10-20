@@ -23,19 +23,19 @@ def mock_model(
             "..",
             "trained_models",
             "standard", 
-            "2016_TOYOTA_Corolla_4cyl_2WD_Explicit_Bin.pickle")
+            "2016_Leaf_24_kWh_ExplicitBin.json")
     elif estimator == "Linear":
         model_path = os.path.join(
             "..",
             "trained_models",
             "standard", 
-            "2016_Leaf_24_kWh_Linear.pickle")
+            "2016_Leaf_24_kWh_LinearRegression.json")
     elif estimator == "RandomForest":
         model_path = os.path.join(
             "..",
             "trained_models",
             "standard", 
-            "2016_Leaf_24_kWh_Random_Forest.pickle",
+            "2016_Leaf_24_kWh_RandomForest.json",
         )
     else:
         raise Exception("Incorrect estimator type")
