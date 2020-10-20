@@ -24,7 +24,7 @@ class RandomForest(EstimatorInterface):
     def __init__(
             self,
             feature_pack: FeaturePack,
-            cores: int = 2,
+            cores: int = 4,
             predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW,
             model: Optional[RandomForestRegressor] = None,
     ):

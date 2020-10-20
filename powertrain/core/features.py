@@ -14,7 +14,7 @@ class Feature(NamedTuple):
 
 
 class FeaturePack(NamedTuple):
-    features: Tuple[Feature]
+    features: Tuple[Feature, ...]
     distance: Feature
     energy: Feature
 

@@ -11,8 +11,8 @@ from powertrain.core.features import FeaturePack, PredictType
 from powertrain.estimators.estimator_interface import EstimatorInterface
 
 
-class BaseEstimator(EstimatorInterface):
-    """Base class for a RouteE estimator. 
+class LinearRegression(EstimatorInterface):
+    """linear regression routee estimator.
     
     This estimator uses a linear model to predict
     route energy usage.
@@ -107,7 +107,7 @@ class BaseEstimator(EstimatorInterface):
         return out_json
 
     @classmethod
-    def from_json(cls, json: dict) -> BaseEstimator:
+    def from_json(cls, json: dict) -> LinearRegression:
         model_dict = json['model']
         model = linear_model.LinearRegression(**model_dict['params'])
         model.coef_ = np.array(model_dict['coef_'])
@@ -116,7 +116,7 @@ class BaseEstimator(EstimatorInterface):
         predict_type = PredictType.from_string(json['predict_type'])
         feature_pack = FeaturePack.from_json(json['feature_pack'])
 
-        return BaseEstimator(feature_pack=feature_pack, predict_type=predict_type, model=model)
+        return LinearRegression(feature_pack=feature_pack, predict_type=predict_type, model=model)
 
 
 

@@ -1,26 +1,26 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Optional
-
-import json
 
 import numpy as np
 from pandas import DataFrame
 
 from powertrain.core.core_utils import test_train_split
-from powertrain.utils.fs import get_version
-from powertrain.validation import errors
+from powertrain.estimators.base import LinearRegression
 from powertrain.estimators.estimator_interface import EstimatorInterface
-from powertrain.estimators.base import BaseEstimator
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.random_forest import RandomForest
+from powertrain.utils.fs import get_version
+from powertrain.validation import errors
 
 _registered_estimators = {
-    'BaseEstimator': BaseEstimator,
+    'LinearRegression': LinearRegression,
     'ExplicitBin': ExplicitBin,
     'RandomForest': RandomForest,
 }
+
 
 def _load_estimator(name: str, json: dict) -> EstimatorInterface:
     if name not in _registered_estimators:
@@ -135,4 +135,3 @@ class Model:
             m.metadata = metadata
 
             return m
-
