@@ -11,4 +11,11 @@ def read_model(infile: str):
             Path and filename for saved file to read. 
             
     """
-    return Model.from_json(Path(infile))
+    path = Path(infile)
+
+    if path.suffix == ".json":
+        return Model.from_json(Path(path))
+    elif path.suffix == ".pickle":
+        return Model.from_pickle(path)
+    else:
+        raise ImportError(f"file type of {path.suffix} not supported by routee-powertrain")

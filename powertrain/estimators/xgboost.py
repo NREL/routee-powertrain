@@ -88,3 +88,11 @@ class XGBoost(EstimatorInterface):
         energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.predict_type.name)
 
         return energy_pred
+
+    def to_json(self) -> dict:
+        raise NotImplemented("to_json() not implemented for XGBoost estimator")
+
+    @classmethod
+    def from_json(cls, json: dict) -> EstimatorInterface:
+        raise NotImplemented("from_json() not implemented for XGBoost estimator")
+

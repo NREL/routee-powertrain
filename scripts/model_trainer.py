@@ -10,7 +10,7 @@ from powertrain.core.model import Model
 from powertrain.estimators import RandomForest, ExplicitBin, LinearRegression
 from powertrain.utils.fs import root
 
-RAW_DATA_PATH = "/projects/aes4t/jholden/data/fastsim_results/2020_05_28_routee_library/*NODE_0.db"
+RAW_DATA_PATH = "/projects/aes4t/jholden/data/fastsim_results/2020_05_28_routee_library/routee_fastsim_veh_db/*NODE_0.db"
 OUT_PATH = root() / "trained_models"
 
 

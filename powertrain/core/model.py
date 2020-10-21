@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import pickle
 from pathlib import Path
 from typing import Optional
 
@@ -110,7 +111,7 @@ class Model:
         return self._estimator.predict(links_df)
 
     def to_json(self, outfile: Path):
-        """Dumps a routee.Model to a json file for persistance and sharing.
+        """Dumps a powertrain model to a json file for persistence and sharing.
 
         Args:
             outfile (str):
@@ -124,6 +125,21 @@ class Model:
         with open(outfile, 'w', encoding='utf-8') as f:
             json.dump(out_dict, f, ensure_ascii=False, indent=4)
 
+    def to_pickle(self, outfile: Path):
+        """Dumps a powertrain model to a pickle file for persistence and sharing.
+
+        Args:
+            outfile (str):
+                Filepath for location of dumped model.
+
+        """
+        out_dict = {
+            'metadata': self.metadata,
+            '_estimator': self._estimator,
+        }
+        with open(outfile, 'wb') as f:
+            pickle.dump(out_dict, f)
+
     @classmethod
     def from_json(cls, infile: Path) -> Model:
         with infile.open('r', encoding='utf-8') as f:
@@ -135,3 +151,16 @@ class Model:
             m.metadata = metadata
 
             return m
+
+    @classmethod
+    def from_pickle(cls, infile: Path) -> Model:
+        with infile.open('rb') as f:
+            in_dict = pickle.load(f)
+            metadata = in_dict['metadata']
+            estimator = in_dict['_estimator']
+
+            m = Model(estimator=estimator)
+            m.metadata = metadata
+
+            return m
+
