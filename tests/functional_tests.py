@@ -4,7 +4,9 @@ import pandas as pd
 
 from powertrain.core.features import Feature, FeaturePack
 from powertrain.core.model import Model
-from powertrain.estimators import RandomForest, ExplicitBin, LinearRegression
+from powertrain.estimators.explicit_bin import ExplicitBin
+from powertrain.estimators.linear_regression import LinearRegression
+from powertrain.estimators.random_forest import RandomForest
 from powertrain.utils.fs import root
 from tests.mock_resources import mock_route
 
