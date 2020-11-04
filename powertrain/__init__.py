@@ -1,3 +1,7 @@
-name = "powertrain"
+from powertrain.io.api import read_model
+from powertrain.core.model import Model
+from powertrain.core.features import Feature, FeaturePack
 
-from powertrain.core.model import Model, Feature, Distance, Energy
+name = "powertrain"
+__version__ = "0.3.1"
+

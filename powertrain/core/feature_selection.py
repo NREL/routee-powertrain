@@ -1,5 +1,6 @@
-from routee.feature_engineering import feature_selector
-     
+from powertrain.feature_engineering import feature_selector
+
+
 class Feature_Selection:
     """This is the preprocessing module for feature engineering.
 
@@ -10,23 +11,23 @@ class Feature_Selection:
             List of all relevant features --> Training + target features.
             
     """
-    
+
     def __init__(self, df, features):
         self.df = df
         self.features = features
-        
-    def get_correlation(self, method = None, target_feature = None, \
-                        multicolinearity = False, show_correlation = False, threshold = 0.4):
-        corr_obj = feature_selector.FeatureCorrelation(self.df, correlation_features = self.features,\
-                                                       method = method, threshold = threshold)
-        if target_feature is not None: 
+
+    def get_correlation(self, method=None, target_feature=None, \
+                        multicolinearity=False, show_correlation=False, threshold=0.4):
+        corr_obj = feature_selector.FeatureCorrelation(self.df, correlation_features=self.features, \
+                                                       method=method, threshold=threshold)
+        if target_feature is not None:
             correlated_features = corr_obj.get_correlated_features(target_feature)
         if multicolinearity is not False:
             corr_obj.get_multicolinearity()
         if show_correlation is not False:
             corr_obj.show_corr()
-            
-    def get_n_features(self, target_feature = None, n_features = 2, estimator = 'RFRegressor', search_method = None):
+
+    def get_n_features(self, target_feature=None, n_features=2, estimator='RFRegressor', search_method=None):
         '''
         1. Args:
             - target_feature [str] --> The target feature name.
@@ -44,17 +45,17 @@ class Feature_Selection:
             - prints the corresponding CV score.
             - shows a plot of the recursive search procedure (except 'rfe' method).
         '''
-           
-        n_feature_obj = feature_selector.N_FeatureSearch( self.df, target_feature = target_feature, n_features=n_features,\
-                                        search_method = search_method, training_model = estimator)
-        if search_method == 'all': 
+
+        n_feature_obj = feature_selector.N_FeatureSearch(self.df, target_feature=target_feature, n_features=n_features, \
+                                                         search_method=search_method, training_model=estimator)
+        if search_method == 'all':
             n_feature_obj.all_sfs()
         elif search_method == 'rfe':
             n_feature_obj.sfs_rfe()
         else:
             n_feature_obj.sequential_feature_search()
-        
-    def get_optimal_features(self, target_feature = None, estimator = 'RFRegressor', search_method = None):
+
+    def get_optimal_features(self, target_feature=None, estimator='RFRegressor', search_method=None):
         '''
         1. Args:
             - target_feature [str] --> The target feature name.
@@ -71,7 +72,9 @@ class Feature_Selection:
             - prints the corresponding CV score.
             - shows a plot of the recursive search procedure (except 'rfe' method).
         '''
-        opt_feature_obj = feature_selector.Optimal_FeatureSearch(self.df, target_feature = target_feature,\
-                                                                 search_method = search_method, training_model = estimator)
-        if search_method == 'rfe': opt_feature_obj.optimal_feature_selector_RFE()
-        else: opt_feature_obj.optimal_feature_selector_SFS()
+        opt_feature_obj = feature_selector.Optimal_FeatureSearch(self.df, target_feature=target_feature, \
+                                                                 search_method=search_method, training_model=estimator)
+        if search_method == 'rfe':
+            opt_feature_obj.optimal_feature_selector_RFE()
+        else:
+            opt_feature_obj.optimal_feature_selector_SFS()

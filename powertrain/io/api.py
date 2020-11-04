@@ -1,20 +1,9 @@
-'''Basic interfact function for reading RouteE models.
-
-This is the base API for interacting with the RouteE package.
-
-Example:
-    import routee as rte
-    
-    model_path = 'path\to\model.pickle'
-    model = rte.read_model(model_path)
-
-'''
-
-import pickle
+from pathlib import Path
 
 from powertrain.core.model import Model
 
-def read_model(infile):
+
+def read_model(infile: str):
     """Function to read model from file.
 
     Args:
@@ -22,16 +11,11 @@ def read_model(infile):
             Path and filename for saved file to read. 
             
     """
-    
-    in_dict = pickle.load(open(infile, 'rb'))
-	
-    model = Model(
-                    in_dict['metadata']['veh_desc'],
-		    in_dict['option'],
-                    estimator = in_dict['estimator']
-                    )
-    model.metadata = in_dict['metadata']
-    model.errors = in_dict['errors']
-    model.option = in_dict['option']
+    path = Path(infile)
 
-    return model
+    if path.suffix == ".json":
+        return Model.from_json(Path(path))
+    elif path.suffix == ".pickle":
+        return Model.from_pickle(path)
+    else:
+        raise ImportError(f"file type of {path.suffix} not supported by routee-powertrain")

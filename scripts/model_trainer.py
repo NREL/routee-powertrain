@@ -1,21 +1,17 @@
-import sqlite3
-import pandas as pd
-import sys
 import glob
 import os
-import pickle
+import sqlite3
+from multiprocessing import Pool
 
-sys.path.append('..')
-import routee as rte
+import pandas as pd
 
-from routee.estimators import RandomForest, ExplicitBin
-from routee.core.model import Feature, Distance, Energy
+from powertrain.core.features import Feature, FeaturePack
+from powertrain.core.model import Model
+from powertrain.estimators import RandomForest, ExplicitBin, LinearRegression
+from powertrain.utils.fs import root
 
-RAW_DATA_PATH = "/data/fastsim-results/2020_03_27_routee_library/routee_fastsim_veh_db/*.db"
-PICKLE_OUT_PATH = "../routee/trained_models/"
-
-raw_files = glob.glob(RAW_DATA_PATH)
-print(f"Total of {len(raw_files)}")
+RAW_DATA_PATH = "/projects/aes4t/jholden/data/fastsim_results/2020_05_28_routee_library/routee_fastsim_veh_db/*NODE_0.db"
+OUT_PATH = root() / "trained_models"
 
 
 def train_model(file):
@@ -23,11 +19,11 @@ def train_model(file):
 
     print(f'Working on vehicle: {vehicle_name}')
 
-    features = [
+    features = (
         Feature('gpsspeed', units='mph'),
         Feature('grade', units='percent_0_100'),
-    ]
-    distance = Distance('miles', units='mi')
+    )
+    distance = Feature('miles', units='mi')
 
     sql_con = sqlite3.connect(file)
 
@@ -35,36 +31,30 @@ def train_model(file):
     df['grade'] = df.grade.apply(lambda x: x * 100)
 
     if df.gge.sum() > 0:
-        energy = Energy('gge', units='gallons')
+        energy = Feature('gge', units='gallons')
     elif df.esskwhoutach.sum() > 0:
-        energy = Energy('esskwhoutach', units='kwh')
+        energy = Feature('esskwhoutach', units='kwh')
     else:
-        raise RuntimeError('There is no energy reported in this data file..')
+        raise RuntimeError('There is no energy in this data file..')
 
     train_df = df[['miles', 'gpsspeed', 'grade', energy.name]].dropna()
+    feature_pack = FeaturePack(features, distance, energy)
 
-    ln_model = rte.Model(vehicle_name)
-    rf_model = rte.Model(vehicle_name, estimator=RandomForest(cores=4))
-    eb_model = rte.Model(vehicle_name, estimator=ExplicitBin(features=features, distance=distance, energy=energy))
+    ln_e = LinearRegression(feature_pack=feature_pack)
+    rf_e = RandomForest(feature_pack=feature_pack)
+    eb_e = ExplicitBin(feature_pack=feature_pack)
 
-    models = {
-        'Linear': ln_model,
-        'Random Forest': rf_model,
-        'Explicit Bin': eb_model,
-    }
-
-    for name, model in models.items():
-        model.train(train_df, features=features, distance=distance, energy=energy)
-        model.dump_model(PICKLE_OUT_PATH + vehicle_name + '_' + name.replace(' ','_') + ".pickle")
-        
-#     with open(PICKLE_OUT_PATH + vehicle_name + "_errors.pickle", 'wb') as f:
-#         pickle.dump(model_errors, f)
+    for e in (ln_e, rf_e, eb_e):
+        m = Model(e, veh_desc=vehicle_name)
+        m.train(train_df)
+        m.to_json(OUT_PATH / f"{vehicle_name}_{e.__class__.__name__}.json")
 
 
-from multiprocessing import Pool
+if __name__ == "__main__":
+    num_cores = 6
 
-num_cores = 6 
+    raw_files = glob.glob(RAW_DATA_PATH)
+    print(f"Total of {len(raw_files)}")
 
-with Pool(num_cores) as p:
-    p.map(train_model, raw_files)
-
+    with Pool(num_cores) as p:
+        p.map(train_model, raw_files)

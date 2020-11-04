@@ -1,16 +1,35 @@
+from __future__ import annotations
+
+import json
 import pickle
+from pathlib import Path
+from typing import Optional
+
 import numpy as np
-import matplotlib.pyplot as plt
+from pandas import DataFrame
 
+from powertrain.core.core_utils import test_train_split
+from powertrain.estimators.linear_regression import LinearRegression
+from powertrain.estimators.estimator_interface import EstimatorInterface
+from powertrain.estimators.explicit_bin import ExplicitBin
+from powertrain.estimators.random_forest import RandomForest
+from powertrain.utils.fs import get_version
 from powertrain.validation import errors
-from powertrain.core.utils import test_train_split
-from powertrain.estimators.base import BaseEstimator
 
-from collections import namedtuple
+_registered_estimators = {
+    'LinearRegression': LinearRegression,
+    'ExplicitBin': ExplicitBin,
+    'RandomForest': RandomForest,
+}
 
-Feature = namedtuple('Feature', ['name', 'units'])
-Distance = namedtuple('Distance', ['name', 'units'])
-Energy = namedtuple('Energy', ['name', 'units'])
+
+def _load_estimator(name: str, json: dict) -> EstimatorInterface:
+    if name not in _registered_estimators:
+        raise TypeError(f"{name} estimator not registered with routee-powertrain")
+
+    e = _registered_estimators[name]
+
+    return e.from_json(json)
 
 
 class Model:
@@ -24,71 +43,40 @@ class Model:
             
     """
 
-    def __init__(self, veh_desc, option=2, estimator=BaseEstimator()):
-        self.metadata = {'veh_desc': veh_desc}
-        self._estimator = estimator
-        self.errors = None
-        self.option = option
+    def __init__(self, estimator: EstimatorInterface, veh_desc: Optional[str] = None):
+        self.metadata = {
+            'veh_desc': veh_desc,
+            'estimator': estimator.__class__.__name__,
+        }
 
-    def train(self, data, features, distance, energy):
-        """Train an energy consumption model based on energy use data.
+        self._estimator = estimator
+
+    def train(
+            self,
+            data: DataFrame,
+    ):
+        """
+        Train a model
 
         Args:
-        
-            fc_data (pandas.DataFrame):
-                Link level energy consumption information and associated link attributes.
-            energy (str):
-                Name/units of the target energy consumption column.
-            distance (str):
-                Name/units of the distance column.
-                
+            data:
+
+        Returns:
+
         """
-        print(f"training estimator {self._estimator} with option {self.option}.")
+        print(f"training estimator {self._estimator} with option {self._estimator.predict_type}.")
 
-        self.metadata['features'] = features
-        self.metadata['distance'] = distance
-        self.metadata['energy'] = energy
-        self.metadata['estimator'] = self._estimator.__class__.__name__
-        self.metadata['routee_version'] = 'v0.3.0'
+        self.metadata['routee_version'] = get_version()
 
-        train_features = [feat.name for feat in features]
-
-        pass_data = data[train_features + [distance.name] + [energy.name]].copy() #reduced local copy of the data based on features
-
-        # convert absolute consumption for FC RATE
-        pass_data[energy.name + '_per_' + distance.name] = (pass_data[energy.name]/pass_data[distance.name]) #converting to energy/distance val
-
+        pass_data = data.copy(deep=True)
         pass_data = pass_data[~pass_data.isin([np.nan, np.inf, -np.inf]).any(1)]
 
-        train, test = test_train_split(pass_data.dropna(), 0.2) #splitting test data between train and validate --> 20% here
+        # splitting test data between train and validate --> 20% here
+        train, test = test_train_split(pass_data.dropna(), 0.2)
 
-        #training the models--> randomForest will have two options of feature selection
-        #option 1: distance is not a feature and fc/dist is the target column, #option 2: distance is a feature, and fc is the target column
-        if (self.metadata['estimator'] == 'ExplicitBin') or (self.option == 2):
-            self._estimator.train(
-                x=train[train_features+[distance.name]],
-                y=train[energy.name],
-            )
-
-        else:
-            self._estimator.train(
-                x=train[train_features],
-                y=train[energy.name + '_per_' + distance.name],
-            )
+        self._estimator.train(pass_data)
 
         self.validate(test)
-
-        #saving feature_importance
-        if (self.metadata['estimator']=='RandomForest') or (self.metadata['estimator']=='XGBoost'):
-            self.metadata['feature_importance'] = self._estimator.feature_importance()
-           
-    def plot_feature_importance(self):
-        if (self.metadata['estimator'] == 'ExplicitBin'):
-            print ("Feature importance not available for visualization.")
-        else:
-            features = [feat.name for feat in self.metadata['features']]
-            if self.option == 2: features.append(self.metadata['distance'].name)
-            self._estimator.plot_feature_importance(features)
 
     def validate(self, test):
         """Validate the accuracy of the estimator.
@@ -101,10 +89,10 @@ class Model:
 
         _target_pred = self.predict(test)
         test['target_pred'] = _target_pred
-        self.errors = errors.all_error(
-            test[self.metadata['energy'].name],
+        self.metadata['errors'] = errors.all_error(
+            test[self._estimator.feature_pack.energy.name],
             _target_pred,
-            test[self.metadata['distance'].name],
+            test[self._estimator.feature_pack.distance.name],
         )
 
     def predict(self, links_df):
@@ -120,23 +108,10 @@ class Model:
                 Predicted energy consumption for every row in links_df.
                 
         """
+        return self._estimator.predict(links_df)
 
-        for feat in self.metadata['features']:
-            assert feat.name in links_df.columns, f"Missing expected column {feat.name} in links input"
-
-        predict_features = [feat.name for feat in self.metadata['features']]
-
-        if (self.metadata['estimator'] == 'ExplicitBin') or (self.option == 2):
-            _energy_pred = self._estimator.predict(links_df[predict_features+[self.metadata['distance'].name]])
-
-        else:
-            _energy_pred_rates = self._estimator.predict(links_df[predict_features])
-            _energy_pred = _energy_pred_rates * links_df[self.metadata['distance'].name]
-
-        return _energy_pred
-
-    def dump_model(self, outfile):
-        """Dumps a routee.Model to a pickle file for persistance and sharing.
+    def to_json(self, outfile: Path):
+        """Dumps a powertrain model to a json file for persistence and sharing.
 
         Args:
             outfile (str):
@@ -145,9 +120,47 @@ class Model:
         """
         out_dict = {
             'metadata': self.metadata,
-            'estimator': self._estimator,
-            'errors': self.errors,
-            'option': self.option,
+            '_estimator_json': self._estimator.to_json(),
         }
+        with open(outfile, 'w', encoding='utf-8') as f:
+            json.dump(out_dict, f, ensure_ascii=False, indent=4)
 
-        pickle.dump(out_dict, open(outfile, 'wb'))
+    def to_pickle(self, outfile: Path):
+        """Dumps a powertrain model to a pickle file for persistence and sharing.
+
+        Args:
+            outfile (str):
+                Filepath for location of dumped model.
+
+        """
+        out_dict = {
+            'metadata': self.metadata,
+            '_estimator': self._estimator,
+        }
+        with open(outfile, 'wb') as f:
+            pickle.dump(out_dict, f)
+
+    @classmethod
+    def from_json(cls, infile: Path) -> Model:
+        with infile.open('r', encoding='utf-8') as f:
+            in_json = json.load(f)
+            metadata = in_json['metadata']
+            estimator = _load_estimator(metadata['estimator'], json=in_json['_estimator_json'])
+
+            m = Model(estimator=estimator)
+            m.metadata = metadata
+
+            return m
+
+    @classmethod
+    def from_pickle(cls, infile: Path) -> Model:
+        with infile.open('rb') as f:
+            in_dict = pickle.load(f)
+            metadata = in_dict['metadata']
+            estimator = in_dict['_estimator']
+
+            m = Model(estimator=estimator)
+            m.metadata = metadata
+
+            return m
+

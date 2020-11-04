@@ -19,11 +19,24 @@ def mock_model(
         estimator: str,
 ):
     if estimator == "ExplicitBin":
-        model_path = os.path.join("..","powertrain","trained_models","standard", "2015_Honda_Accord_HEV_Explicit_Bin.pickle")
+        model_path = os.path.join(
+            "..",
+            "trained_models",
+            "standard", 
+            "2016_Leaf_24_kWh_ExplicitBin.json")
     elif estimator == "Linear":
-        model_path = os.path.join("..","powertrain","trained_models","standard", "2015_Honda_Accord_HEV_Linear.pickle")
+        model_path = os.path.join(
+            "..",
+            "trained_models",
+            "standard", 
+            "2016_Leaf_24_kWh_LinearRegression.json")
     elif estimator == "RandomForest":
-        model_path = os.path.join("..","powertrain","trained_models","standard", "2015_Honda_Accord_HEV_Random_Forest.pickle")
+        model_path = os.path.join(
+            "..",
+            "trained_models",
+            "standard", 
+            "2016_Leaf_24_kWh_RandomForest.json",
+        )
     else:
         raise Exception("Incorrect estimator type")
 

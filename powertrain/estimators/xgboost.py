@@ -1,82 +1,98 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
+from typing import Union
 
-from powertrain.estimators.base import BaseEstimator
+from numpy import clip
+from pandas import DataFrame, Series
+from xgboost import XGBRegressor
 
-import xgboost as xgb
+from powertrain.core.features import PredictType, FeaturePack
+from powertrain.estimators.estimator_interface import EstimatorInterface
 
 
-class XGBoost(BaseEstimator):
+class XGBoost(EstimatorInterface):
     """This estimator uses a xgboost tree to select an optimal decision tree,
     meant to serve as an automated construction of a lookup table.
-
-    Example application:
-        > import routee
-        > from routee.estimators import RandomForest
-        >
-        >
-        > model_rf = routee.Model(
-        >                '2016 Ford Explorer',
-        >                estimator = RandomForest(cores = 2),
-        >                )
-        >
-        > model_rf.train(fc_data, # fc_data = link attributes + fuel consumption
-        >               energy='gallons',
-        >               distance='miles',
-        >               trip_ids='trip_ids')
-        >
-        > model_rf.predict(route1) # returns route1 with energy appended to each link
-        
-    Args:
-        cores (int):
-            Number of cores to use during traing.
-            
     """
 
-    def __init__(self, cores):
-        self.cores = cores
+    def __init__(
+            self,
+            feature_pack: FeaturePack,
+            predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW,
+    ):
+        if isinstance(predict_type, str):
+            ptype = PredictType.from_string(predict_type)
+        elif isinstance(predict_type, int):
+            ptype = PredictType.from_int(predict_type)
+        elif isinstance(predict_type, PredictType):
+            ptype = predict_type
+        else:
+            raise TypeError(f"predict_type {predict_type} of python type {type(predict_type)} not supported")
+        self.predict_type: PredictType = ptype
 
-    def train(self, x, y):
-        """Method to train the estimator over a specific dataset.
-        Overrides BaseEstimatortrain method.
-
-        Args:
-            train (pandas.DataFrame):
-                Data frame of the training data including features and target.
-            test (pandas.DataFrame):
-                Data frame of testing data for validation and error calculation.
-            metadata (dict):
-                Dictionary of metadata including features, target, distance column,
-                energy column, and trip_ids column.
-
-        Returns
-            errors (dict):
-                Dictionary with error metrics.
-                
-        """
-
-        regmod = xgb.XGBRegressor(
+        mod = XGBRegressor(
             n_estimators=100,
             reg_lambda=1,
             gamma=0,
             max_depth=3
         )
+        self.model: XGBRegressor = mod
 
-        self.model = regmod.fit(np.array(x), np.array(y)) #trained regressor model
+        self.feature_pack: FeaturePack = feature_pack
 
+    def train(self, data: DataFrame):
+        """
+        train method for the base estimator (linear regression)
+        Args:
+            data:
 
-    #add feature importance
-    def feature_importance(self):
-        return self.model.feature_importances_
-        
-    def plot_feature_importance(self, features = None):
-        self.model.feature_names = features
-        xgb.plot_importance(self.model)
-        plt.rcParams['figure.figsize'] = [5, 5]
-        plt.show()
-        
-        
-        (pd.Series(self.model.feature_importances_, index=features)
-        .nlargest(10)
-        .plot(kind='barh'))
+        Returns:
+
+        """
+
+        if self.predict_type == PredictType.ENERGY_RATE:  # convert absolute consumption to rate consumption
+            energy_rate_name = self.feature_pack.energy.name + "_per_" + self.feature_pack.distance.name
+            energy_rate = data[self.feature_pack.energy.name] / data[self.feature_pack.distance.name]
+            data[energy_rate_name] = energy_rate
+
+            x = data[self.feature_pack.feature_list]
+            y = data[energy_rate_name]
+        elif self.predict_type == PredictType.ENERGY_RAW:
+            x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]]
+            y = data[self.feature_pack.energy.name]
+        else:
+            raise NotImplemented(f"{self.predict_type} not supported by XGBoost")
+        self.model = self.model.fit(x.values, y.values)
+
+    def predict(self, data: DataFrame) -> Series:
+        """Apply the estimator to to predict consumption.
+
+        Args:
+        data (pandas.DataFrame):
+            Columns that match self.features and self.distance that
+            describe vehicle passes over links in the road network.
+
+        Returns:
+            target_pred (float):
+                Predicted target for every row in links_df.
+
+        """
+        if self.predict_type == PredictType.ENERGY_RATE:
+            x = data[self.feature_pack.feature_list]
+            _energy_pred_rates = self.model.predict(x.values)
+            _energy_pred = _energy_pred_rates * data[self.feature_pack.distance.name]
+        elif self.predict_type == PredictType.ENERGY_RAW:
+            x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]]
+            _energy_pred = self.model.predict(x.values)
+        else:
+            raise NotImplemented(f"{self.predict_type} not supported by XGBoost")
+
+        energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.predict_type.name)
+
+        return energy_pred
+
+    def to_json(self) -> dict:
+        raise NotImplemented("to_json() not implemented for XGBoost estimator")
+
+    @classmethod
+    def from_json(cls, json: dict) -> EstimatorInterface:
+        raise NotImplemented("from_json() not implemented for XGBoost estimator")
+

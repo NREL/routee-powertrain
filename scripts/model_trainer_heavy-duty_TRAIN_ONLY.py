@@ -92,13 +92,13 @@ features = [
 energy = Energy('gallons', units='gallons')
 
 eb_model = routee.Model('class_8_linehaul', estimator=ExplicitBin(features=features, distance=distance, energy=energy))
-eb_model.train(df_links_fltr, features=features, distance=distance, energy=energy)
+eb_model.train(df_links_fltr, feature_pack=features, distance=distance, energy=energy)
 eb_model.dump_model('../routee/trained_models/class_8_linehaul_diesel_Explicit_Bin.pickle')
 
 rf_model = routee.Model('class_8_linehaul', estimator=RandomForest(cores=3))
-rf_model.train(df_links_fltr, features=features, distance=distance, energy=energy)
+rf_model.train(df_links_fltr, feature_pack=features, distance=distance, energy=energy)
 rf_model.dump_model('../routee/trained_models/class_8_linehaul_diesel_Random_Forest.pickle')
 
 base_model = routee.Model('class_8_linehaul')
-base_model.train(df_links_fltr, features=features, distance=distance, energy=energy)
+base_model.train(df_links_fltr, feature_pack=features, distance=distance, energy=energy)
 base_model.dump_model('../routee/trained_models/class_8_linehaul_diesel_Linear.pickle')

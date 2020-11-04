@@ -1,32 +1,29 @@
 from __future__ import annotations
+from typing import Union
 
-from typing import Union, Optional
+import numpy as np
 
 from numpy import clip
 from pandas import DataFrame, Series
-from sklearn.ensemble import RandomForestRegressor
+from sklearn import linear_model
 
-from powertrain.core.core_utils import serialize_random_forest_regressor, deserialize_random_forest_regressor
-from powertrain.core.features import PredictType, FeaturePack
+from powertrain.core.features import FeaturePack, PredictType
 from powertrain.estimators.estimator_interface import EstimatorInterface
 
 
-class RandomForest(EstimatorInterface):
-    """This estimator uses a random forest to select an optimal decision tree,
-    meant to serve as an automated construction of a lookup table.
-
-    Args:
-        cores (int):
-            Number of cores to use during training.
-            
+class LinearRegression(EstimatorInterface):
+    """linear regression routee estimator.
+    
+    This estimator uses a linear model to predict
+    route energy usage.
+    
     """
 
     def __init__(
             self,
             feature_pack: FeaturePack,
-            cores: int = 4,
             predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW,
-            model: Optional[RandomForestRegressor] = None,
+            model: linear_model.LinearRegression = linear_model.LinearRegression()
     ):
         if isinstance(predict_type, str):
             ptype = PredictType.from_string(predict_type)
@@ -36,22 +33,14 @@ class RandomForest(EstimatorInterface):
             ptype = predict_type
         else:
             raise TypeError(f"predict_type {predict_type} of python type {type(predict_type)} not supported")
-        self.predict_type: PredictType = ptype
 
-        if not model:
-            model = RandomForestRegressor(n_estimators=20,
-                                          max_features='auto',
-                                          max_depth=10,
-                                          min_samples_split=10,
-                                          n_jobs=cores,
-                                          random_state=52)
+        self.predict_type = ptype
+        self.feature_pack = feature_pack
+        self.model = model
 
-        self.model: RandomForestRegressor = model
-
-        self.feature_pack: FeaturePack = feature_pack
-        self.cores = cores
-
-    def train(self, data: DataFrame):
+    def train(self,
+              data: DataFrame,
+              ):
         """
         train method for the base estimator (linear regression)
         Args:
@@ -60,7 +49,6 @@ class RandomForest(EstimatorInterface):
         Returns:
 
         """
-
         if self.predict_type == PredictType.ENERGY_RATE:  # convert absolute consumption to rate consumption
             energy_rate_name = self.feature_pack.energy.name + "_per_" + self.feature_pack.distance.name
             energy_rate = data[self.feature_pack.energy.name] / data[self.feature_pack.distance.name]
@@ -72,7 +60,8 @@ class RandomForest(EstimatorInterface):
             x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]]
             y = data[self.feature_pack.energy.name]
         else:
-            raise NotImplemented(f"{self.predict_type} not supported by RandomForest")
+            raise NotImplemented(f"{self.predict_type} not supported by BaseEstimator")
+
         self.model = self.model.fit(x.values, y.values)
 
     def predict(self, data: DataFrame) -> Series:
@@ -80,13 +69,13 @@ class RandomForest(EstimatorInterface):
 
         Args:
         data (pandas.DataFrame):
-            Columns that match self.features and self.distance that
+            Columns that match self.features and self.distance that 
             describe vehicle passes over links in the road network.
 
         Returns:
-            target_pred (float):
-                Predicted target for every row in links_df.
-
+            target_pred (float): 
+                Predicted target for every row in links_df. 
+                
         """
         if self.predict_type == PredictType.ENERGY_RATE:
             x = data[self.feature_pack.feature_list]
@@ -96,35 +85,41 @@ class RandomForest(EstimatorInterface):
             x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]]
             _energy_pred = self.model.predict(x.values)
         else:
-            raise NotImplemented(f"{self.predict_type} not supported by RandomForest")
+            raise NotImplemented(f"{self.predict_type} not supported by BaseEstimator")
 
         energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.feature_pack.energy.name)
 
         return energy_pred
 
     def to_json(self) -> dict:
+        serialized_model = {
+            'meta': self.model.__class__.__name__,
+            'coef_': self.model.coef_.tolist(),
+            'intercept_': self.model.intercept_.tolist(),
+            'params': self.model.get_params()
+        }
         out_json = {
-            'model': serialize_random_forest_regressor(self.model),
+            'model': serialized_model,
             'feature_pack': self.feature_pack.to_json(),
-            'predict_type': self.predict_type.name,
-            'cores': self.cores
+            'predict_type': self.predict_type.name
         }
 
         return out_json
 
     @classmethod
-    def from_json(cls, json: dict) -> RandomForest:
+    def from_json(cls, json: dict) -> LinearRegression:
         model_dict = json['model']
-        model = deserialize_random_forest_regressor(model_dict)
+        model = linear_model.LinearRegression(**model_dict['params'])
+        model.coef_ = np.array(model_dict['coef_'])
+        model.intercept_ = np.array(model_dict['intercept_'])
 
         predict_type = PredictType.from_string(json['predict_type'])
         feature_pack = FeaturePack.from_json(json['feature_pack'])
-        cores = json['cores']
 
-        e = RandomForest(
-            feature_pack=feature_pack,
-            predict_type=predict_type,
-            cores=cores,
-            model=model
-        )
-        return e
+        return LinearRegression(feature_pack=feature_pack, predict_type=predict_type, model=model)
+
+
+
+
+
+

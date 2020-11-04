@@ -1,15 +1,31 @@
-from os import path
+import codecs
+import os
 
 from setuptools import setup, find_packages
 
 # Get the long description from the README file
-here = path.abspath(path.dirname(__file__))
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+here = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
+
+
+def read(rel_path):
+    with codecs.open(os.path.join(here, rel_path), 'r') as fp:
+        return fp.read()
+
+
+def get_version(rel_path):
+    for line in read(rel_path).splitlines():
+        if line.startswith('__version__'):
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+    else:
+        raise RuntimeError("Unable to find version string.")
+
 
 setup(
     name="route-powertrain",
-    version="0.3.1",
+    version=get_version(os.path.join("powertrain", "__init__.py")),
     description=
     "RouteE is a tool for predicting energy usage over a set of road links.",
     long_description=long_description,
@@ -20,16 +36,17 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: Other/Proprietary License",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Scientific/Engineering"
     ],
     packages=find_packages(),
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_requires=[
-        "pandas==0.24",
-        "numpy==1.16",
-        "scikit-learn==0.21",
-        "scipy==1.2",
+        "pandas",
+        "numpy",
+        "scikit-learn",
+        "scipy",
+        "xgboost",
     ],
     extras_require={
         "optional": [
