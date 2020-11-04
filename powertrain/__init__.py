@@ -3,5 +3,5 @@ from powertrain.core.model import Model
 from powertrain.core.features import Feature, FeaturePack
 
 name = "powertrain"
-__version__ = "0.3.1"
+__version__ = "0.4.0-alpha"
 
