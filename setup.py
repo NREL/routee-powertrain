@@ -24,7 +24,7 @@ def get_version(rel_path):
 
 
 setup(
-    name="route-powertrain",
+    name="routee-powertrain",
     version=get_version(os.path.join("powertrain", "__init__.py")),
     description=
     "RouteE is a tool for predicting energy usage over a set of road links.",
@@ -45,12 +45,11 @@ setup(
         "pandas",
         "numpy",
         "scikit-learn",
-        "scipy",
-        "xgboost",
     ],
     extras_require={
         "optional": [
             "matplotlib",
+            "xgboost"
         ],
     },
     author="National Renewable Energy Laboratory",

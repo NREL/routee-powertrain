@@ -7,7 +7,9 @@ import pandas as pd
 
 from powertrain.core.features import Feature, FeaturePack
 from powertrain.core.model import Model
-from powertrain.estimators import RandomForest, ExplicitBin, LinearRegression
+from powertrain.estimators.explicit_bin import ExplicitBin
+from powertrain.estimators.linear_regression import LinearRegression
+from powertrain.estimators.random_forest import RandomForest
 from powertrain.utils.fs import root
 
 RAW_DATA_PATH = "/projects/aes4t/jholden/data/fastsim_results/2020_05_28_routee_library/routee_fastsim_veh_db/*NODE_0.db"
