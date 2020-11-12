@@ -15,6 +15,8 @@ from powertrain.utils.fs import root
 RAW_DATA_PATH = "/projects/mbap/data/fastsim_results/2020_11_9/FASTSim_py_veh_db_w_phevs/*.db"
 OUT_PATH = "/projects/mbap/data/routee_results/2020_11_9/"
 
+if not os.path.exists(OUT_PATH):
+    os.makedirs(OUT_PATH)
 
 def train_model(file):
     vehicle_name = os.path.splitext(os.path.basename(file))[0]
