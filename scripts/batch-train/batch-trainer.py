@@ -1,22 +1,22 @@
+import io
+import logging
+import multiprocessing as mp
+import os
+import tempfile
+
 import pandas as pd
 import sqlalchemy as sql
-import os
 import yaml
-import logging
-import io
-import tempfile
-import multiprocessing as mp
 
 from powertrain.core.features import Feature, FeaturePack
 from powertrain.core.model import Model
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
-from powertrain.utils.fs import root
 
-logging.basicConfig(filename='batch_run.log', \
-                    filemode='w', \
-                    level=logging.DEBUG,\
+logging.basicConfig(filename='batch_run.log',
+                    filemode='w',
+                    level=logging.DEBUG,
                     format='%(asctime)s %(message)s')
 
 logging.info('RouteE batch run START')
@@ -27,7 +27,7 @@ def load_config(config_file):
     Load the user config file, config.yml
     This is where all configurations for the batch run are stored.
     """
-    
+
     with open(config_file, 'r') as stream:
         try:
             return yaml.safe_load(stream)
@@ -35,10 +35,9 @@ def load_config(config_file):
             print(exc)
 
 
-
 def read_sql_inmem_uncompressed(query, db_engine):
     copy_sql = "COPY ({query}) TO STDOUT WITH CSV {head}".format(
-       query=query, head="HEADER"
+        query=query, head="HEADER"
     )
     conn = db_engine.raw_connection()
     cur = conn.cursor()
@@ -48,10 +47,11 @@ def read_sql_inmem_uncompressed(query, db_engine):
     df = pd.read_csv(store)
     return df
 
+
 def read_sql_tmpfile(query, db_engine):
     with tempfile.TemporaryFile() as tmpfile:
         copy_sql = "COPY ({query}) TO STDOUT WITH CSV {head}".format(
-           query=query, head="HEADER"
+            query=query, head="HEADER"
         )
         conn = db_engine.raw_connection()
         cur = conn.cursor()
@@ -60,15 +60,13 @@ def read_sql_tmpfile(query, db_engine):
         df = pd.read_csv(tmpfile)
         return df
 
+
 def train_routee_model(tuple_in):
     # Read vehicle specs
     config = tuple_in[0]
     db_name = tuple_in[1]
 
-    veh_specs = pd.read_csv(config['vehicles_db'])
-
     # Read FASTSim "link" results
-
 
     # Train model(s)
 
@@ -76,7 +74,7 @@ def train_routee_model(tuple_in):
 
     logging.info('    Training on data from {}'.format(db_name))
 
-    vehicle_name = db_name.replace('.db','')
+    vehicle_name = db_name.replace('.db', '')
 
     features = (
         Feature('gpsspeed', units='mph'),
@@ -84,7 +82,7 @@ def train_routee_model(tuple_in):
     )
     distance = Feature('miles', units='mi')
 
-    sql_con = sql.create_engine('sqlite:///'+config['fastsim_results_path']+db_name)
+    sql_con = sql.create_engine('sqlite:///' + config['fastsim_results_path'] + db_name)
 
     logging.info('    Reading SQLite')
 
@@ -117,19 +115,16 @@ def train_routee_model(tuple_in):
 
     logging.info('    Dumping models')
     for e in (ln_e, rf_e, eb_e):
-        m = Model(e, veh_desc=vehicle_name)
+        m = Model(e, description=vehicle_name)
         m.train(train_df)
-        m.to_json(config['routee_results_path']+f"{vehicle_name}_{e.__class__.__name__}.json")
-        m.to_pickle(config['routee_results_path']+f"{vehicle_name}_{e.__class__.__name__}.pickle")
-    
+        m.to_json(config['routee_results_path'] + f"{vehicle_name}_{e.__class__.__name__}.json")
+        m.to_pickle(config['routee_results_path'] + f"{vehicle_name}_{e.__class__.__name__}.pickle")
+
     return
-
-    
-
 
 
 if __name__ == '__main__':
-    
+
     config = load_config('config.yml')
 
     # Initialize results location
@@ -142,13 +137,11 @@ if __name__ == '__main__':
     fs_results_dbs = os.listdir(config['fastsim_results_path'])
     fs_results_dbs = [fn for fn in fs_results_dbs if fn.endswith('.db')]
 
-    tup_input = zip([config]*len(fs_results_dbs), fs_results_dbs)   
+    tup_input = zip([config] * len(fs_results_dbs), fs_results_dbs)
 
-    pool = mp.Pool(processes = config['n_cores'])
+    pool = mp.Pool(processes=config['n_cores'])
     pool.map(train_routee_model, tup_input)
 
     pool.close()
     pool.terminate()
     pool.join()
-
-    
