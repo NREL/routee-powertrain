@@ -1,4 +1,5 @@
 import logging as log
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -41,14 +42,14 @@ if __name__ == "__main__":
 
     for e in (ln_e, rf_e, eb_e):
         log.info(f"training estimator {e}..")
-        m = Model(e, veh_desc=veh_name)
+        m = Model(e, description=veh_name)
         m.train(train_df)
 
         # test out prediction
         log.info(f"predicting {m} over test route..")
-        r = m.predict(mock_route())
+        r1 = m.predict(mock_route())
 
-        energy = round(r.sum(), 2)
+        energy1 = round(r1.sum(), 2)
         log.info(f"predicted {energy} gge over test route..")
 
         # test out writing and reading json
@@ -60,10 +61,15 @@ if __name__ == "__main__":
         new_m = Model.from_json(json_outfile)
 
         log.info(f"predicting {new_m} over test route..")
-        r = new_m.predict(mock_route())
+        r2 = new_m.predict(mock_route())
 
-        energy = round(r.sum(), 2)
+        energy2 = round(r2.sum(), 2)
         log.info(f"predicted {energy} gge over test route..")
+
+        if math.isclose(energy1, energy2):
+            log.info("\n\n ✅ Successfully saved and loaded model in json format! \n\n")
+        else:
+            log.info("\n\n ❌ The model loaded from json did not predict the same energy  \n\n")
 
         log.info("removing json file..")
         json_outfile.unlink()
@@ -77,10 +83,15 @@ if __name__ == "__main__":
         new_m = Model.from_pickle(pickle_outfile)
 
         log.info(f"predicting {new_m} over test route..")
-        r = new_m.predict(mock_route())
+        r3 = new_m.predict(mock_route())
 
-        energy = round(r.sum(), 2)
+        energy3 = round(r3.sum(), 2)
         log.info(f"predicted {energy} gge over test route..")
+
+        if math.isclose(energy1, energy3):
+            log.info("\n\n ✅ Successfully saved and loaded model in pickle format! \n\n")
+        else:
+            log.info("\n\n ❌ The model loaded from pickle did not predict the same energy  \n\n")
 
         log.info("removing pickle file..")
         pickle_outfile.unlink()

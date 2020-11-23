@@ -137,10 +137,7 @@ shows significant difference between the two 'option' settings.
 scenario_name = "2016_audi_A3"
 
 eb = ExplicitBin(feature_pack)
-eb_model = Model(
-    estimator=eb,
-    veh_desc=scenario_name
-)
+eb_model = Model(estimator=eb, description=scenario_name)
 
 # training model with data (also does validation with test data and calculates error metrics)
 eb_model.train(df_mod)
@@ -158,10 +155,7 @@ To investigate the feature importance after the training, user can call the 'plo
 scenario_name = "2016_audi_A3"
 option = 2  # going for fc/dist option
 
-xgb_model = Model(
-    estimator=XGBoost(feature_pack, predict_type=option),
-    veh_desc=scenario_name
-)
+xgb_model = Model(estimator=XGBoost(feature_pack, predict_type=option), description=scenario_name)
 
 # training model with data (also does validation with test data and calculates error metrics)
 xgb_model.train(df_mod)
@@ -181,10 +175,7 @@ To investigate the feature importance after the training, user can call the 'plo
 scenario_name = "2016_audi_A3"
 option = 2  # going for fc/dist option
 
-rf_model = Model(
-    estimator=RandomForest(feature_pack, predict_type=option),
-    veh_desc=scenario_name
-)
+rf_model = Model(estimator=RandomForest(feature_pack, predict_type=option), description=scenario_name)
 # training model with data (also does validation with test data and calculates error metrics)
 rf_model.train(df_mod)
 print(rf_model.metadata)
@@ -324,9 +315,9 @@ df_mod = df_passes[['gpsspeed', 'grade', 'gge', 'miles']]
 
 # We train new models based on the reduced feature list.
 option = 2
-eb_model = Model(estimator=ExplicitBin(feature_pack), veh_desc=scenario_name)
-rf_model = Model(estimator=RandomForest(feature_pack, predict_type=option), veh_desc=scenario_name)
-xgb_model = Model(estimator=XGBoost(feature_pack, predict_type=option), veh_desc=scenario_name)
+eb_model = Model(estimator=ExplicitBin(feature_pack), description=scenario_name)
+rf_model = Model(estimator=RandomForest(feature_pack, predict_type=option), description=scenario_name)
+xgb_model = Model(estimator=XGBoost(feature_pack, predict_type=option), description=scenario_name)
 
 # training model with data (also does validation with test data and calculates error metrics)
 eb_model.train(df_mod)

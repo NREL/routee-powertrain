@@ -47,7 +47,7 @@ def train_model(file):
     eb_e = ExplicitBin(feature_pack=feature_pack)
 
     for e in (ln_e, rf_e, eb_e):
-        m = Model(e, veh_desc=vehicle_name)
+        m = Model(e, description=vehicle_name)
         m.train(train_df)
         m.to_json(OUT_PATH / f"{vehicle_name}_{e.__class__.__name__}.json")
 
