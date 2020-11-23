@@ -72,7 +72,7 @@ if __name__ == "__main__":
             log.info("\n\n ❌ The model loaded from json did not predict the same energy  \n\n")
 
         log.info("removing json file..")
-        json_outfile.unlink()
+        # json_outfile.unlink()
 
         # test out writing and reading pickle
         log.info(f"writing {m} to pickle..")

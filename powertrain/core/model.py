@@ -90,7 +90,7 @@ class Model:
 
         _target_pred = self.predict(test)
         test['target_pred'] = _target_pred
-        self.metadata.set_errors(errors.all_error(
+        self.metadata = self.metadata.set_errors(errors.all_error(
             test[self._estimator.feature_pack.energy.name],
             _target_pred,
             test[self._estimator.feature_pack.distance.name],
