@@ -8,6 +8,7 @@ data/
 *.code-workspace
 .idea/
 *.egg-info/
+*.log
 
 .ipynb_checkpoints
 __pycache__

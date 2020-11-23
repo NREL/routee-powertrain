@@ -86,10 +86,21 @@ examples of RouteE usage. The
 illustrating how to use the pre-trained RouteE models that ship with the package is particularly useful for getting up 
 and running.
 
+## Training Workflow
+Training batches of RouteE models from FASTSim results can be performed by running: ```powertrain/scripts/model_trainer.py```
+
+The script requires user modification to specify the ```RAW_DATA_PATH``` (path to FASTSim results) and ```OUT_PATH``` (path to output RouteE models).
+
+Optionally, depending on the size of the FASTSim results and the compute resources on teh machine that is running the training, the user can modify the ```num_cores``` variable to specify how many CPUs should be made available to the processes in the script. On Eagle's 36 core machines, memory issues are typically encountered for full size FASTSim results if the number of CPUs exceeds ~6. 
+
+Once the script has sucessfully run (~3 hours on eagle with 6 cores and 20 different vehicle types), the output directory will be populated. In order to summarize the performance of the resulting models the user can run ```powertrain/scripts/model_check.py``` after modifying the ```PATH_to_models``` variable to match the output locatin of the trained RouteE models. The script dumps image files of the generated plots in ```powertrain/scripts/plots```.
+
+1. ```conda activate routee-powertrain```
+1. ```python model_trainer.py```
+1. ```python model_check.py```
+
 
 ## Coming Soon*
-
-* A RESTful API for using RouteE's prediction function.
 * Medium- and Heavy-Duty vehicle modeling.
 * Emissions estimation from the energy predictions.
 
