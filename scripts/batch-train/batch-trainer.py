@@ -213,7 +213,7 @@ def run() -> int:
     if c.get(-1):
         log.error(f"{c[-1]} model(s) failed to train; check the logs to see what happened")
 
-    log.info(f"training {len(train_files)} completed successfully! 😎")
+    log.info(f"training {len(train_files)} model(s) completed successfully! 😎")
 
     return 1
 
