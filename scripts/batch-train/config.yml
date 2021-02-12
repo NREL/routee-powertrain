@@ -1,9 +1,0 @@
-# Run RouteE for a set of FASTSim results:
-
-vehicles_db: '/home/jholden/GitHub/run-fastsim-tsdc/vehicle_models/routee_default_models/FASTSim_py_veh_db-phevsONLY.csv'
-
-fastsim_results_path: '/projects/mbap/data/fastsim_results/2020_11_9/FASTSim_py_veh_db_w_phevs/'
-
-routee_results_path: '/projects/mbap/data/routee_results/2020_11_9/'
-
-n_cores: 6

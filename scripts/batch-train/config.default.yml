@@ -1,0 +1,44 @@
+# config for training a batch of models:
+
+# where to find the training data; where to write the resulting routee-powertrain models
+training_data_path: '/path/to/training/data/'
+output_path: '/where/to/write/outputs/'
+
+# define the energy targets to use; the training database should indicate which energy type to use;
+energy_targets:
+  - energy_type: electric
+    name: esskwhoutach
+    units: kwh
+  - energy_type: gasoline
+    name: gge
+    units: gallons
+
+# define the distance feature to use
+distance:
+  name: miles
+  units: miles
+
+# define any other features to use for training the models
+features:
+  - name: gpsspeed
+    units: mph
+  - name: grade
+    units: percent_0_100
+
+# which estimators should be used: [explicit_bin, random_forest, linear_regression, xgboost]
+estimators:
+  - explicit_bin
+  - random_forest
+
+# how many cores to use
+n_cores: 6
+
+# what format to write the routee-powertrain model: [json, pickle]
+model_output_type: json
+
+# how the model should predict energy: [energy_raw, energy_rate]
+prediction_type: energy_raw
+
+
+
+

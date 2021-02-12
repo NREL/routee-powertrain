@@ -1,18 +1,22 @@
+from __future__ import annotations
+
 import io
 import logging
-import multiprocessing as mp
-import os
 import tempfile
+import argparse
+from enum import Enum
+from pathlib import Path
+from typing import NamedTuple, Dict, List
 
 import pandas as pd
-import sqlalchemy as sql
 import yaml
 
-from powertrain.core.features import Feature, FeaturePack
-from powertrain.core.model import Model
+from powertrain.core.features import Feature, PredictType
+from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
+from powertrain.estimators.xgboost import XGBoost
 
 logging.basicConfig(filename='batch_run.log',
                     filemode='w',
@@ -21,18 +25,95 @@ logging.basicConfig(filename='batch_run.log',
 
 logging.info('RouteE batch run START')
 
+parser = argparse.ArgumentParser(description="batch run for training routee-powertrain models")
+parser.add_argument(
+    'config_file',
+    help='the configuration for this run'
+)
 
-def load_config(config_file):
+
+class EnergyType(Enum):
+    ELECTRIC = 0
+    GASOLINE = 1
+
+    @classmethod
+    def from_string(cls, string: str) -> EnergyType:
+        if string.lower() == "electric":
+            return cls.ELECTRIC
+        elif string.lower() == "gasoline":
+            return cls.GASOLINE
+        else:
+            raise TypeError(f"energy type {string} not supported by this script; try [electric | gasoline]")
+
+
+class OutputType(Enum):
+    JSON = 0
+    PICKLE = 1
+
+    @classmethod
+    def from_string(cls, string: str) -> OutputType:
+        if string.lower() == "json":
+            return OutputType.JSON
+        elif string.lower() == "pickle":
+            return OutputType.PICKLE
+        else:
+            raise TypeError(f"output type {string} not supported by this script; try [json | pickle]")
+
+
+def get_estimator_class(s: str) -> EstimatorInterface:
+    registered_estimators = {
+        'explicit_bin': ExplicitBin,
+        'random_forest': RandomForest,
+        'linear_regression': LinearRegression,
+        'xgboost': XGBoost,
+    }
+    if s not in registered_estimators:
+        raise TypeError(f"{s} is not a valid estimator type; try one of {list(registered_estimators.keys())}")
+
+    else:
+        return registered_estimators[s]
+
+
+class BatchConfig(NamedTuple):
+    training_data_path: Path
+    output_path: Path
+
+    energy_targets: Dict[EnergyType, Feature]
+    distance: Feature
+    features: List[Feature, ...]
+
+    estimators: List[EstimatorInterface, ...]
+
+    n_cores: int
+    model_output_type: OutputType
+    prediction_type: PredictType
+
+    @classmethod
+    def from_dict(cls, d: dict) -> BatchConfig:
+        return BatchConfig(
+            training_data_path=Path(d['training_data_path']),
+            output_path=Path(d['training_data_path']),
+            energy_targets={EnergyType.from_string(d['energy_type']): Feature.from_dict(d) for d in d['energy_targets']},
+            distance=Feature.from_dict(d['distance']),
+            features=[Feature.from_dict(d) for d in d['features']],
+            estimators=[get_estimator_class(s) for s in d['estimators']],
+            n_cores=int(d['n_cores']),
+            model_output_type=OutputType.from_string(d['model_output_type']),
+            prediction_type=PredictType.from_string(d['prediction_type'])
+        )
+
+
+def load_config(config_file: str) -> BatchConfig:
     """
-    Load the user config file, config.yml
-    This is where all configurations for the batch run are stored.
+    Load the user config file and returns a BatchConfig object
     """
+    config_file = Path(config_file)
+    if not config_file.is_file():
+        raise FileNotFoundError(f"couldn't find config file: {config_file}")
 
     with open(config_file, 'r') as stream:
-        try:
-            return yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
+        d = yaml.safe_load(stream)
+        return BatchConfig.from_dict(d)
 
 
 def read_sql_inmem_uncompressed(query, db_engine):
@@ -62,86 +143,16 @@ def read_sql_tmpfile(query, db_engine):
 
 
 def train_routee_model(tuple_in):
-    # Read vehicle specs
-    config = tuple_in[0]
-    db_name = tuple_in[1]
+    pass
 
-    # Read FASTSim "link" results
+def run() -> int:
+    args = parser.parse_args()
 
-    # Train model(s)
+    config = load_config(args.config_file)
 
-    # Write output as JSON and CSV where applicable
-
-    logging.info('    Training on data from {}'.format(db_name))
-
-    vehicle_name = db_name.replace('.db', '')
-
-    features = (
-        Feature('gpsspeed', units='mph'),
-        Feature('grade', units='percent_0_100'),
-    )
-    distance = Feature('miles', units='mi')
-
-    sql_con = sql.create_engine('sqlite:///' + config['fastsim_results_path'] + db_name)
-
-    logging.info('    Reading SQLite')
-
-    quer = """
-    SELECT sampno, vehno, tripno, gpsspeed, miles, grade, gge, esskwhoutach
-    FROM links
-    LIMIT 100000
-    """
-
-    df = pd.read_sql(quer, sql_con)
-    df['grade'] = df.grade.apply(lambda x: x * 100)
-
-    # Determine fuel type - gge must come first to catch HEVs
-    if df.gge.sum() > 0:
-        energy = Feature('gge', units='gallons')
-    elif df.esskwhoutach.sum() > 0:
-        energy = Feature('esskwhoutach', units='kwh')
-    else:
-        raise RuntimeError('There is no energy in this data file..')
-
-    train_df = df[['miles', 'gpsspeed', 'grade', energy.name]].dropna()
-    feature_pack = FeaturePack(features, distance, energy)
-
-    logging.info('    Training LinReg')
-    ln_e = LinearRegression(feature_pack=feature_pack)
-    logging.info('    Training RF')
-    rf_e = RandomForest(feature_pack=feature_pack)
-    logging.info('    Training Exbin')
-    eb_e = ExplicitBin(feature_pack=feature_pack)
-
-    logging.info('    Dumping models')
-    for e in (ln_e, rf_e, eb_e):
-        m = Model(e, description=vehicle_name)
-        m.train(train_df)
-        m.to_json(config['routee_results_path'] + f"{vehicle_name}_{e.__class__.__name__}.json")
-        m.to_pickle(config['routee_results_path'] + f"{vehicle_name}_{e.__class__.__name__}.pickle")
-
-    return
+    print(config)
 
 
 if __name__ == '__main__':
+    run()
 
-    config = load_config('config.yml')
-
-    # Initialize results location
-    logging.info('Inititalizing results directory: %s' % config['routee_results_path'])
-
-    if not os.path.exists(config['routee_results_path']):
-        os.makedirs(config['routee_results_path'])
-
-    # List FASTSim results DBs
-    fs_results_dbs = os.listdir(config['fastsim_results_path'])
-    fs_results_dbs = [fn for fn in fs_results_dbs if fn.endswith('.db')]
-
-    tup_input = zip([config] * len(fs_results_dbs), fs_results_dbs)
-
-    pool = mp.Pool(processes=config['n_cores'])
-    pool.map(train_routee_model, tup_input)
-
-    pool.close()
-    pool.terminate()
-    pool.join()
