@@ -1,29 +1,35 @@
 from __future__ import annotations
 
-import io
-import logging
-import tempfile
 import argparse
+import glob
+import logging
+import sqlite3
+import traceback
+from collections import Counter
 from enum import Enum
+from multiprocessing import Pool
 from pathlib import Path
-from typing import NamedTuple, Dict, List
+from typing import NamedTuple, Dict, List, Union, Type, Tuple
 
 import pandas as pd
 import yaml
 
-from powertrain.core.features import Feature, PredictType
-from powertrain.estimators.estimator_interface import EstimatorInterface
+from powertrain import Model
+from powertrain.core.features import Feature, PredictType, FeaturePack
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
 from powertrain.estimators.xgboost import XGBoost
 
-logging.basicConfig(filename='batch_run.log',
-                    filemode='w',
-                    level=logging.DEBUG,
-                    format='%(asctime)s %(message)s')
-
-logging.info('RouteE batch run START')
+formatter = logging.Formatter("%(asctime)s [%(levelname)s] - %(message)s")
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
+file_handler = logging.FileHandler("batch-trainer.log")
+file_handler.setFormatter(formatter)
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+log.addHandler(file_handler)
+log.addHandler(stream_handler)
 
 parser = argparse.ArgumentParser(description="batch run for training routee-powertrain models")
 parser.add_argument(
@@ -60,7 +66,7 @@ class OutputType(Enum):
             raise TypeError(f"output type {string} not supported by this script; try [json | pickle]")
 
 
-def get_estimator_class(s: str) -> EstimatorInterface:
+def get_estimator_class(s: str):
     registered_estimators = {
         'explicit_bin': ExplicitBin,
         'random_forest': RandomForest,
@@ -80,9 +86,9 @@ class BatchConfig(NamedTuple):
 
     energy_targets: Dict[EnergyType, Feature]
     distance: Feature
-    features: List[Feature, ...]
+    features: Tuple[Feature, ...]
 
-    estimators: List[EstimatorInterface, ...]
+    estimators: List[Type[Union[ExplicitBin, LinearRegression, RandomForest, XGBoost], ...]]
 
     n_cores: int
     model_output_type: OutputType
@@ -93,14 +99,23 @@ class BatchConfig(NamedTuple):
         return BatchConfig(
             training_data_path=Path(d['training_data_path']),
             output_path=Path(d['training_data_path']),
-            energy_targets={EnergyType.from_string(d['energy_type']): Feature.from_dict(d) for d in d['energy_targets']},
+            energy_targets={EnergyType.from_string(d['energy_type']): Feature.from_dict(d) for d in
+                            d['energy_targets']},
             distance=Feature.from_dict(d['distance']),
-            features=[Feature.from_dict(d) for d in d['features']],
+            features=tuple(Feature.from_dict(d) for d in d['features']),
             estimators=[get_estimator_class(s) for s in d['estimators']],
             n_cores=int(d['n_cores']),
             model_output_type=OutputType.from_string(d['model_output_type']),
             prediction_type=PredictType.from_string(d['prediction_type'])
         )
+
+
+class ModelConfig(NamedTuple):
+    """
+    config for a single model
+    """
+    batch_config: BatchConfig
+    training_file: Path
 
 
 def load_config(config_file: str) -> BatchConfig:
@@ -116,43 +131,81 @@ def load_config(config_file: str) -> BatchConfig:
         return BatchConfig.from_dict(d)
 
 
-def read_sql_inmem_uncompressed(query, db_engine):
-    copy_sql = "COPY ({query}) TO STDOUT WITH CSV {head}".format(
-        query=query, head="HEADER"
-    )
-    conn = db_engine.raw_connection()
-    cur = conn.cursor()
-    store = io.StringIO()
-    cur.copy_expert(copy_sql, store)
-    store.seek(0)
-    df = pd.read_csv(store)
-    return df
+def train_model(mconfig: ModelConfig) -> int:
+    def _err(msg: str) -> int:
+        log.error(msg)
+        return -1
 
+    if not mconfig.training_file.is_file():
+        _err(f"could not find training data at {mconfig.training_file}")
 
-def read_sql_tmpfile(query, db_engine):
-    with tempfile.TemporaryFile() as tmpfile:
-        copy_sql = "COPY ({query}) TO STDOUT WITH CSV {head}".format(
-            query=query, head="HEADER"
-        )
-        conn = db_engine.raw_connection()
-        cur = conn.cursor()
-        cur.copy_expert(copy_sql, tmpfile)
-        tmpfile.seek(0)
-        df = pd.read_csv(tmpfile)
-        return df
+    bconfig = mconfig.batch_config
 
+    # TODO: we assume the filename represents the vehicle name;
+    #  perhaps better to come from a metadata table in the training database?
+    model_name = mconfig.training_file.stem
 
-def train_routee_model(tuple_in):
-    pass
+    log.info(f"working on training for {model_name}")
+
+    sql_con = sqlite3.connect(mconfig.training_file)
+
+    df = pd.read_sql_query("SELECT * FROM links", sql_con)
+
+    # TODO: we should let energy type come from a metadata table in the training database
+    if df.gge.sum() > 0:
+        energy = bconfig.energy_targets.get(EnergyType.GASOLINE)
+        if not energy:
+            _err(f"could not find energy target of type gasoline for {model_name} in the config")
+    elif df.esskwhoutach.sum() > 0:
+        energy = bconfig.energy_targets.get(EnergyType.ELECTRIC)
+        if not energy:
+            _err(f"could not find energy target of type gasoline for {model_name} in the config")
+    else:
+        _err(f'there is no energy in the file {mconfig.training_file}')
+
+    train_cols = [f.name for f in bconfig.features] + [bconfig.distance.name] + [energy.name]
+    train_df = df[train_cols].dropna()
+    feature_pack = FeaturePack(bconfig.features, bconfig.distance, energy)
+
+    for eclass in bconfig.estimators:
+        try:
+            e = eclass(feature_pack=feature_pack, predict_type=bconfig.prediction_type)
+        except Exception:
+            _err(f"failed to load estimator type {eclass} \n {traceback.format_exc()}")
+
+        m = Model(e, description=model_name)
+        m.train(train_df)
+
+        if bconfig.model_output_type == OutputType.JSON:
+            m.to_json(bconfig.output_path / f"{model_name}_{eclass.__name__}.json")
+        elif bconfig.model_output_type == OutputType.PICKLE:
+            m.to_pickle(bconfig.output_path / f"{model_name}_{eclass.__name__}.pickle")
+        else:
+            _err(f"got unexpected output type: {bconfig.model_output_type}")
+
+    return 1
+
 
 def run() -> int:
+    log.info("🏎  routee-powertrain batch training started!")
     args = parser.parse_args()
 
-    config = load_config(args.config_file)
+    bconfig = load_config(args.config_file)
 
-    print(config)
+    train_files = glob.glob(str(bconfig.training_data_path / "*.db"))
+    if not train_files:
+        log.error(f"no training .db files found at {bconfig.training_data_path}")
+        return -1
+
+    with Pool(bconfig.n_cores) as p:
+        results = p.map(train_model, [ModelConfig(batch_config=bconfig, training_file=Path(f)) for f in train_files])
+
+    c = Counter(results)
+    if c.get(-1):
+        log.error(f"{c[-1]} model(s) failed to train; check the logs to see what happened")
+
+    return 1
 
 
 if __name__ == '__main__':
     run()
-

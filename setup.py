@@ -49,7 +49,6 @@ setup(
     extras_require={
         "optional": [
             "matplotlib",
-            "sqlalhcemy",
             "xgboost"
         ],
     },
