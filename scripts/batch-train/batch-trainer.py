@@ -26,10 +26,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 file_handler = logging.FileHandler("batch-trainer.log")
 file_handler.setFormatter(formatter)
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
 log.addHandler(file_handler)
-log.addHandler(stream_handler)
 
 parser = argparse.ArgumentParser(description="batch run for training routee-powertrain models")
 parser.add_argument(
@@ -97,7 +94,7 @@ class BatchConfig(NamedTuple):
     def from_dict(cls, d: dict) -> BatchConfig:
         return BatchConfig(
             training_data_path=Path(d['training_data_path']),
-            output_path=Path(d['training_data_path']) / datetime.now().strftime('%Y-%m-%d_%H-%M-%S'),
+            output_path=Path(d['output_path']) / datetime.now().strftime('%Y-%m-%d_%H-%M-%S'),
             energy_targets={EnergyType.from_string(d['energy_type']): Feature.from_dict(d) for d in
                             d['energy_targets']},
             distance=Feature.from_dict(d['distance']),
