@@ -134,7 +134,7 @@ def load_config(config_file: str) -> BatchConfig:
 
 def train_model(mconfig: ModelConfig) -> int:
     if not mconfig.training_file.is_file():
-        _err(f"could not find training data at {mconfig.training_file}")
+        return _err(f"could not find training data at {mconfig.training_file}")
 
     bconfig = mconfig.batch_config
 
@@ -153,13 +153,13 @@ def train_model(mconfig: ModelConfig) -> int:
     if df.gge.sum() > 0:
         energy = bconfig.energy_targets.get(EnergyType.GASOLINE)
         if not energy:
-            _err(f"could not find energy target of type gasoline for {model_name} in the config")
+            return _err(f"could not find energy target of type gasoline for {model_name} in the config")
     elif df.esskwhoutach.sum() > 0:
         energy = bconfig.energy_targets.get(EnergyType.ELECTRIC)
         if not energy:
-            _err(f"could not find energy target of type gasoline for {model_name} in the config")
+            return _err(f"could not find energy target of type gasoline for {model_name} in the config")
     else:
-        _err(f'there is no energy in the file {mconfig.training_file}')
+        return _err(f'there is no energy in the file {mconfig.training_file}')
 
     train_cols = [f.name for f in bconfig.features] + [bconfig.distance.name] + [energy.name]
     train_df = df[train_cols].dropna()
@@ -169,7 +169,8 @@ def train_model(mconfig: ModelConfig) -> int:
         try:
             e = eclass(feature_pack=feature_pack, predict_type=bconfig.prediction_type)
         except Exception:
-            _err(f"failed to load estimator type {eclass} \n {traceback.format_exc()}")
+            log.error(f"failed to load estimator type {eclass} \n {traceback.format_exc()}")
+            continue
 
         m = Model(e, description=model_name)
         m.train(train_df)
@@ -183,7 +184,7 @@ def train_model(mconfig: ModelConfig) -> int:
             log.info(f"writing model to {outfile}")
             m.to_pickle(outfile)
         else:
-            _err(f"got unexpected output type: {bconfig.model_output_type}")
+            return _err(f"got unexpected output type: {bconfig.model_output_type}")
 
     return 1
 
@@ -195,7 +196,7 @@ def run() -> int:
     try:
         bconfig = load_config(args.config_file)
     except FileNotFoundError:
-        _err(f"could not find {args.config_file}")
+        return _err(f"could not find {args.config_file}")
 
     bconfig.output_path.mkdir(parents=True, exist_ok=True)
 
