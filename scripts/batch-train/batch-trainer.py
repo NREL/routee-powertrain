@@ -205,6 +205,7 @@ def run() -> int:
         log.error(f"no training .db files found at {bconfig.training_data_path}")
         return -1
 
+    log.info(f"working on {len(train_files)} with {bconfig.n_cores} cores")
     with Pool(bconfig.n_cores) as p:
         results = p.map(train_model, [ModelConfig(batch_config=bconfig, training_file=Path(f)) for f in train_files])
 
