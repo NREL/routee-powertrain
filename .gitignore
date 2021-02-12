@@ -10,5 +10,7 @@ data/
 *.egg-info/
 *.log
 
+config.yml
+
 .ipynb_checkpoints
 __pycache__
