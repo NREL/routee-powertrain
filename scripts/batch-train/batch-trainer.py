@@ -6,6 +6,7 @@ import logging
 import sqlite3
 import traceback
 from collections import Counter
+from datetime import datetime
 from enum import Enum
 from multiprocessing import Pool
 from pathlib import Path
@@ -98,7 +99,7 @@ class BatchConfig(NamedTuple):
     def from_dict(cls, d: dict) -> BatchConfig:
         return BatchConfig(
             training_data_path=Path(d['training_data_path']),
-            output_path=Path(d['training_data_path']),
+            output_path=Path(d['training_data_path']) / datetime.now().strftime('%Y-%m-%d_%H-%M-%S'),
             energy_targets={EnergyType.from_string(d['energy_type']): Feature.from_dict(d) for d in
                             d['energy_targets']},
             distance=Feature.from_dict(d['distance']),
@@ -191,6 +192,8 @@ def run() -> int:
     args = parser.parse_args()
 
     bconfig = load_config(args.config_file)
+
+    bconfig.output_path.mkdir(parents=True, exist_ok=True)
 
     train_files = glob.glob(str(bconfig.training_data_path / "*.db"))
     if not train_files:
