@@ -20,7 +20,6 @@ from powertrain.core.features import Feature, PredictType, FeaturePack
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
-from powertrain.estimators.xgboost import XGBoost
 
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] - %(message)s")
 log = logging.getLogger(__name__)
@@ -72,7 +71,6 @@ def get_estimator_class(s: str):
         'explicit_bin': ExplicitBin,
         'random_forest': RandomForest,
         'linear_regression': LinearRegression,
-        'xgboost': XGBoost,
     }
     if s not in registered_estimators:
         raise TypeError(f"{s} is not a valid estimator type; try one of {list(registered_estimators.keys())}")
