@@ -199,6 +199,7 @@ def run() -> int:
 
     bconfig.output_path.mkdir(parents=True, exist_ok=True)
 
+    log.info(f"looking for .db files in {bconfig.training_data_path}")
     train_files = glob.glob(str(bconfig.training_data_path / "*.db"))
     if not train_files:
         log.error(f"no training .db files found at {bconfig.training_data_path}")
@@ -210,6 +211,8 @@ def run() -> int:
     c = Counter(results)
     if c.get(-1):
         log.error(f"{c[-1]} model(s) failed to train; check the logs to see what happened")
+
+    log.info(f"training {len(train_files)} completed successfully! 😎")
 
     return 1
 

@@ -1,7 +1,10 @@
 # config for training a batch of models:
 
-# where to find the training data; where to write the resulting routee-powertrain models
+# where to find the training data;
+# the script will look for all .db files that live in this folder
 training_data_path: '/path/to/training/data/'
+
+# where to write the resulting routee-powertrain models
 output_path: '/where/to/write/outputs/'
 
 # define the energy targets to use; the training database should indicate which energy type to use;
