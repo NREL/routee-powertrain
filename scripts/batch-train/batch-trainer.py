@@ -117,6 +117,11 @@ class ModelConfig(NamedTuple):
     training_file: Path
 
 
+def _err(msg: str) -> int:
+    log.error(msg)
+    return -1
+
+
 def load_config(config_file: str) -> BatchConfig:
     """
     Load the user config file and returns a BatchConfig object
@@ -131,10 +136,6 @@ def load_config(config_file: str) -> BatchConfig:
 
 
 def train_model(mconfig: ModelConfig) -> int:
-    def _err(msg: str) -> int:
-        log.error(msg)
-        return -1
-
     if not mconfig.training_file.is_file():
         _err(f"could not find training data at {mconfig.training_file}")
 
@@ -148,6 +149,7 @@ def train_model(mconfig: ModelConfig) -> int:
 
     sql_con = sqlite3.connect(mconfig.training_file)
 
+    log.info("reading training data into memory")
     df = pd.read_sql_query("SELECT * FROM links", sql_con)
 
     # TODO: we should let energy type come from a metadata table in the training database
@@ -176,9 +178,13 @@ def train_model(mconfig: ModelConfig) -> int:
         m.train(train_df)
 
         if bconfig.model_output_type == OutputType.JSON:
-            m.to_json(bconfig.output_path / f"{model_name}_{eclass.__name__}.json")
+            outfile = bconfig.output_path / f"{model_name}_{eclass.__name__}.json"
+            log.info(f"writing model to {outfile}")
+            m.to_json(outfile)
         elif bconfig.model_output_type == OutputType.PICKLE:
-            m.to_pickle(bconfig.output_path / f"{model_name}_{eclass.__name__}.pickle")
+            outfile = bconfig.output_path / f"{model_name}_{eclass.__name__}.pickle"
+            log.info(f"writing model to {outfile}")
+            m.to_pickle(outfile)
         else:
             _err(f"got unexpected output type: {bconfig.model_output_type}")
 
@@ -189,7 +195,10 @@ def run() -> int:
     log.info("🏎  routee-powertrain batch training started!")
     args = parser.parse_args()
 
-    bconfig = load_config(args.config_file)
+    try:
+        bconfig = load_config(args.config_file)
+    except FileNotFoundError:
+        _err(f"could not find {args.config_file}")
 
     bconfig.output_path.mkdir(parents=True, exist_ok=True)
 

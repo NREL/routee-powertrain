@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import pickle
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -23,6 +24,7 @@ _registered_estimators = {
     'RandomForest': RandomForest,
 }
 
+log = logging.getLogger(__name__)
 
 def _load_estimator(name: str, json: dict) -> EstimatorInterface:
     if name not in _registered_estimators:
@@ -67,7 +69,7 @@ class Model:
         Returns:
 
         """
-        print(f"training estimator {self._estimator} with option {self._estimator.predict_type}.")
+        log.info(f"training estimator {self._estimator.__class__.__name__}")
 
         pass_data = data.copy(deep=True)
         pass_data = pass_data[~pass_data.isin([np.nan, np.inf, -np.inf]).any(1)]
