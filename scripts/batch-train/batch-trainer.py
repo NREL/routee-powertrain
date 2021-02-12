@@ -87,7 +87,7 @@ class BatchConfig(NamedTuple):
     distance: Feature
     features: Tuple[Feature, ...]
 
-    estimators: List[Type[Union[ExplicitBin, LinearRegression, RandomForest, XGBoost], ...]]
+    estimators: List[Type[Union[ExplicitBin, LinearRegression, RandomForest], ...]]
 
     n_cores: int
     model_output_type: OutputType
