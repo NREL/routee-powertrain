@@ -168,8 +168,8 @@ def train_model(mconfig: ModelConfig) -> int:
     for eclass in bconfig.estimators:
         try:
             e = eclass(feature_pack=feature_pack, predict_type=bconfig.prediction_type)
-        except Exception:
-            log.error(f"failed to load estimator type {eclass} \n {traceback.format_exc()}")
+        except NotImplementedError:
+            log.error(f"failed to load estimator type {eclass.__name__} \n {traceback.format_exc()}")
             continue
 
         m = Model(e, description=model_name)
@@ -206,7 +206,7 @@ def run() -> int:
         log.error(f"no training .db files found at {bconfig.training_data_path}")
         return -1
 
-    log.info(f"working on {len(train_files)} with {bconfig.n_cores} cores")
+    log.info(f"working on {len(train_files)} model with {bconfig.n_cores} cores")
     with Pool(bconfig.n_cores) as p:
         results = p.map(train_model, [ModelConfig(batch_config=bconfig, training_file=Path(f)) for f in train_files])
 
