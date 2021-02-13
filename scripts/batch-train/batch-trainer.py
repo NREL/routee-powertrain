@@ -166,11 +166,7 @@ def train_model(mconfig: ModelConfig) -> int:
     feature_pack = FeaturePack(bconfig.features, bconfig.distance, energy)
 
     for eclass in bconfig.estimators:
-        try:
-            e = eclass(feature_pack=feature_pack, predict_type=bconfig.prediction_type)
-        except NotImplementedError:
-            log.error(f"failed to load estimator type {eclass.__name__} \n {traceback.format_exc()}")
-            continue
+        e = eclass(feature_pack=feature_pack, predict_type=bconfig.prediction_type)
 
         m = Model(e, description=model_name)
         m.train(train_df)
