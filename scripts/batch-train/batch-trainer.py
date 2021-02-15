@@ -119,16 +119,19 @@ def _err(msg: str) -> int:
     return -1
 
 
-def _safe(func):
-    def wrapper(*arg) -> int:
-        try:
-            func(*arg)
-        except Exception:
-            log.error("process failed, see traceback:")
-            log.error(traceback.format_exc())
-            return -1
+def safe_train(*args):
+    def _safe(func):
+        def wrapper(*arg) -> int:
+            try:
+                func(*arg)
+            except Exception:
+                log.error("training failed for a single model, see traceback:")
+                log.error(traceback.format_exc())
+                return -1
 
-    return wrapper
+        return wrapper
+
+    return _safe(train_model)(*args)
 
 
 def load_config(config_file: str) -> BatchConfig:
@@ -144,7 +147,6 @@ def load_config(config_file: str) -> BatchConfig:
         return BatchConfig.from_dict(d)
 
 
-@_safe
 def train_model(mconfig: ModelConfig) -> int:
     if not mconfig.training_file.is_file():
         return _err(f"could not find training data at {mconfig.training_file}")
@@ -217,7 +219,7 @@ def run() -> int:
 
     log.info(f"working on {len(train_files)} model with {bconfig.n_cores} cores")
     with Pool(bconfig.n_cores) as p:
-        results = p.map(train_model, [ModelConfig(batch_config=bconfig, training_file=Path(f)) for f in train_files])
+        results = p.map(safe_train, [ModelConfig(batch_config=bconfig, training_file=Path(f)) for f in train_files])
 
     c = Counter(results)
     if c.get(-1):
