@@ -119,6 +119,18 @@ def _err(msg: str) -> int:
     return -1
 
 
+def _safe(func):
+    def wrapper(*arg) -> int:
+        try:
+            func(*arg)
+        except Exception:
+            log.error("process failed, see traceback:")
+            log.error(traceback.format_exc())
+            return -1
+
+    return wrapper
+
+
 def load_config(config_file: str) -> BatchConfig:
     """
     Load the user config file and returns a BatchConfig object
@@ -132,6 +144,7 @@ def load_config(config_file: str) -> BatchConfig:
         return BatchConfig.from_dict(d)
 
 
+@_safe
 def train_model(mconfig: ModelConfig) -> int:
     if not mconfig.training_file.is_file():
         return _err(f"could not find training data at {mconfig.training_file}")
@@ -209,8 +222,8 @@ def run() -> int:
     c = Counter(results)
     if c.get(-1):
         log.error(f"{c[-1]} model(s) failed to train; check the logs to see what happened")
-
-    log.info(f"training {len(train_files)} model(s) completed successfully! 😎")
+    else:
+        log.info(f"training {len(train_files)} model(s) completed successfully! 😎")
 
     return 1
 
