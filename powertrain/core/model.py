@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import pickle
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -9,9 +10,10 @@ import numpy as np
 from pandas import DataFrame
 
 from powertrain.core.core_utils import test_train_split
-from powertrain.estimators.linear_regression import LinearRegression
+from powertrain.core.metadata import Metadata
 from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
+from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
 from powertrain.utils.fs import get_version
 from powertrain.validation import errors
@@ -22,6 +24,7 @@ _registered_estimators = {
     'RandomForest': RandomForest,
 }
 
+log = logging.getLogger(__name__)
 
 def _load_estimator(name: str, json: dict) -> EstimatorInterface:
     if name not in _registered_estimators:
@@ -36,19 +39,21 @@ class Model:
     """This is the core model for interaction with the routee engine.
 
     Args:
-        veh_desc (str):
+        description (str):
             Unique description of the vehicle to be modeled.
         estimator (routee.estimator.base.BaseEstimator):
             Estimator to use for predicting route energy usage.
             
     """
 
-    def __init__(self, estimator: EstimatorInterface, veh_desc: Optional[str] = None):
-        self.metadata = {
-            'veh_desc': veh_desc,
-            'estimator': estimator.__class__.__name__,
-        }
-
+    def __init__(self, estimator: EstimatorInterface, description: Optional[str] = None):
+        self.metadata = Metadata(
+            model_description=description,
+            estimator_name=estimator.__class__.__name__,
+            estimator_features=estimator.feature_pack.to_json(),
+            estimator_predict_type=estimator.predict_type.name,
+            routee_version=get_version()
+        )
         self._estimator = estimator
 
     def train(
@@ -64,9 +69,7 @@ class Model:
         Returns:
 
         """
-        print(f"training estimator {self._estimator} with option {self._estimator.predict_type}.")
-
-        self.metadata['routee_version'] = get_version()
+        log.info(f"training estimator {self._estimator.__class__.__name__}")
 
         pass_data = data.copy(deep=True)
         pass_data = pass_data[~pass_data.isin([np.nan, np.inf, -np.inf]).any(1)]
@@ -89,11 +92,11 @@ class Model:
 
         _target_pred = self.predict(test)
         test['target_pred'] = _target_pred
-        self.metadata['errors'] = errors.all_error(
+        self.metadata = self.metadata.set_errors(errors.all_error(
             test[self._estimator.feature_pack.energy.name],
             _target_pred,
             test[self._estimator.feature_pack.distance.name],
-        )
+        ))
 
     def predict(self, links_df):
         """Apply the trained energy model to to predict consumption.
@@ -119,7 +122,7 @@ class Model:
 
         """
         out_dict = {
-            'metadata': self.metadata,
+            'metadata': self.metadata.to_json(),
             '_estimator_json': self._estimator.to_json(),
         }
         with open(outfile, 'w', encoding='utf-8') as f:
@@ -144,8 +147,8 @@ class Model:
     def from_json(cls, infile: Path) -> Model:
         with infile.open('r', encoding='utf-8') as f:
             in_json = json.load(f)
-            metadata = in_json['metadata']
-            estimator = _load_estimator(metadata['estimator'], json=in_json['_estimator_json'])
+            metadata = Metadata.from_json(in_json['metadata'])
+            estimator = _load_estimator(metadata.estimator_name, json=in_json['_estimator_json'])
 
             m = Model(estimator=estimator)
             m.metadata = metadata
@@ -163,4 +166,3 @@ class Model:
             m.metadata = metadata
 
             return m
-

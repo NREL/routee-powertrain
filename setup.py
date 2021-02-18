@@ -45,6 +45,7 @@ setup(
         "pandas",
         "numpy",
         "scikit-learn",
+        "PyYAML",
     ],
     extras_require={
         "optional": [

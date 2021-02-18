@@ -10,6 +10,11 @@ class Feature(NamedTuple):
 
     @classmethod
     def from_dict(cls, d: dict) -> Feature:
+        if 'name' not in d:
+            raise ValueError("must provide feature name when building from dictionary")
+        elif 'units' not in d:
+            raise ValueError("must provide feature units when building from dictionary")
+
         return Feature(name=d['name'], units=d['units'])
 
 
@@ -54,7 +59,7 @@ class PredictType(Enum):
         elif string.lower() in ['rate_energy', 'energy_rate']:
             return PredictType.ENERGY_RATE
         else:
-            raise TypeError(f"{string} not a supported predict type.")
+            raise TypeError(f"{string} not a supported predict type, try [energy_raw | energy_rate]")
 
     @classmethod
     def from_int(cls, integer: int):

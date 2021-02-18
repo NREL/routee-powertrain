@@ -2,6 +2,7 @@ import glob
 import os
 import sqlite3
 from multiprocessing import Pool
+from pathlib import Path
 
 import pandas as pd
 
@@ -10,10 +11,11 @@ from powertrain.core.model import Model
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
-from powertrain.utils.fs import root
 
-RAW_DATA_PATH = "/projects/aes4t/jholden/data/fastsim_results/2020_05_28_routee_library/routee_fastsim_veh_db/*NODE_0.db"
-OUT_PATH = root() / "trained_models"
+RAW_DATA_PATH = "/projects/mbap/data/fastsim_results/2020_11_9/FASTSim_py_veh_db_w_phevs/*.db"
+
+outpath = Path("/projects/mbap/data/routee_results/2020_11_9")
+outpath.mkdir(exist_ok=True)
 
 
 def train_model(file):
@@ -47,9 +49,10 @@ def train_model(file):
     eb_e = ExplicitBin(feature_pack=feature_pack)
 
     for e in (ln_e, rf_e, eb_e):
-        m = Model(e, veh_desc=vehicle_name)
+        m = Model(e, description=vehicle_name)
         m.train(train_df)
-        m.to_json(OUT_PATH / f"{vehicle_name}_{e.__class__.__name__}.json")
+        m.to_json(outpath / f"{vehicle_name}_{e.__class__.__name__}.json")
+        m.to_pickle(outpath / f"{vehicle_name}_{e.__class__.__name__}.pickle")
 
 
 if __name__ == "__main__":
