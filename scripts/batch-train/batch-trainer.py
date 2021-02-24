@@ -161,7 +161,12 @@ def train_model(mconfig: ModelConfig) -> int:
     sql_con = sqlite3.connect(mconfig.training_file)
 
     log.info("reading training data into memory")
-    df = pd.read_sql_query("SELECT * FROM links", sql_con)
+    columns = [f.name for f in bconfig.features] + [bconfig.distance.name] + [e.name for e in bconfig.energy_targets]
+    query = f"""
+            select {", ".join(columns)} 
+            from links
+            """
+    df = pd.read_sql_query(query, sql_con)
 
     try:
         train_metadata = pd.read_sql_query("select * from metadata", sql_con)
