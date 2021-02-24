@@ -66,7 +66,7 @@ class ExplicitBin(EstimatorInterface):
             raise TypeError(f"predict_type {predict_type} of python type {type(predict_type)} not supported")
 
         if ptype != PredictType.ENERGY_RAW:
-            raise NotImplementedError(f"{self.predict_type} not supported by ExplicitBin")
+            raise NotImplementedError(f"predict type of {ptype.name} not supported by ExplicitBin, try energy_raw")
 
         self.predict_type = ptype
         self.bin_lims: dict = {}
@@ -87,7 +87,7 @@ class ExplicitBin(EstimatorInterface):
 
         """
         if self.predict_type != PredictType.ENERGY_RAW:
-            raise NotImplementedError(f"{self.predict_type} not supported by ExplicitBin")
+            raise NotImplementedError(f"predict type of {self.predict_type.name} not supported by ExplicitBin, try energy_raw")
 
         x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]].astype(float)
         y = data[self.feature_pack.energy.name].astype(float)

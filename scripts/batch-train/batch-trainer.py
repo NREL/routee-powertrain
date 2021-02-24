@@ -161,7 +161,7 @@ def train_model(mconfig: ModelConfig) -> int:
     sql_con = sqlite3.connect(mconfig.training_file)
 
     log.info("reading training data into memory")
-    read_columns = [f.name for f in bconfig.features] + [bconfig.distance.name] + [e.name for e in bconfig.energy_targets]
+    read_columns = [f.name for f in bconfig.features] + [bconfig.distance.name] + [e.name for e in bconfig.energy_targets.values()]
     query = f"""
             select {", ".join(read_columns)} 
             from links
