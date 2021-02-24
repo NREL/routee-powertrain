@@ -3,6 +3,7 @@ import logging
 from powertrain.io.api import read_model
 from powertrain.core.model import Model
 from powertrain.core.features import Feature, FeaturePack
+from powertrain.utils.load import load_pretrained_model, load_route
 
 name = "powertrain"
 __version__ = "0.4.0"
@@ -14,3 +15,4 @@ formatter = logging.Formatter("%(asctime)s [%(levelname)s] - %(message)s")
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 log.addHandler(stream_handler)
+
