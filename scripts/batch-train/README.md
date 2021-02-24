@@ -7,15 +7,19 @@ Workflow for training a batch of routee-powertrain models
 Setup for routee-powertrain batch training takes a few steps:
 
 1. Create a new conda environment and install routee-powertrain:
-    > conda create -n routee-powertrain python=3.8
-	> conda activate routee-powertrain
-	> git clone https://github.nrel.gov/MBAP/routee-powertrain.git
-	> cd routee-powertrain
-	> pip install -e .
+```
+conda create -n routee-powertrain python=3.8
+conda activate routee-powertrain
+git clone https://github.nrel.gov/MBAP/routee-powertrain.git
+cd routee-powertrain
+pip install -e .
+```
 
 3. Copy over the default config to your own file:
-    > cd routee-powertrain/scripts/batch-train
-    > cp default.config.yml config.yml
+```
+cd routee-powertrain/scripts/batch-train
+cp default.config.yml config.yml
+```
 	
 ### input files
 
