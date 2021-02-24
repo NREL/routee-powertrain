@@ -60,7 +60,7 @@ class LinearRegression(EstimatorInterface):
             x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]]
             y = data[self.feature_pack.energy.name]
         else:
-            raise NotImplemented(f"{self.predict_type} not supported by BaseEstimator")
+            raise NotImplementedError(f"{self.predict_type} not supported by BaseEstimator")
 
         self.model = self.model.fit(x.values, y.values)
 
@@ -85,7 +85,7 @@ class LinearRegression(EstimatorInterface):
             x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]]
             _energy_pred = self.model.predict(x.values)
         else:
-            raise NotImplemented(f"{self.predict_type} not supported by BaseEstimator")
+            raise NotImplementedError(f"{self.predict_type} not supported by BaseEstimator")
 
         energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.feature_pack.energy.name)
 
