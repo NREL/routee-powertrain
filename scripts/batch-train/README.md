@@ -75,9 +75,8 @@ prediction_type: energy_raw
 ```
 
 
-Note that we've set the names energy targets, distance features, and other features to match the names that the fastsim script outputs. If you didn't change anything in the run-fastim-tsdc repo these should match right out of the box. 
-
-Stay tuned for more documentation related to using more advanced features (other than distance, grade and speed). In the meantime, these features are pretty good indicators of energy usage.
+Note that we've set the names energy targets, distance features, and other features to match the names that the fastsim script outputs. 
+If you're using custom data, these should match your own training data. 
 
 ### running
 
