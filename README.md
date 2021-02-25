@@ -53,12 +53,23 @@ import powertrain
 ```
 
 ## Pre-Trained Models
-The standard library of pretrained RouteE models is available on [Box](https://app.box.com/s/cwfqgkvxssoxnc4k6sghvqfjg19f4clb). From that link, you can download the standard library manually. It is recommended that you create a directory for the downloaded data by following these steps: 
+RouteE-Powertrain comes prepackaged with a few standard models and can access a large library of pretrained models.
+
+To see which models are available you can use the function `list_available_models` and then you can load any model
+with the function `load_pretrained_model`. 
+
+Here's a sample workflow:
+
+```python
+import powertrain as pt
+
+# determine which models are available
+model_names = pt.list_available_models()
+for name in model_names:
+  print(name)
+
+leaf = pt.load_pretrained_model("2016_Nissan_Leaf_30_kWh_ExplicitBin")
 ```
-cd <path-to-routee-powertrain>
-mkdir powertrain/trained_models
-```
-Then move the downloaded and unzipped "standard" directory of pre-trained routee-powertrain models into ```powertrain/trained_models/```.
 
 ## Test Data
 If you are developing on the routee-powertrain projects and plan to run any of the tests, you will need to also download the test data from [Box](https://app.box.com/s/dm5w4mo56ej9jfmyo404kz98roz7jat7). 
@@ -71,7 +82,7 @@ RouteE has two core functions: model training and energy prediction. The below i
 
 <img src="docs/wiki_imgs/routee_workflow.jpg">
 
-The typical user will utilize RouteE's ![growing catalog of pre-trained models](routee/trained_models). Currently, the 
+The typical user will utilize RouteE's catalog of pre-trained models. Currently, the 
 catalog consists of light-duty vehicle models, including conventional gasoline, diesel, plug-in hybrid electric (PHEV), 
 hybrid electric (HEV), and battery electric (BEV). These models can be applied to link-level driving data (in the form 
 of [pandas](https://pandas.pydata.org/) dataframes) to output energy consumption predictions. Such predictions can be 
@@ -81,24 +92,10 @@ Users that wish to train new RouteE models can do so. The model training functio
 own drive-cycle data, powertrain modeling system, and road network data to train custom models. 
 
 This [routee-notebooks](https://github.nrel.gov/MBAP/routee-notebooks) repo provides demonstrations notebooks for 
-examples of RouteE usage. The 
-[demo notebook](https://github.nrel.gov/MBAP/routee-notebooks/blob/master/notebooks/demos/Use_Pretrained_Model.ipynb)
-illustrating how to use the pre-trained RouteE models that ship with the package is particularly useful for getting up 
-and running.
+examples of RouteE usage. 
 
 ## Training Workflow
-Training batches of RouteE models from FASTSim results can be performed by running: ```powertrain/scripts/model_trainer.py```
-
-The script requires user modification to specify the ```RAW_DATA_PATH``` (path to FASTSim results) and ```OUT_PATH``` (path to output RouteE models).
-
-Optionally, depending on the size of the FASTSim results and the compute resources on teh machine that is running the training, the user can modify the ```num_cores``` variable to specify how many CPUs should be made available to the processes in the script. On Eagle's 36 core machines, memory issues are typically encountered for full size FASTSim results if the number of CPUs exceeds ~6. 
-
-Once the script has sucessfully run (~3 hours on eagle with 6 cores and 20 different vehicle types), the output directory will be populated. In order to summarize the performance of the resulting models the user can run ```powertrain/scripts/model_check.py``` after modifying the ```PATH_to_models``` variable to match the output locatin of the trained RouteE models. The script dumps image files of the generated plots in ```powertrain/scripts/plots```.
-
-1. ```conda activate routee-powertrain```
-1. ```python model_trainer.py```
-1. ```python model_check.py```
-
+Training batches of RouteE models from FASTSim results can be performed with the [batch-train script](https://github.nrel.gov/MBAP/routee-powertrain/tree/master/scripts/batch-train) 
 
 ## Coming Soon*
 * Medium- and Heavy-Duty vehicle modeling.
