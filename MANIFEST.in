@@ -1,0 +1,2 @@
+recursive-include powertrain/resources/default_models *
+recursive-include powertrain/resources/sample_routes *

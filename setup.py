@@ -53,6 +53,11 @@ setup(
             "xgboost"
         ],
     },
+    include_package_data=True,
+    package_data={
+        "powertrain.resources.default_models": ["*"],
+        "powertrain.resources.sample_routes": ["*"],
+    },
     author="National Renewable Energy Laboratory",
     author_email="Holden, Jacob <Jacob.Holden@nrel.gov>",
     license="Copyright ©2020 Alliance for Sustainable Energy, LLC All Rights Reserved",

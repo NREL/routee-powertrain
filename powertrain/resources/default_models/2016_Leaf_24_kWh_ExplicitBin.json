@@ -1,0 +1,136 @@
+{
+    "metadata": {
+        "model_description": "2016_Leaf_24_kWh",
+        "estimator_name": "ExplicitBin",
+        "estimator_features": {
+            "features": [
+                {
+                    "name": "gpsspeed",
+                    "units": "mph"
+                },
+                {
+                    "name": "grade",
+                    "units": "percent_0_100"
+                }
+            ],
+            "distance": {
+                "name": "miles",
+                "units": "miles"
+            },
+            "energy": {
+                "name": "esskwhoutach",
+                "units": "kwh"
+            }
+        },
+        "estimator_predict_type": "ENERGY_RAW",
+        "routee_version": "0.4.0",
+        "errors": {
+            "root_mean_squared_error": 0.04487435318896352,
+            "mean_absolute_error": 0.014231945494696663,
+            "distance_weighted_mean_absolute_error": 0.08030219029303147,
+            "distance_weighted_mean_absolute_percentage_error": -17.634092329266057,
+            "distance_weighted_relative_percent_difference": 0.7143013610080754,
+            "energy_weighted_relative_percent_difference": 0.3570311016843399,
+            "_relative_percent_difference": 0.9902006271564702,
+            "net_error": -0.0003737184699249197
+        }
+    },
+    "_estimator_json": {
+        "model": "{\"(0, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, 0)\":{\"miles\":5610.2107419661,\"esskwhoutach\":1116.0475389913,\"esskwhoutach_per_100miles\":19.8931482314},\"(0, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(0, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, 0)\":{\"miles\":23979.0309791318,\"esskwhoutach\":2596.0612222817,\"esskwhoutach_per_100miles\":10.8263808681},\"(5, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(5, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, 0)\":{\"miles\":41423.3865679581,\"esskwhoutach\":3842.2169122942,\"esskwhoutach_per_100miles\":9.2754775276},\"(10, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(10, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, 0)\":{\"miles\":55455.5696982851,\"esskwhoutach\":7248.7285547418,\"esskwhoutach_per_100miles\":13.0712362963},\"(15, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(15, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, 0)\":{\"miles\":66844.0882008617,\"esskwhoutach\":10882.4615782232,\"esskwhoutach_per_100miles\":16.2803650571},\"(20, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(20, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, 0)\":{\"miles\":78976.1456850101,\"esskwhoutach\":13736.7018235021,\"esskwhoutach_per_100miles\":17.3934821766},\"(25, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(25, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, 0)\":{\"miles\":93071.93483715,\"esskwhoutach\":16639.704548214,\"esskwhoutach_per_100miles\":17.8783266699},\"(30, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(30, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, 0)\":{\"miles\":104005.9893196383,\"esskwhoutach\":19084.6132097749,\"esskwhoutach_per_100miles\":18.3495328823},\"(35, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(35, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, 0)\":{\"miles\":104763.8544632859,\"esskwhoutach\":20045.6476500907,\"esskwhoutach_per_100miles\":19.1341257467},\"(40, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(40, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, 0)\":{\"miles\":96562.529377988,\"esskwhoutach\":19733.3060939634,\"esskwhoutach_per_100miles\":20.4357800288},\"(45, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(45, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, 0)\":{\"miles\":90909.906684374,\"esskwhoutach\":20276.8693840578,\"esskwhoutach_per_100miles\":22.3043561737},\"(50, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(50, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, 0)\":{\"miles\":103334.1841436868,\"esskwhoutach\":25461.9705885186,\"esskwhoutach_per_100miles\":24.6404138181},\"(55, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(55, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, 0)\":{\"miles\":117436.646342154,\"esskwhoutach\":31957.9711114878,\"esskwhoutach_per_100miles\":27.2129459644},\"(60, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(60, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, 0)\":{\"miles\":129294.0805796493,\"esskwhoutach\":38426.4599149101,\"esskwhoutach_per_100miles\":29.7202004474},\"(65, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(65, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, 0)\":{\"miles\":95583.3825971499,\"esskwhoutach\":30713.0464864425,\"esskwhoutach_per_100miles\":32.132202954},\"(70, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(70, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, 0)\":{\"miles\":39196.2200875021,\"esskwhoutach\":13633.9787576739,\"esskwhoutach_per_100miles\":34.7839121406},\"(75, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(75, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, -6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, -5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, -4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, -3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, -2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, -1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, 0)\":{\"miles\":36692.5436217188,\"esskwhoutach\":18791.509418919,\"esskwhoutach_per_100miles\":51.2134280268},\"(80, 1)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, 2)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, 3)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, 4)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, 5)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null},\"(80, 6)\":{\"miles\":null,\"esskwhoutach\":null,\"esskwhoutach_per_100miles\":null}}",
+        "bin_lims": {
+            "gpsspeed": [
+                0,
+                5,
+                10,
+                15,
+                20,
+                25,
+                30,
+                35,
+                40,
+                45,
+                50,
+                55,
+                60,
+                65,
+                70,
+                75,
+                80,
+                100
+            ],
+            "grade": [
+                -15,
+                -5.5,
+                -4.5,
+                -3.5,
+                -2.5,
+                -1.5,
+                -0.5,
+                0.5,
+                1.5,
+                2.5,
+                3.5,
+                4.5,
+                5.5,
+                15
+            ]
+        },
+        "bin_labels": {
+            "gpsspeed": [
+                0,
+                5,
+                10,
+                15,
+                20,
+                25,
+                30,
+                35,
+                40,
+                45,
+                50,
+                55,
+                60,
+                65,
+                70,
+                75,
+                80
+            ],
+            "grade": [
+                -6,
+                -5,
+                -4,
+                -3,
+                -2,
+                -1,
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+            ]
+        },
+        "feature_pack": {
+            "features": [
+                {
+                    "name": "gpsspeed",
+                    "units": "mph"
+                },
+                {
+                    "name": "grade",
+                    "units": "percent_0_100"
+                }
+            ],
+            "distance": {
+                "name": "miles",
+                "units": "miles"
+            },
+            "energy": {
+                "name": "esskwhoutach",
+                "units": "kwh"
+            }
+        },
+        "predict_type": "ENERGY_RAW"
+    }
+}

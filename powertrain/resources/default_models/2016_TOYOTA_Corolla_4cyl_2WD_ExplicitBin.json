@@ -1,0 +1,136 @@
+{
+    "metadata": {
+        "model_description": "2016_TOYOTA_Corolla_4cyl_2WD",
+        "estimator_name": "ExplicitBin",
+        "estimator_features": {
+            "features": [
+                {
+                    "name": "gpsspeed",
+                    "units": "mph"
+                },
+                {
+                    "name": "grade",
+                    "units": "percent_0_100"
+                }
+            ],
+            "distance": {
+                "name": "miles",
+                "units": "miles"
+            },
+            "energy": {
+                "name": "gge",
+                "units": "gallons"
+            }
+        },
+        "estimator_predict_type": "ENERGY_RAW",
+        "routee_version": "0.4.0",
+        "errors": {
+            "root_mean_squared_error": 0.0030992923623894063,
+            "mean_absolute_error": 0.0009638340641331447,
+            "distance_weighted_mean_absolute_error": 0.008195978450434193,
+            "distance_weighted_mean_absolute_percentage_error": 0.7792495468704832,
+            "distance_weighted_relative_percent_difference": 0.43475402814515546,
+            "energy_weighted_relative_percent_difference": 0.398643532551417,
+            "_relative_percent_difference": 0.5965668310594682,
+            "net_error": -0.00021636234208465018
+        }
+    },
+    "_estimator_json": {
+        "model": "{\"(0, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, 0)\":{\"miles\":5928.9295641254,\"gge\":849.635280439,\"gge_per_100miles\":14.3303318289},\"(0, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(0, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, 0)\":{\"miles\":24635.2209051387,\"gge\":1489.6121689871,\"gge_per_100miles\":6.0466767265},\"(5, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(5, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, 0)\":{\"miles\":41943.6048568811,\"gge\":1812.0604630467,\"gge_per_100miles\":4.3202306269},\"(10, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(10, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, 0)\":{\"miles\":55937.4432556923,\"gge\":2040.9676352654,\"gge_per_100miles\":3.6486609263},\"(15, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(15, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, 0)\":{\"miles\":67302.0482635315,\"gge\":2238.8452502983,\"gge_per_100miles\":3.3265633187},\"(20, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(20, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, 0)\":{\"miles\":79467.7425890881,\"gge\":2375.4024335523,\"gge_per_100miles\":2.9891404439},\"(25, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(25, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, 0)\":{\"miles\":93727.789438578,\"gge\":2509.2599734614,\"gge_per_100miles\":2.6771782291},\"(30, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(30, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, 0)\":{\"miles\":104780.9984536416,\"gge\":2544.285412799,\"gge_per_100miles\":2.4281935182},\"(35, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(35, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, 0)\":{\"miles\":105627.618357457,\"gge\":2425.4402512209,\"gge_per_100miles\":2.2962178727},\"(40, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(40, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, 0)\":{\"miles\":97781.8062100915,\"gge\":2213.2970685721,\"gge_per_100miles\":2.2635060185},\"(45, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(45, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, 0)\":{\"miles\":92383.9442842263,\"gge\":2108.152995218,\"gge_per_100miles\":2.281947379},\"(50, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(50, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, 0)\":{\"miles\":106115.1124991479,\"gge\":2463.9797752835,\"gge_per_100miles\":2.3219876201},\"(55, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(55, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, 0)\":{\"miles\":121842.4213495331,\"gge\":2952.0616149814,\"gge_per_100miles\":2.4228520595},\"(60, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(60, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, 0)\":{\"miles\":137550.3222513037,\"gge\":3523.0517390727,\"gge_per_100miles\":2.5612820686},\"(65, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(65, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, 0)\":{\"miles\":108064.8520868925,\"gge\":2945.1836555737,\"gge_per_100miles\":2.7253853577},\"(70, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(70, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, 0)\":{\"miles\":49079.3481276515,\"gge\":1457.2633304789,\"gge_per_100miles\":2.9691986265},\"(75, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(75, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, -6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, -5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, -4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, -3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, -2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, -1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, 0)\":{\"miles\":52194.3608922437,\"gge\":2221.6985013257,\"gge_per_100miles\":4.2565872315},\"(80, 1)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, 2)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, 3)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, 4)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, 5)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null},\"(80, 6)\":{\"miles\":null,\"gge\":null,\"gge_per_100miles\":null}}",
+        "bin_lims": {
+            "gpsspeed": [
+                0,
+                5,
+                10,
+                15,
+                20,
+                25,
+                30,
+                35,
+                40,
+                45,
+                50,
+                55,
+                60,
+                65,
+                70,
+                75,
+                80,
+                100
+            ],
+            "grade": [
+                -15,
+                -5.5,
+                -4.5,
+                -3.5,
+                -2.5,
+                -1.5,
+                -0.5,
+                0.5,
+                1.5,
+                2.5,
+                3.5,
+                4.5,
+                5.5,
+                15
+            ]
+        },
+        "bin_labels": {
+            "gpsspeed": [
+                0,
+                5,
+                10,
+                15,
+                20,
+                25,
+                30,
+                35,
+                40,
+                45,
+                50,
+                55,
+                60,
+                65,
+                70,
+                75,
+                80
+            ],
+            "grade": [
+                -6,
+                -5,
+                -4,
+                -3,
+                -2,
+                -1,
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+            ]
+        },
+        "feature_pack": {
+            "features": [
+                {
+                    "name": "gpsspeed",
+                    "units": "mph"
+                },
+                {
+                    "name": "grade",
+                    "units": "percent_0_100"
+                }
+            ],
+            "distance": {
+                "name": "miles",
+                "units": "miles"
+            },
+            "energy": {
+                "name": "gge",
+                "units": "gallons"
+            }
+        },
+        "predict_type": "ENERGY_RAW"
+    }
+}
