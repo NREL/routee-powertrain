@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
-import pickle
 import logging
+import pickle
 from pathlib import Path
 from typing import Optional
+from urllib import request
 
 import numpy as np
 from pandas import DataFrame
@@ -25,6 +26,7 @@ _registered_estimators = {
 }
 
 log = logging.getLogger(__name__)
+
 
 def _load_estimator(name: str, json: dict) -> EstimatorInterface:
     if name not in _registered_estimators:
@@ -161,6 +163,29 @@ class Model:
             in_dict = pickle.load(f)
             metadata = in_dict['metadata']
             estimator = in_dict['_estimator']
+
+            m = Model(estimator=estimator)
+            m.metadata = metadata
+
+            return m
+
+    @classmethod
+    def from_url(cls, url: str, filetype="json") -> Model:
+        """
+        attempts to read a file from a url
+        Args:
+            url: the url to download the file from
+            filetype: the type of file to expect
+
+        Returns: a powertrain model
+        """
+        if filetype.lower() != "json":
+            raise NotImplementedError("only json filetypes are supported")
+
+        with request.urlopen(url) as u:
+            in_json = json.loads(u.read().decode('utf-8'))
+            metadata = Metadata.from_json(in_json['metadata'])
+            estimator = _load_estimator(metadata.estimator_name, json=in_json['_estimator_json'])
 
             m = Model(estimator=estimator)
             m.metadata = metadata
