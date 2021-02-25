@@ -14,6 +14,7 @@ from typing import NamedTuple, Dict, List, Union, Type, Tuple
 
 import pandas as pd
 import yaml
+from pandas.io.sql import DatabaseError
 
 from powertrain import Model
 from powertrain.core.features import Feature, PredictType, FeaturePack
@@ -153,8 +154,6 @@ def train_model(mconfig: ModelConfig) -> int:
 
     bconfig = mconfig.batch_config
 
-    # TODO: we assume the filename represents the vehicle name;
-    #  perhaps better to come from a metadata table in the training database?
     model_name = mconfig.training_file.stem
 
     log.info(f"working on training for {model_name}")
@@ -162,19 +161,44 @@ def train_model(mconfig: ModelConfig) -> int:
     sql_con = sqlite3.connect(mconfig.training_file)
 
     log.info("reading training data into memory")
-    df = pd.read_sql_query("SELECT * FROM links", sql_con)
+    read_columns = [f.name for f in bconfig.features] + [bconfig.distance.name] + [e.name for e in bconfig.energy_targets.values()]
+    query = f"""
+            select {", ".join(read_columns)} 
+            from links
+            """
+    df = pd.read_sql_query(query, sql_con)
 
-    # TODO: we should let energy type come from a metadata table in the training database
-    if df.gge.sum() > 0:
-        energy = bconfig.energy_targets.get(EnergyType.GASOLINE)
+    try:
+        train_metadata = pd.read_sql_query("select * from metadata", sql_con)
+        energy_type = train_metadata.loc[0, 'energy_type']
+        energy = bconfig.energy_targets.get(EnergyType.from_string(energy_type))
         if not energy:
-            return _err(f"could not find energy target of type gasoline for {model_name} in the config")
-    elif df.esskwhoutach.sum() > 0:
-        energy = bconfig.energy_targets.get(EnergyType.ELECTRIC)
+            return _err(
+                f"training data indicated an energy type of {energy_type} "
+                f"but could not find a matching energy target in the config"
+            )
+    except (DatabaseError, KeyError):
+        log.error("attempted to load key 'energy_type' from 'metadata' table in training data but could not find it")
+        log.info("will attempt to infer the energy type based on the training data")
+
+        energy = None
+
+        gas_target = bconfig.energy_targets.get(EnergyType.GASOLINE)
+        if gas_target:
+            if gas_target.name in df.columns:
+                if df[gas_target.name].sum() > 0:
+                    energy = gas_target
+
+        elec_target = bconfig.energy_targets.get(EnergyType.ELECTRIC)
+        if elec_target and not energy:
+            if elec_target.name in df.columns:
+                if df[elec_target.name].sum() > 0:
+                    energy = elec_target
+
         if not energy:
-            return _err(f"could not find energy target of type gasoline for {model_name} in the config")
-    else:
-        return _err(f'there is no energy in the file {mconfig.training_file}')
+            return _err(
+                f'failed to infer the energy target for {model_name}; '
+                f'check to make sure the energy targets match the columns names in the training data.')
 
     train_cols = [f.name for f in bconfig.features] + [bconfig.distance.name] + [energy.name]
     train_df = df[train_cols].dropna()
