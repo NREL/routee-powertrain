@@ -202,6 +202,10 @@ def train_model(mconfig: ModelConfig) -> int:
 
     train_cols = [f.name for f in bconfig.features] + [bconfig.distance.name] + [energy.name]
     train_df = df[train_cols].dropna()
+
+    # drop any nonsense values
+    train_df = train_df[train_df[bconfig.distance.name] <= 0]
+
     feature_pack = FeaturePack(bconfig.features, bconfig.distance, energy)
 
     for eclass in bconfig.estimators:
