@@ -4,49 +4,39 @@ from typing import Dict, Optional, TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
-
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import mean_squared_error
 
 if TYPE_CHECKING:
     from powertrain import Model
 
 
-def trip_average_error_weight(df, energy, trip_ids):
-    trips_df = df.groupby(trip_ids).agg({energy: sum, 'energy_pred': sum})
-    rate_error = (trips_df[energy] / trips_df[energy].sum()) * abs(trips_df[energy] - trips_df.energy_pred) / trips_df[
-        energy]
-    tae_w = rate_error.sum()
-    return tae_w
-
-
-def net_energy_error(target: np.ndarray, target_pred: np.ndarray):
-    """Calculate the net energy prediction error over all
-    links in the test dataset
-    """
+def net_energy_error(target: np.ndarray, target_pred: np.ndarray) -> float:
     net_e = np.sum(target)
     net_e_pred = np.sum(target_pred)
     net_error = (net_e_pred - net_e) / net_e
     return net_error
 
 
-def energy_weighted_relative_percent_difference(target: np.ndarray, target_pred: np.ndarray):
-    target = target.flatten()
-    target_pred = target_pred.flatten()
-    denom = np.abs(target) + np.abs(target_pred)
-    high_mask = denom > 0.0000001
-    low_mask = denom < -0.0000001
-    mask = low_mask | high_mask
+def weighted_relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> float:
+    epsilon = np.finfo(np.float64).eps
 
-    y = target[mask]
-    y_hat = target_pred[mask]
+    w = np.array(np.abs(target) / np.sum(np.abs(target)))
 
-    w = np.array(np.abs(y) / np.sum(np.abs(y))).flatten()
+    error_norm = np.abs(2 * ((target - target_pred) / np.maximum((np.abs(target) + np.abs(target_pred)), epsilon)))
 
-    error_norm = np.abs(2 * ((y - y_hat) / (np.abs(y) + np.abs(y_hat))))
+    mean_error = np.average(error_norm, weights=w)
 
-    ew_rpe = np.sum(error_norm * w)
+    return mean_error
 
-    return ew_rpe
+
+def relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> float:
+    epsilon = np.finfo(np.float64).eps
+
+    error_norm = np.abs(2 * ((target - target_pred) / np.maximum((np.abs(target) + np.abs(target_pred)), epsilon)))
+
+    mean_error = np.average(error_norm)
+
+    return mean_error
 
 
 def compute_errors(
@@ -61,30 +51,28 @@ def compute_errors(
         model: the routee-powertrain model
         trip_column: an optional trip column for computing trip level metrics
 
-    Returns:
+    Returns: a dictionary with all of the error values
 
     """
     feature_pack = model.feature_pack
-    target = np.array(test_df[feature_pack.energy.name])
 
-    target_pred_series = model.predict(test_df)
-    target_pred = np.array(target_pred_series)
+    target = np.array(test_df[feature_pack.energy.name])
+    target_pred = np.array(model.predict(test_df))
 
     errors = {}
 
     rmse = np.sqrt(mean_squared_error(target, target_pred))
-    errors['root_mean_squared_error'] = rmse
+    errors['link_root_mean_squared_error'] = rmse
 
-    mae = mean_absolute_error(target, target_pred)
-    errors['mean_absolute_error'] = mae
-
-    ew_rpe = energy_weighted_relative_percent_difference(target, target_pred)
-    errors['energy_weighted_relative_percent_difference'] = ew_rpe
+    ew_rpe = weighted_relative_percent_difference(target, target_pred)
+    errors['link_weighted_relative_percent_difference'] = ew_rpe
 
     if trip_column:
-        test_df['energy_pred'] = target_pred_series
-        trip_error = trip_average_error_weight(test_df, feature_pack.energy.name, trip_column)
-        errors['trip_average_error_weight'] = trip_error
+        test_df['energy_pred'] = target_pred
+        gb = test_df.groupby(trip_column).agg({feature_pack.energy.name: sum, 'energy_pred': sum})
+        t_rpd = relative_percent_difference(gb[feature_pack.energy.name], gb['energy_pred'])
+        errors['trip_relative_percent_difference'] = t_rpd
+        errors['trip_root_mean_squared_error'] = mean_squared_error(gb[feature_pack.energy.name], squared=False)
 
     errors['net_error'] = net_energy_error(target, target_pred)
 

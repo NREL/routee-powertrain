@@ -120,19 +120,14 @@ def _err(msg: str) -> int:
     return -1
 
 
-def safe_train(*args):
-    def _safe(func):
-        def wrapper(*arg) -> int:
-            try:
-                func(*arg)
-            except Exception:
-                log.error("training failed for a single model, see traceback:")
-                log.error(traceback.format_exc())
-                return -1
-
-        return wrapper
-
-    return _safe(train_model)(*args)
+def safe_train(mconfig: ModelConfig):
+    try:
+        result = train_model(mconfig)
+        return result
+    except Exception:
+        log.error("training failed for a single model, see traceback:")
+        log.error(traceback.format_exc())
+        return -1
 
 
 def load_config(config_file: str) -> BatchConfig:
@@ -161,7 +156,8 @@ def train_model(mconfig: ModelConfig) -> int:
     sql_con = sqlite3.connect(mconfig.training_file)
 
     log.info("reading training data into memory")
-    read_columns = [f.name for f in bconfig.features] + [bconfig.distance.name] + [e.name for e in bconfig.energy_targets.values()]
+    read_columns = [f.name for f in bconfig.features] + [bconfig.distance.name] + [e.name for e in
+                                                                                   bconfig.energy_targets.values()]
     query = f"""
             select {", ".join(read_columns)} 
             from links
@@ -204,7 +200,7 @@ def train_model(mconfig: ModelConfig) -> int:
     train_df = df[train_cols].dropna()
 
     # drop any nonsense values
-    train_df = train_df[train_df[bconfig.distance.name] <= 0]
+    train_df = train_df[train_df[bconfig.distance.name] > 0]
 
     feature_pack = FeaturePack(bconfig.features, bconfig.distance, energy)
 
@@ -212,7 +208,7 @@ def train_model(mconfig: ModelConfig) -> int:
         e = eclass(feature_pack=feature_pack, predict_type=bconfig.prediction_type)
 
         m = Model(e, description=model_name)
-        m.train(train_df)
+        m.train(train_df, trip_column="tripno")
 
         if bconfig.model_output_type == OutputType.JSON:
             outfile = bconfig.output_path / f"{model_name}_{eclass.__name__}.json"
