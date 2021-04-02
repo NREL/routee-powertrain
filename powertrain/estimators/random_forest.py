@@ -74,7 +74,7 @@ class RandomForest(EstimatorInterface):
         _energy_pred_rates = self.model.predict(x.values)
         _energy_pred = _energy_pred_rates * data[self.feature_pack.distance.name]
 
-        energy_pred = Series(_energy_pred)
+        energy_pred = Series(_energy_pred, index=data.index)
 
         return energy_pred
 

@@ -8,7 +8,7 @@ from typing import Optional
 from urllib import request
 
 import numpy as np
-from pandas import DataFrame
+from pandas import DataFrame, Series
 
 from powertrain.core.core_utils import test_train_split
 from powertrain.core.metadata import Metadata
@@ -99,7 +99,7 @@ class Model:
             test[self._estimator.feature_pack.distance.name],
         ))
 
-    def predict(self, links_df):
+    def predict(self, links_df) -> Series:
         """Apply the trained energy model to to predict consumption.
 
         Args:
