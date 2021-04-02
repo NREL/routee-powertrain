@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from enum import Enum
 from typing import NamedTuple, Tuple, List
 
 
@@ -40,32 +39,3 @@ class FeaturePack(NamedTuple):
         distance = Feature.from_dict(json['distance'])
         energy = Feature.from_dict(json['energy'])
         return FeaturePack(features, distance, energy)
-
-
-class PredictType(Enum):
-    """
-    describes the nature of the estimator prediction
-
-    ENERGY_RATE: predicts the fuel consumption rate per distance unit
-    ENERGY_RAW: predicts the raw fuel consumption
-    """
-    ENERGY_RATE = 1
-    ENERGY_RAW = 2
-
-    @classmethod
-    def from_string(cls, string: str):
-        if string.lower() in ['raw_energy', 'energy_raw']:
-            return PredictType.ENERGY_RAW
-        elif string.lower() in ['rate_energy', 'energy_rate']:
-            return PredictType.ENERGY_RATE
-        else:
-            raise TypeError(f"{string} not a supported predict type, try [energy_raw | energy_rate]")
-
-    @classmethod
-    def from_int(cls, integer: int):
-        if integer == 1:
-            return PredictType.ENERGY_RATE
-        elif integer == 2:
-            return PredictType.ENERGY_RAW
-        else:
-            raise TypeError(f"{integer} not a supported predict type integer option.")

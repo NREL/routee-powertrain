@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import ast
-from typing import Union
 
 import numpy as np
 import pandas as pd
 
-from powertrain.core.features import FeaturePack, PredictType
+from powertrain.core.features import FeaturePack
 from powertrain.estimators.estimator_interface import EstimatorInterface
 
 
@@ -53,22 +52,8 @@ class ExplicitBin(EstimatorInterface):
     def __init__(
             self,
             feature_pack: FeaturePack,
-            predict_type: Union[str, int, PredictType] = PredictType.ENERGY_RAW,
             model: pd.DataFrame = pd.DataFrame(),
     ):
-        if isinstance(predict_type, str):
-            ptype = PredictType.from_string(predict_type)
-        elif isinstance(predict_type, int):
-            ptype = PredictType.from_int(predict_type)
-        elif isinstance(predict_type, PredictType):
-            ptype = predict_type
-        else:
-            raise TypeError(f"predict_type {predict_type} of python type {type(predict_type)} not supported")
-
-        if ptype != PredictType.ENERGY_RAW:
-            raise NotImplementedError(f"predict type of {ptype.name} not supported by ExplicitBin, try energy_raw")
-
-        self.predict_type = ptype
         self.bin_lims: dict = {}
         self.bin_labels: dict = {}
         self.model = model
@@ -86,9 +71,6 @@ class ExplicitBin(EstimatorInterface):
         Returns:
 
         """
-        if self.predict_type != PredictType.ENERGY_RAW:
-            raise NotImplementedError(f"predict type of {self.predict_type.name} not supported by ExplicitBin, try energy_raw")
-
         x = data[self.feature_pack.feature_list + [self.feature_pack.distance.name]].astype(float)
         y = data[self.feature_pack.energy.name].astype(float)
         df = pd.concat([x, y], axis=1, ignore_index=True, sort=False)
@@ -206,21 +188,19 @@ class ExplicitBin(EstimatorInterface):
             'bin_lims': self.bin_lims,
             'bin_labels': self.bin_labels,
             'feature_pack': self.feature_pack.to_json(),
-            'predict_type': self.predict_type.name
         }
 
         return out_json
 
     @classmethod
     def from_json(cls, json: dict) -> ExplicitBin:
-        predict_type = PredictType.from_string(json['predict_type'])
         feature_pack = FeaturePack.from_json(json['feature_pack'])
         model_df = pd.read_json(json['model'], orient="index")
         model_df.index = pd.MultiIndex.from_tuples(
             [ast.literal_eval(i) for i in model_df.index],
             names=("speed_bins", "grade_bins")
         )
-        eb = ExplicitBin(feature_pack=feature_pack, predict_type=predict_type, model=model_df)
+        eb = ExplicitBin(feature_pack=feature_pack, model=model_df)
         eb.bin_lims = json['bin_lims']
         eb.bin_labels = json['bin_labels']
 

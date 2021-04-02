@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from powertrain import read_model
+from powertrain import load_pretrained_model
 
 
 def mock_route() -> pd.DataFrame:
@@ -15,29 +15,5 @@ def mock_route() -> pd.DataFrame:
     return route_df
 
 
-def mock_model(
-        estimator: str,
-):
-    if estimator == "ExplicitBin":
-        model_path = os.path.join(
-            "..",
-            "trained_models",
-            "standard", 
-            "2016_Leaf_24_kWh_ExplicitBin.json")
-    elif estimator == "Linear":
-        model_path = os.path.join(
-            "..",
-            "trained_models",
-            "standard", 
-            "2016_Leaf_24_kWh_LinearRegression.json")
-    elif estimator == "RandomForest":
-        model_path = os.path.join(
-            "..",
-            "trained_models",
-            "standard", 
-            "2016_Leaf_24_kWh_RandomForest.json",
-        )
-    else:
-        raise Exception("Incorrect estimator type")
-
-    return read_model(model_path)
+def mock_model():
+    return load_pretrained_model("2016_Leaf_24_kWh_ExplicitBin")

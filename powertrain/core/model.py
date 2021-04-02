@@ -53,7 +53,6 @@ class Model:
             model_description=description,
             estimator_name=estimator.__class__.__name__,
             estimator_features=estimator.feature_pack.to_json(),
-            estimator_predict_type=estimator.predict_type.name,
             routee_version=get_version()
         )
         self._estimator = estimator
