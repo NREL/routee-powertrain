@@ -1,8 +1,11 @@
 # where find models to test
-models_path: '/where/to/find/models/'
+models_path: 'where/to/find/models'
 
 # where to save the resulting plots
-output_path: '/where/to/write/outputs/'
+output_path: 'where/to/save/outputs'
+
+# number of links generated for the test
+num_links: 15
 
 # these ranges will be used when generating predictions using the routee-powertrain models
 feature_ranges:

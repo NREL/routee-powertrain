@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
-import yaml
+import logging
 
 import numpy as np
 from pandas import DataFrame
+from pathlib import Path
 
 from typing import Dict
 
@@ -11,11 +12,11 @@ from powertrain.core.model import Model
 log = logging.getLogger(__name__)
 
 
-def visualize_features(model: Model, feature_ranges: Dict, output_filepath: str):
+def visualize_features(model: Model, feature_ranges: Dict, output_filepath: Path, num_links: int):
 
     # grab the necessary metadata from the model
     feature_meta = model.metadata.estimator_features['features']
-    distance_units = model.metadata.estimator_features['distance']['units']
+    distance_units = model.metadata.estimator_features['distance']['name']
     energy_units = model.metadata.estimator_features['energy']['units']
     model_name = model.metadata.model_description
 
@@ -36,7 +37,7 @@ def visualize_features(model: Model, feature_ranges: Dict, output_filepath: str)
         links_df = DataFrame()
         links_df[current_feature] = np.linspace(feature_ranges[current_feature]['min'],
                                                 feature_ranges[current_feature]['max'],
-                                                num=15)
+                                                num=num_links)
         for other_feature in feature_ranges:
             if other_feature != current_feature:
                 links_df[other_feature] = [(feature_ranges[other_feature]['default'])] * len(links_df)
@@ -49,5 +50,6 @@ def visualize_features(model: Model, feature_ranges: Dict, output_filepath: str)
                  label=model_name)
         plt.xlabel(f'{current_feature} [{current_units}]')
         plt.ylabel(f'{energy_units}/100{distance_units}')
-        plt.savefig(f'{current_feature}_vs_{energy_units}_per_100{distance_units}.png', format='png')
+        plt.savefig(output_filepath.joinpath(f'{current_feature}_vs_{energy_units}_per_100{distance_units}.png'),
+                    format='png')
         plt.clf()

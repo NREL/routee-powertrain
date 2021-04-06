@@ -18,7 +18,6 @@ file_handler = logging.FileHandler("visualization.log")
 file_handler.setFormatter(formatter)
 log.addHandler(file_handler)
 
-# TODO: update args parser
 parser = argparse.ArgumentParser(description="batch run for visualizing routee-powertrain models")
 parser.add_argument(
     'config_file',
@@ -31,6 +30,8 @@ class VisualConfig(NamedTuple):
 
     output_path: Path
 
+    num_links: int
+
     feature_ranges: Dict[str, float]
 
     @classmethod
@@ -38,6 +39,7 @@ class VisualConfig(NamedTuple):
         return VisualConfig(
             models_path=Path(d['models_path']),
             output_path=Path(d['output_path']) / datetime.now().strftime('%Y-%m-%d_%H-%M-%S'),
+            num_links=int(d['num_links']),
             feature_ranges=d['feature_ranges']
         )
 
@@ -74,18 +76,22 @@ def run():
     log.info(f"looking for .json files or .pickle files in {vconfig.models_path}")
     json_model_paths = glob.glob(str(vconfig.models_path / "*.json"))
     pickle_model_paths = glob.glob(str(vconfig.models_path / "*.pickle"))
+    log.info(f'found {len(json_model_paths)} .json files')
+    log.info(f'found {len(pickle_model_paths)} .pickle files')
     if not json_model_paths and not pickle_model_paths:
         return _err(f"no .json files or .pickle files found at {vconfig.models_path}")
 
     if json_model_paths:
+        log.info(f'processing .json files')
         for model_path in json_model_paths:
-            model = Model.from_json(model_path)
-            visualize_features(model, vconfig.feature_ranges, vconfig.output_path)
+            model = Model.from_json(Path(model_path))
+            visualize_features(model, vconfig.feature_ranges, vconfig.output_path, vconfig.num_links)
 
     if pickle_model_paths:
+        log.info(f'processing .pickle files')
         for model_path in pickle_model_paths:
-            model = Model.from_pickle(model_path)
-            visualize_features(model, vconfig.feature_ranges, vconfig.output_path)
+            model = Model.from_pickle(Path(model_path))
+            visualize_features(model, vconfig.feature_ranges, vconfig.output_path, vconfig.num_links)
 
 
 if __name__ == '__main__':
