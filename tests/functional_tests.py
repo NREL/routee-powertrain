@@ -57,7 +57,7 @@ if __name__ == "__main__":
         r1 = m.predict(mock_route())
 
         energy1 = round(r1.sum(), 2)
-        log.info(f"predicted {energy} gge over test route..")
+        log.info(f"predicted {energy1} gge over test route..")
 
         # test out writing and reading json
         log.info(f"writing {m} to json..")
@@ -71,7 +71,7 @@ if __name__ == "__main__":
         r2 = new_m.predict(mock_route())
 
         energy2 = round(r2.sum(), 2)
-        log.info(f"predicted {energy} gge over test route..")
+        log.info(f"predicted {energy2} gge over test route..")
 
         if math.isclose(energy1, energy2):
             log.info("\n\n ✅ Successfully saved and loaded model in json format! \n\n")
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         r3 = new_m.predict(mock_route())
 
         energy3 = round(r3.sum(), 2)
-        log.info(f"predicted {energy} gge over test route..")
+        log.info(f"predicted {energy3} gge over test route..")
 
         if math.isclose(energy1, energy3):
             log.info("\n\n ✅ Successfully saved and loaded model in pickle format! \n\n")
