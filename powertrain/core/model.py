@@ -17,7 +17,7 @@ from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
 from powertrain.utils.fs import get_version
-from powertrain.validation import errors
+from powertrain.validation.errors import compute_errors
 
 _registered_estimators = {
     'LinearRegression': LinearRegression,
@@ -61,12 +61,13 @@ class Model:
     def train(
             self,
             data: DataFrame,
+            trip_column: Optional[str] = None
     ):
         """
-        Train a model
 
         Args:
             data:
+            trip_column:
 
         Returns:
 
@@ -81,26 +82,11 @@ class Model:
 
         self._estimator.train(pass_data)
 
-        self.validate(test)
+        model_errors = compute_errors(test, self, trip_column)
 
-    def validate(self, test):
-        """Validate the accuracy of the estimator.
+        self.metadata = self.metadata.set_errors(model_errors)
 
-        Args:
-            test (pandas.DataFrame):
-                Holdout test dataframe for validating performance.
-                
-        """
-
-        _target_pred = self.predict(test)
-        test['target_pred'] = _target_pred
-        self.metadata = self.metadata.set_errors(errors.all_error(
-            test[self._estimator.feature_pack.energy.name],
-            _target_pred,
-            test[self._estimator.feature_pack.distance.name],
-        ))
-
-    def predict(self, links_df):
+    def predict(self, links_df: DataFrame):
         """Apply the trained energy model to to predict consumption.
 
         Args:
@@ -144,6 +130,10 @@ class Model:
         }
         with open(outfile, 'wb') as f:
             pickle.dump(out_dict, f)
+
+    @property
+    def feature_pack(self):
+        return self._estimator.feature_pack
 
     @classmethod
     def from_json(cls, infile: Path) -> Model:

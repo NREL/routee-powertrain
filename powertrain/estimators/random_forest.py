@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Union, Optional
 
-from numpy import clip
 from pandas import DataFrame, Series
 from sklearn.ensemble import RandomForestRegressor
 
@@ -98,7 +97,8 @@ class RandomForest(EstimatorInterface):
         else:
             raise NotImplementedError(f"{self.predict_type} not supported by RandomForest")
 
-        energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.feature_pack.energy.name)
+        # energy_pred = Series(clip(_energy_pred, a_min=0, a_max=None), name=self.feature_pack.energy.name)
+        energy_pred = Series(_energy_pred)
 
         return energy_pred
 
