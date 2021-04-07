@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import argparse
 import glob
 import logging
 
 from datetime import datetime
 from pathlib import Path
-from typing import NamedTuple, Dict, List, Union, Type, Tuple
+from typing import NamedTuple, Dict
 
 import yaml
 
@@ -35,7 +37,7 @@ class VisualConfig(NamedTuple):
     feature_ranges: Dict[str, float]
 
     @classmethod
-    def from_dict(cls, d: dict):
+    def from_dict(cls, d: dict) -> VisualConfig:
         return VisualConfig(
             models_path=Path(d['models_path']),
             output_path=Path(d['output_path']) / f"visualization_results_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
@@ -46,7 +48,7 @@ class VisualConfig(NamedTuple):
 
 def load_config(config_file: str) -> VisualConfig:
     """
-    Load the user config file and returns a BatchConfig object
+    Load the user config file and returns a VisualConfig object
     """
     config_file = Path(config_file)
     if not config_file.is_file():
