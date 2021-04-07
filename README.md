@@ -39,6 +39,10 @@ You will now be able to import routee-powertrain in your code with:
 import powertrain
 ```
 
+## Workflow
+
+Refer to the [routee-powertrain wiki](https://github.nrel.gov/MBAP/routee-powertrain/wiki) for guides on the tool.
+
 ## Pre-Trained Models
 RouteE-Powertrain comes prepackaged with a few standard models and can access a large library of pretrained models.
 
@@ -63,5 +67,4 @@ If you are developing on the routee-powertrain projects and plan to run any of t
 
 It is recommended that you move the downloaded and unzipped "routee-powertrain-test-data" directory into `powertrain/tests/`.
 
-## Workflow
-Training batches of RouteE models from FASTSim results can be performed with the [batch-train script](https://github.nrel.gov/MBAP/routee-powertrain/tree/master/scripts/batch-train) 
+
