@@ -1,13 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from pathlib import Path
 from typing import Dict
 
 from powertrain.core.model import Model
 
 
-def visualize_features(model: Model, feature_ranges: Dict, output_filepath: Path, num_links: int):
+def visualize_features(
+        model: Model,
+        feature_ranges: Dict,
+        output_filepath: Path,
+        num_links: int) -> Dict[str: Series]:
     """
     takes a model and generates test links to independently test the model's features
     and creates plots of those predictions
@@ -16,6 +20,7 @@ def visualize_features(model: Model, feature_ranges: Dict, output_filepath: Path
     :param feature_ranges: a dictionary with value ranges to generate test links
     :param output_filepath: where to store the results
     :param num_links: the number of test links or data points the model will predict over
+    :return: a dictionary containing the predictions where the key is the feature tested
     :raises Exception due to IOErrors, missing keys in model, or missing config values
     """
 
@@ -33,6 +38,9 @@ def visualize_features(model: Model, feature_ranges: Dict, output_filepath: Path
     if not all(feature in feature_ranges.keys() for feature in feature_dict.keys()):
         missing_features = set(feature_dict.keys()) - set(feature_ranges.keys())
         raise KeyError(f"feature range config is missing {missing_features} for model {model_name}")
+
+    # dict for holding the prediction series
+    predictions = {}
 
     # for each feature test it individually using the values form the visualization feature ranges
     for current_feature, current_units in feature_dict.items():
@@ -63,3 +71,7 @@ def visualize_features(model: Model, feature_ranges: Dict, output_filepath: Path
         plt.savefig(output_filepath.joinpath(f'{model_name}_{current_feature}.png'),
                     format='png')
         plt.clf()
+
+        predictions[current_feature] = prediction
+
+    return predictions
