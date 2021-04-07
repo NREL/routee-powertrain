@@ -1,27 +1,4 @@
-# RouteE
-
-## Overview
-
-<img align="right" src="docs/wiki_imgs/routeelogo.png" width="100" height="120">
-
-The Route Energy Prediction Model (RouteE) was developed under ARPA-e TRANSNET and SMART Mobility - CAVs. Applications 
-include vehicle route selection, energy accounting and optimization in transportation simulation, and corridor energy 
-analyses, among others. This tool is applicable in any situation where past, present, or future trip information is 
-available, and does not require high-resolution (i.e. 1 Hz+) like what is required to run a powertrain simulation. 
-The simplest version of this model would be multiplying the average fuel economy of a vehicle by the distance of a 
-proposed trip to get a prediction of fuel consumption. RouteE adds extensibility to account for different fuel 
-consumption behavior based on traffic speed, road grade, stops, and turns. Validations have been performed using 
-on-road fuel consumption data for conventional and electrified vehicle powertrains. Transferring the results of the 
-on-road validation to a larger set of real-world origin–destination pairs, it is estimated that implementing the present 
-methodology in a green-routing application would accurately select the route that consumes the least fuel 90% of the 
-time. The novel machine learning techniques used in RouteE make it a flexible and robust tool for a variety of 
-transportation applications.
-
-RouteE is a modular and lightweight python package. The package allows for users to train and use custom vehicle energy 
-consumption models or choose from the catalog of models pre-trained by NREL using 
-[FASTSim](https://www.nrel.gov/transportation/fastsim.html) on over 1 million miles of driving data from the 
-[Transportation Secure Data Center](https://www.nrel.gov/transportation/secure-transportation-data/).
-
+# RouteE Powertrain
 
 ## Setup
 Clone (or download) the RouteE repository and create a compatible python environment to ensure package compatibility.
