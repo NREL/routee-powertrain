@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 def root() -> Path:
-    return Path(__file__).parents[2]
+    return Path(__file__).parent.parent
 
 
 # file utils
@@ -13,8 +13,8 @@ def read(path: Path):
         return fp.read()
 
 
-def get_version(path: Path = root() / "powertrain" / "__init__.py"):
-    for line in read(path).splitlines():
+def get_version(path: Path = root() / "__init__.py"):
+    for line in path.open('r').readlines():
         if line.startswith('__version__'):
             delim = '"' if '"' in line else "'"
             return line.split(delim)[1]

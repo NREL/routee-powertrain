@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import warnings
 from typing import NamedTuple
+
+from powertrain.utils.fs import get_version
 
 
 class Metadata(NamedTuple):
@@ -12,7 +15,6 @@ class Metadata(NamedTuple):
 
     estimator_name: str
     estimator_features: dict
-    estimator_predict_type: str
 
     routee_version: str
 
@@ -26,4 +28,14 @@ class Metadata(NamedTuple):
 
     @classmethod
     def from_json(cls, j: dict) -> Metadata:
+        if 'estimator_predict_type' in j:
+            warnings.warn(
+                "this model contains an estimator_predict_type which has been deprecated and will be ignored.")
+            del (j['estimator_predict_type'])
+
+        v = get_version()
+        if j['routee_version'] != v:
+            warnings.warn(f"this model was trained using routee-powertrain version {j['routee_version']}"
+                          f" but you're using version {v}")
+
         return Metadata(**j)

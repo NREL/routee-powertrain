@@ -1,3 +1,10 @@
+"""
+NOTE: to run this functional test, you'll need to get the file: links_fastsim_2014mazda3.csv
+from the location:
+
+https://app.box.com/s/dm5w4mo56ej9jfmyo404kz98roz7jat7
+
+"""
 import logging as log
 import math
 from pathlib import Path

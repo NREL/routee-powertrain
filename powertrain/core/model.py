@@ -8,7 +8,7 @@ from typing import Optional
 from urllib import request
 
 import numpy as np
-from pandas import DataFrame
+from pandas import DataFrame, Series
 
 from powertrain.core.core_utils import test_train_split
 from powertrain.core.metadata import Metadata
@@ -53,7 +53,6 @@ class Model:
             model_description=description,
             estimator_name=estimator.__class__.__name__,
             estimator_features=estimator.feature_pack.to_json(),
-            estimator_predict_type=estimator.predict_type.name,
             routee_version=get_version()
         )
         self._estimator = estimator
