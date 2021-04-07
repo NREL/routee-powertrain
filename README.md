@@ -69,24 +69,6 @@ examples of RouteE usage.
 ## Training Workflow
 Training batches of RouteE models from FASTSim results can be performed with the [batch-train script](https://github.nrel.gov/MBAP/routee-powertrain/tree/master/scripts/batch-train) 
 
-## Coming Soon*
-* Medium- and Heavy-Duty vehicle modeling.
-* Emissions estimation from the energy predictions.
-
-<sub><sup>* "Soon"</sup></sub>
-
-## Publications
-
-* RouteE: A Vehicle Energy Consumption Prediction Engine (2020) ([link](https://saemobilus.sae.org/content/2020-01-0939)).
-* Trip Energy Estimation Methodology and Model Based on Real-World Driving Data for Green-Routing Applications (2018) ([link](https://doi.org/10.1177/0361198118798286)).
-* Development of a Trip Energy Estimation Model Using Real-World Global Positioning System Driving Data (2017) ([link](https://www.osti.gov/servlets/purl/1393793)).
-
-## The Team
-
-* Jake Holden (<jacob.holden@nrel.gov>)
-* Nick Reinicke (<nicholas.reinicke@nrel.gov>)
-* Jeff Cappellucci (<jeff.cappellucci@nrel.gov>)
-
 ## License
 RouteE Copyright ©2019   Alliance for Sustainable Energy, LLC All Rights Reserved
  
