@@ -1,7 +1,7 @@
 # RouteE Powertrain
 
 ## Setup
-Clone (or download) the RouteE repository and create a compatible python environment to ensure package compatibility.
+Clone (or download) the RouteE Powertrain repository and create a compatible python environment to ensure package compatibility.
 
 `git clone https://github.nrel.gov/MBAP/routee-powertrain.git`
 
@@ -13,12 +13,7 @@ conda activate routee-powertrain
 ```
 This will create a new conda environment that uses python 3.8.
 
-Then, you can install the routee-powertrain library:
-```
-pip install routee-powertrain 
-```
-
-or if you're already in the routee-powertrain root directory then: 
+Navigate to the the routee-powertrain root directory. Then: 
 
 ```
 pip install .
