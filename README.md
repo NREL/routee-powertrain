@@ -2,13 +2,9 @@
 
 ## Overview
 
-Welcome to the RouteE Powertrain repo!
+Welcome to the routee-powertrain repo!
 
-RouteE Powertrain has two core functions: model training and energy prediction. The below image highlights RouteE's capabilities: 
-
-<p align="center">
-  <img src="docs/wiki_imgs/routee_workflow.jpg" width="50%" height="50%">
-</p>
+RouteE Powertrain has two core functions: vehicle energy consumption model training and energy prediction. 
 
 The typical user will utilize RouteE's catalog of pre-trained models. Currently, the 
 catalog consists of light-duty vehicle models, including conventional gasoline, diesel, plug-in hybrid electric (PHEV), 
@@ -67,11 +63,5 @@ If you are developing on the routee-powertrain projects and plan to run any of t
 
 It is recommended that you move the downloaded and unzipped "routee-powertrain-test-data" directory into `powertrain/tests/`.
 
-## Training Workflow
+## Workflow
 Training batches of RouteE models from FASTSim results can be performed with the [batch-train script](https://github.nrel.gov/MBAP/routee-powertrain/tree/master/scripts/batch-train) 
-
-## License
-RouteE Copyright ©2019   Alliance for Sustainable Energy, LLC All Rights Reserved
- 
-This computer software was produced by Alliance for Sustainable Energy, LLC under Contract No. DE-AC36-08GO28308 with the U.S. Department of Energy. For 5 years from the date permission to assert copyright was obtained, the Government is granted for itself and others acting on its behalf a non-exclusive, paid-up, irrevocable worldwide license in this software to reproduce, prepare derivative works, and perform publicly and display publicly, by or on behalf of the Government. There is provision for the possible extension of the term of this license.
-Subsequent to that period or any extension granted, the Government is granted for itself and others acting on its behalf a non-exclusive, paid-up, irrevocable worldwide license in this software to reproduce, prepare derivative works, distribute copies to the public, perform publicly and display publicly, and to permit others to do so. The specific term of the license can be identified by inquiry made to Alliance for Sustainable Energy, LLC or DOE. NEITHER ALLIANCE FOR SUSTAINABLE ENERGY, LLC, THE UNITED STATES NOR THE UNITED STATES DEPARTMENT OF ENERGY, NOR ANY OF THEIR EMPLOYEES, MAKES ANY WARRANTY, EXPRESS OR IMPLIED, OR ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR THE ACCURACY, COMPLETENESS, OR USEFULNESS OF ANY DATA, APPARATUS, PRODUCT, OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT INFRINGE PRIVATELY OWNED RIGHTS.
