@@ -27,8 +27,7 @@ def visualize_features(model: Model, feature_ranges: Dict, output_filepath: Path
     # if any features are missing in config, throw an error
     if not all(feature in feature_ranges.keys() for feature in feature_dict.keys()):
         missing_features = set(feature_dict.keys()) - set(feature_ranges.keys())
-        log.info(f"feature range config is missing {missing_features} for model {model_name}. Aborting visualization")
-        return
+        raise KeyError(f"feature range config is missing {missing_features} for model {model_name}")
 
     # for each feature test it individually using the values form the visualization feature ranges
     for current_feature, current_units in feature_dict.items():
@@ -50,6 +49,6 @@ def visualize_features(model: Model, feature_ranges: Dict, output_filepath: Path
                  label=model_name)
         plt.xlabel(f'{current_feature} [{current_units}]')
         plt.ylabel(f'{energy_units}/100{distance_units}')
-        plt.savefig(output_filepath.joinpath(f'{current_feature}_vs_{energy_units}_per_100{distance_units}.png'),
+        plt.savefig(output_filepath.joinpath(f'{model_name}_{current_feature}.png'),
                     format='png')
         plt.clf()

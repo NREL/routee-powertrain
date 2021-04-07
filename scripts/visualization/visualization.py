@@ -35,10 +35,10 @@ class VisualConfig(NamedTuple):
     feature_ranges: Dict[str, float]
 
     @classmethod
-    def from_dict(cls, d: dict) -> VisualConfig:
+    def from_dict(cls, d: dict):
         return VisualConfig(
             models_path=Path(d['models_path']),
-            output_path=Path(d['output_path']) / datetime.now().strftime('%Y-%m-%d_%H-%M-%S'),
+            output_path=Path(d['output_path']) / f"visualization_results_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
             num_links=int(d['num_links']),
             feature_ranges=d['feature_ranges']
         )
@@ -63,7 +63,7 @@ def _err(msg: str) -> int:
 
 
 def run():
-    log.info("🏎  routee-powertrain visualization started!")
+    log.info("routee-powertrain visualization started!")
     args = parser.parse_args()
 
     try:
@@ -84,14 +84,24 @@ def run():
     if json_model_paths:
         log.info(f'processing .json files')
         for model_path in json_model_paths:
-            model = Model.from_json(Path(model_path))
-            visualize_features(model, vconfig.feature_ranges, vconfig.output_path, vconfig.num_links)
+            try:
+                model = Model.from_json(Path(model_path))
+                visualize_features(model, vconfig.feature_ranges, vconfig.output_path, vconfig.num_links)
+            except Exception as error:
+                _err(f'unable to process model {model_path} due to ERROR:')
+                _err(f" {str(error)}")
 
     if pickle_model_paths:
         log.info(f'processing .pickle files')
         for model_path in pickle_model_paths:
-            model = Model.from_pickle(Path(model_path))
-            visualize_features(model, vconfig.feature_ranges, vconfig.output_path, vconfig.num_links)
+            try:
+                model = Model.from_pickle(Path(model_path))
+                visualize_features(model, vconfig.feature_ranges, vconfig.output_path, vconfig.num_links)
+            except Exception as error:
+                _err(f'unable to process model {model_path} due to ERROR:')
+                _err(f" {str(error)}")
+
+    log.info('done!')
 
 
 if __name__ == '__main__':
