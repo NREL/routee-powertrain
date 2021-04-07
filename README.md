@@ -1,6 +1,24 @@
 # RouteE Powertrain
 
+## Overview
+
 Welcome to the RouteE Powertrain repo!
+
+RouteE Powertrain has two core functions: model training and energy prediction. The below image highlights RouteE's capabilities: 
+
+<p align="center">
+  <img src="docs/wiki_imgs/routee_workflow.jpg" width="50%" height="50%">
+</p>
+
+The typical user will utilize RouteE's catalog of pre-trained models. Currently, the 
+catalog consists of light-duty vehicle models, including conventional gasoline, diesel, plug-in hybrid electric (PHEV), 
+hybrid electric (HEV), and battery electric (BEV). These models can be applied to link-level driving data (in the form 
+of [pandas](https://pandas.pydata.org/) dataframes) to output energy consumption predictions.
+
+Users that wish to train new RouteE models can do so. The model training function of RouteE enables users to use their 
+own drive-cycle data, powertrain modeling system, and road network data to train custom models. 
+
+Visit the [routee-traffic-control](https://github.nrel.gov/MBAP/routee-notebooks) repo for demo notebooks with examples of RouteE usage. 
 
 ## Setup
 Clone (or download) the RouteE Powertrain repository and create a compatible python environment to ensure package compatibility.
@@ -47,26 +65,7 @@ leaf = pt.load_pretrained_model("2016_Nissan_Leaf_30_kWh_ExplicitBin")
 ## Test Data
 If you are developing on the routee-powertrain projects and plan to run any of the tests, you will need to also download the test data from [Box](https://app.box.com/s/dm5w4mo56ej9jfmyo404kz98roz7jat7). 
 
-It is recommended that you move the downloaded and unzipped "routee-powertrain-test-data" directory into ```powertrain/tests/```.
-
-## Getting Started
-
-RouteE has two core functions: model training and energy prediction. The below image highlights RouteE's capabilities: 
-<p align="center">
-  <img src="docs/wiki_imgs/routee_workflow.jpg" width="50%" height="50%">
-</p>
-
-
-The typical user will utilize RouteE's catalog of pre-trained models. Currently, the 
-catalog consists of light-duty vehicle models, including conventional gasoline, diesel, plug-in hybrid electric (PHEV), 
-hybrid electric (HEV), and battery electric (BEV). These models can be applied to link-level driving data (in the form 
-of [pandas](https://pandas.pydata.org/) dataframes) to output energy consumption predictions. Such predictions can be 
-applied to single-vehicle routes or network-wide traffic data.
-
-Users that wish to train new RouteE models can do so. The model training function of RouteE enables users to use their 
-own drive-cycle data, powertrain modeling system, and road network data to train custom models. 
-
-Visit the [routee-traffic-control](https://github.nrel.gov/MBAP/routee-notebooks) repo for demo notebooks with examples of RouteE usage. 
+It is recommended that you move the downloaded and unzipped "routee-powertrain-test-data" directory into `powertrain/tests/`.
 
 ## Training Workflow
 Training batches of RouteE models from FASTSim results can be performed with the [batch-train script](https://github.nrel.gov/MBAP/routee-powertrain/tree/master/scripts/batch-train) 
