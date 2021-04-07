@@ -51,8 +51,10 @@ It is recommended that you move the downloaded and unzipped "routee-powertrain-t
 ## Getting Started
 
 RouteE has two core functions: model training and energy prediction. The below image highlights RouteE's capabilities: 
+<p align="center">
+  <img src="docs/wiki_imgs/routee_workflow.jpg" width="50%" height="50%">
+</p>
 
-<img src="docs/wiki_imgs/routee_workflow.jpg">
 
 The typical user will utilize RouteE's catalog of pre-trained models. Currently, the 
 catalog consists of light-duty vehicle models, including conventional gasoline, diesel, plug-in hybrid electric (PHEV), 
