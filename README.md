@@ -1,19 +1,20 @@
 # RouteE Powertrain
 
+Welcome to the RouteE Powertrain repo!
+
 ## Setup
 Clone (or download) the RouteE Powertrain repository and create a compatible python environment to ensure package compatibility.
 
 `git clone https://github.nrel.gov/MBAP/routee-powertrain.git`
 
-
 routee-powertrain depends on python 3.8. One way to satisfy this is to use [conda](https://conda.io/docs/):
+
 ```
 conda create -n routee-powertrain python=3.8 
 conda activate routee-powertrain
 ```
-This will create a new conda environment that uses python 3.8.
 
-Navigate to the the routee-powertrain root directory. Then: 
+This will create a new conda environment that uses python 3.8. Navigate to the the routee-powertrain root directory. Then: 
 
 ```
 pip install .
@@ -65,8 +66,7 @@ applied to single-vehicle routes or network-wide traffic data.
 Users that wish to train new RouteE models can do so. The model training function of RouteE enables users to use their 
 own drive-cycle data, powertrain modeling system, and road network data to train custom models. 
 
-This [routee-notebooks](https://github.nrel.gov/MBAP/routee-notebooks) repo provides demonstrations notebooks for 
-examples of RouteE usage. 
+Visit the [routee-traffic-control](https://github.nrel.gov/MBAP/routee-notebooks) repo for demo notebooks with examples of RouteE usage. 
 
 ## Training Workflow
 Training batches of RouteE models from FASTSim results can be performed with the [batch-train script](https://github.nrel.gov/MBAP/routee-powertrain/tree/master/scripts/batch-train) 
