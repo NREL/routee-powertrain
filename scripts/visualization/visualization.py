@@ -28,16 +28,27 @@ parser.add_argument(
 
 
 class VisualConfig(NamedTuple):
+    """
+        this class holds all of the configuration values found in the new visualization config
+
+        models_path: where to find models for visualization
+        output_path: where to save the visualizations
+        num_links: the number of test links or data points the model will predict over
+        feature_ranges: a dictionary with value ranges to generate test links
+    """
     models_path: Path
 
     output_path: Path
 
     num_links: int
 
-    feature_ranges: Dict[str, float]
+    feature_ranges: Dict[str, dict]
 
     @classmethod
     def from_dict(cls, d: dict) -> VisualConfig:
+        """
+        creates a VisualConfig from a dictionary
+        """
         return VisualConfig(
             models_path=Path(d['models_path']),
             output_path=Path(d['output_path']) / f"visualization_results_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",

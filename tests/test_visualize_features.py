@@ -9,7 +9,12 @@ from tests.mock_resources import mock_model
 
 
 def _clean_temp_files(filepath: Path):
-    for f in filepath.glob('*.png'):
+    """
+    removes the given directory and all temp files within
+
+    :param filepath: directory to be deleted
+    """
+    for f in filepath.glob('*'):
         try:
             remove(f)
         except OSError as e:
@@ -20,6 +25,10 @@ def _clean_temp_files(filepath: Path):
 class TestVisualizeFeatures(TestCase):
 
     def test_successful_run(self):
+        """
+        test to verify that the predictions returned are the correct length, contain the tests for each of the features
+        in the model, and plots are saved to the correct location with the correct naming scheme
+        """
         model = mock_model()
         feature_ranges = {
             'gpsspeed': {
@@ -57,6 +66,9 @@ class TestVisualizeFeatures(TestCase):
         _clean_temp_files(output_filepath)
 
     def test_missing_feature(self):
+        """
+        test to verify that a KeyError is thrown when the config is missing a required feature
+        """
         model = mock_model()
         feature_ranges = {
             'gpsspeed': {

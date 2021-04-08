@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from pandas import DataFrame, Series
+from pandas import DataFrame
 from pathlib import Path
 from typing import Dict
 
