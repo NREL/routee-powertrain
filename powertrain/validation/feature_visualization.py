@@ -9,9 +9,9 @@ from powertrain.core.model import Model
 
 def visualize_features(
         model: Model,
-        feature_ranges: Dict,
+        feature_ranges: Dict[str, dict],
         output_filepath: Path,
-        num_links: int) -> Dict[str: Series]:
+        num_links: int) -> dict:
     """
     takes a model and generates test links to independently test the model's features
     and creates plots of those predictions
