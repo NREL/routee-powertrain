@@ -66,6 +66,7 @@ def visualize_features(
         plt.plot(links_df[current_feature],
                  prediction * 100 / links_df[distance_units],
                  label=model_name)
+        plt.title(f'{model_name}')
         plt.xlabel(f'{current_feature} [{current_units}]')
         plt.ylabel(f'{energy_units}/100{distance_units}')
         plt.savefig(output_filepath.joinpath(f'{model_name}_{current_feature}.png'),
