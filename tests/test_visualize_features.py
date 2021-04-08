@@ -55,3 +55,25 @@ class TestVisualizeFeatures(TestCase):
 
         # clean up temp files
         _clean_temp_files(output_filepath)
+
+    def test_missing_feature(self):
+        model = mock_model()
+        feature_ranges = {
+            'gpsspeed': {
+                'max': 80,
+                'min': 0,
+                'default': 40
+            }
+        }
+
+        # temp directory for holding temporary results
+        output_filepath = Path('tmp/')
+        output_filepath.mkdir(parents=True, exist_ok=True)
+
+        with self.assertRaises(KeyError):
+            visualize_features(model=model,
+                               feature_ranges=feature_ranges,
+                               output_filepath=output_filepath,
+                               num_links=15)
+
+        _clean_temp_files(output_filepath)
