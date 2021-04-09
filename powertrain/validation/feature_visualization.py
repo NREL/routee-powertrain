@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 from powertrain.core.model import Model
 
@@ -10,16 +10,16 @@ from powertrain.core.model import Model
 def visualize_features(
         model: Model,
         feature_ranges: Dict[str, dict],
-        output_filepath: Path,
-        num_links: int) -> dict:
+        num_links: int,
+        output_filepath: Optional[Path] = None) -> dict:
     """
     takes a model and generates test links to independently test the model's features
     and creates plots of those predictions
 
     :param model: the model to be tested
     :param feature_ranges: a dictionary with value ranges to generate test links
-    :param output_filepath: where to store the results
     :param num_links: the number of test links or data points the model will predict over
+    :param output_filepath: if not none, saves results to this location. Else the plots are displayed rather than saved
     :return: a dictionary containing the predictions where the key is the feature tested
     :raises Exception due to IOErrors, missing keys in model, or missing config values
     """
@@ -70,8 +70,12 @@ def visualize_features(
         plt.title(f'{model_name}_{estimator_name}')
         plt.xlabel(f'{current_feature} [{current_units}]')
         plt.ylabel(f'{energy_units}/100{distance_units}')
-        plt.savefig(output_filepath.joinpath(f'{model_name}_{estimator_name}_{current_feature}.png'),
-                    format='png')
+
+        # if an output filepath is specified, save th results instead of displaying them
+        if output_filepath is not None:
+            plt.savefig(output_filepath.joinpath(f'{model_name}_{estimator_name}_{current_feature}.png'), format='png')
+        else:
+            plt.show()
         plt.clf()
 
         predictions[current_feature] = prediction

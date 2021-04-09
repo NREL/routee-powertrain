@@ -99,7 +99,7 @@ def run():
         for model_path in json_model_paths:
             try:
                 model = Model.from_json(Path(model_path))
-                visualize_features(model, vconfig.feature_ranges, vconfig.output_path, vconfig.num_links)
+                visualize_features(model, vconfig.feature_ranges, vconfig.num_links, vconfig.output_path)
             except Exception as error:
                 _err(f'unable to process model {model_path} due to ERROR:')
                 _err(f" {str(error)}")
@@ -109,7 +109,7 @@ def run():
         for model_path in pickle_model_paths:
             try:
                 model = Model.from_pickle(Path(model_path))
-                visualize_features(model, vconfig.feature_ranges, vconfig.output_path, vconfig.num_links)
+                visualize_features(model, vconfig.feature_ranges, vconfig.num_links, vconfig.output_path)
             except Exception as error:
                 _err(f'unable to process model {model_path} due to ERROR:')
                 _err(f" {str(error)}")

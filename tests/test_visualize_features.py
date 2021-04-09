@@ -30,6 +30,8 @@ class TestVisualizeFeatures(TestCase):
         in the model, and plots are saved to the correct location with the correct naming scheme
         """
         model = mock_model()
+        model_name = model.metadata.model_description
+        estimator_name = model.metadata.estimator_name
         feature_ranges = {
             'gpsspeed': {
                 'max': 80,
@@ -49,21 +51,27 @@ class TestVisualizeFeatures(TestCase):
         # run the function with the mock data
         predictions = visualize_features(model=model,
                                          feature_ranges=feature_ranges,
-                                         output_filepath=output_filepath,
-                                         num_links=15)
+                                         num_links=15,
+                                         output_filepath=output_filepath)
         # tests to check the predictions
-        self.assertEqual(list(predictions.keys()), ['gpsspeed', 'grade'], 'should have tested both grade and gpsspeed')
-        self.assertEqual(len(predictions['gpsspeed']), 15, 'should have made predictions for 15 links testing gpsspeed')
-        self.assertEqual(len(predictions['grade']), 15, 'should have made predictions for 15 links testing grade')
+        try:
+            self.assertEqual(list(predictions.keys()), ['gpsspeed', 'grade'], 'should have tested both grade and '
+                                                                              'gpsspeed')
+            self.assertEqual(len(predictions['gpsspeed']), 15, 'should have made predictions for 15 links testing '
+                                                               'gpsspeed')
+            self.assertEqual(len(predictions['grade']), 15, 'should have made predictions for 15 links testing grade')
 
-        # tests for saving plots and naming convention
-        self.assertTrue(Path.exists(output_filepath.joinpath(f'{model.metadata.model_description}_grade.png')),
-                        'should save grade plot as png')
-        self.assertTrue(Path.exists(output_filepath.joinpath(f'{model.metadata.model_description}_gpsspeed.png')),
-                        'should save gpsspeed plot as png')
+            # tests for saving plots and naming convention
+            self.assertTrue(Path.exists(output_filepath.joinpath(f'{model_name}_{estimator_name}_grade.png')),
+                            'should save grade plot as png')
+            self.assertTrue(Path.exists(output_filepath.joinpath(f'{model_name}_{estimator_name}_gpsspeed.png')),
+                            'should save gpsspeed plot as png')
+            _clean_temp_files(output_filepath)
 
-        # clean up temp files
-        _clean_temp_files(output_filepath)
+        except AssertionError as error:
+            # clean up temp files
+            _clean_temp_files(output_filepath)
+            raise AssertionError(error)
 
     def test_missing_feature(self):
         """
@@ -82,10 +90,15 @@ class TestVisualizeFeatures(TestCase):
         output_filepath = Path('tmp/')
         output_filepath.mkdir(parents=True, exist_ok=True)
 
-        with self.assertRaises(KeyError):
-            visualize_features(model=model,
-                               feature_ranges=feature_ranges,
-                               output_filepath=output_filepath,
-                               num_links=15)
+        try:
+            with self.assertRaises(KeyError):
+                visualize_features(model=model,
+                                   feature_ranges=feature_ranges,
+                                   num_links=15,
+                                   output_filepath=output_filepath)
+                _clean_temp_files(output_filepath)
 
-        _clean_temp_files(output_filepath)
+        except AssertionError as error:
+            # clean up temp files
+            _clean_temp_files(output_filepath)
+            raise AssertionError(error)
