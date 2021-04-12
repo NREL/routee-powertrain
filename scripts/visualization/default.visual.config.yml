@@ -1,0 +1,20 @@
+# where find models to test
+models_path: 'where/to/find/models'
+
+# where to save the resulting plots
+output_path: 'where/to/save/outputs'
+
+# number of links generated for the test
+num_links: 15
+
+# these ranges will be used when generating predictions using the routee-powertrain models
+feature_ranges:
+  gpsspeed:
+    max: 80
+    min: 0
+    default: 40
+    
+  grade:
+    max: 0.20
+    min: -0.20
+    default: 0
