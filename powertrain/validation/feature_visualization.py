@@ -50,9 +50,16 @@ def visualize_features(
         # make <num_links> number of links
         # using the feature range config, generate evenly spaced ascending values for the current feature
         links_df = DataFrame()
-        links_df[current_feature] = np.linspace(feature_ranges[current_feature]['min'],
-                                                feature_ranges[current_feature]['max'],
-                                                num=num_links)
+        if 'data_type' in feature_ranges[current_feature]:
+            if feature_ranges[current_feature]['data_type'] == 'int':
+                difference = int(feature_ranges[current_feature]['max'] - feature_ranges[current_feature]['min'])
+                links_df[current_feature] = np.arange(start=feature_ranges[current_feature]['min'],
+                                                      stop=feature_ranges[current_feature]['max']+1,
+                                                      step=int(difference/min([num_links, difference])))
+        else:
+            links_df[current_feature] = np.linspace(feature_ranges[current_feature]['min'],
+                                                    feature_ranges[current_feature]['max'],
+                                                    num=num_links)
         # for every other feature, set it to its default value for the all links
         for other_feature in feature_ranges:
             if other_feature != current_feature:
@@ -73,7 +80,9 @@ def visualize_features(
 
         # if an output filepath is specified, save th results instead of displaying them
         if output_filepath is not None:
-            plt.savefig(output_filepath.joinpath(f'{model_name}_{estimator_name}_{current_feature}.png'), format='png')
+            output_filepath.joinpath(f'{model_name}').mkdir(parents=True, exist_ok=True)
+            plt.savefig(output_filepath.joinpath(f'{model_name}/{model_name}_{estimator_name}_{current_feature}.png'),
+                        format='png')
         else:
             plt.show()
         plt.clf()
