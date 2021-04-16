@@ -46,9 +46,6 @@ setup(
         "numpy",
         "scikit-learn",
         "PyYAML",
-        "SKompiler",
-        "sympy",
-        "astor"
     ],
     extras_require={
         "optional": [
