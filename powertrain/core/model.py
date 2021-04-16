@@ -4,7 +4,7 @@ import json
 import logging
 import pickle
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 from urllib import request
 
 import numpy as np
@@ -136,7 +136,8 @@ class Model:
         return self._estimator.feature_pack
 
     @classmethod
-    def from_json(cls, infile: Path) -> Model:
+    def from_json(cls, infile: Union[Path, str]) -> Model:
+        infile = Path(infile)
         with infile.open('r', encoding='utf-8') as f:
             in_json = json.load(f)
             metadata = Metadata.from_json(in_json['metadata'])
