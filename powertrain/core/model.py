@@ -74,6 +74,7 @@ class Model:
         log.info(f"training estimator {self._estimator.__class__.__name__}")
 
         pass_data = data.copy(deep=True)
+        pass_data["energy_rate"] = data[self.feature_pack.energy.name] / data[self.feature_pack.distance.name]
         pass_data = pass_data[~pass_data.isin([np.nan, np.inf, -np.inf]).any(1)]
 
         # splitting test data between train and validate --> 20% here

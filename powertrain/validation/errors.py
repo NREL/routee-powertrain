@@ -74,7 +74,6 @@ def compute_errors(
         t_wrpd = weighted_relative_percent_difference(gb[feature_pack.energy.name], gb['energy_pred'])
         errors['trip_relative_percent_difference'] = t_rpd
         errors['trip_weighted_relative_percent_difference'] = t_wrpd
-        errors['trip_root_mean_squared_error'] = mean_squared_error(gb[feature_pack.energy.name], squared=False)
 
     errors['net_error'] = net_energy_error(target, target_pred)
 

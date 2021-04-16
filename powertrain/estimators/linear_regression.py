@@ -35,11 +35,8 @@ class LinearRegression(EstimatorInterface):
         Returns:
 
         """
-        # convert absolute consumption to rate consumption
-        energy_rate = data[self.feature_pack.energy.name] / data[self.feature_pack.distance.name]
-
         x = data[self.feature_pack.feature_list]
-        y = energy_rate
+        y = data.energy_rate
 
         self.model = self.model.fit(x.values, y.values)
 
