@@ -198,7 +198,7 @@ class ExplicitBin(EstimatorInterface):
         model_df = pd.read_json(json['model'], orient="index")
         model_df.index = pd.MultiIndex.from_tuples(
             [ast.literal_eval(i) for i in model_df.index],
-            names=("speed_bins", "grade_bins")
+            names=[f for f in feature_pack.feature_list]
         )
         eb = ExplicitBin(feature_pack=feature_pack, model=model_df)
         eb.bin_lims = json['bin_lims']
