@@ -12,7 +12,7 @@ def visualize_features(
         feature_ranges: Dict[str, dict],
         num_links: int,
         int_features: Optional[Tuple] = (),
-        output_filepath: Optional[Path] = None) -> dict:
+        output_filepath: Optional[str] = None) -> dict:
     """
     takes a model and generates test links to independently test the model's features
     and creates plots of those predictions
@@ -56,7 +56,7 @@ def visualize_features(
             difference = int(feature_ranges[current_feature]['max'] - feature_ranges[current_feature]['min'])
             links_df[current_feature] = np.arange(start=feature_ranges[current_feature]['min'],
                                                   stop=feature_ranges[current_feature]['max'] + 1,
-                                                  step=int(difference / min([num_links, difference])))
+                                                  step=round(difference / min([num_links, difference])))
         else:
             links_df[current_feature] = np.linspace(feature_ranges[current_feature]['min'],
                                                     feature_ranges[current_feature]['max'],
@@ -81,8 +81,8 @@ def visualize_features(
 
         # if an output filepath is specified, save th results instead of displaying them
         if output_filepath is not None:
-            output_filepath.joinpath(f'{model_name}').mkdir(parents=True, exist_ok=True)
-            plt.savefig(output_filepath.joinpath(f'{model_name}/{model_name}_{estimator_name}_{current_feature}.png'),
+            Path(output_filepath).joinpath(f'{model_name}').mkdir(parents=True, exist_ok=True)
+            plt.savefig(Path(output_filepath).joinpath(f'{model_name}/{model_name}_{estimator_name}_{current_feature}.png'),
                         format='png')
         else:
             plt.show()

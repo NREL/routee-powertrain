@@ -14,11 +14,13 @@ def _clean_temp_files(filepath: Path):
 
     :param filepath: directory to be deleted
     """
-    for f in filepath.glob('*'):
-        try:
-            remove(f)
-        except OSError as e:
-            print("Error: %s : %s" % (f, e.strerror))
+    for dir in filepath.glob('*'):
+        for f in dir.glob('*'):
+            try:
+                remove(f)
+            except OSError as e:
+                print("Error: %s : %s" % (f, e.strerror))
+        dir.rmdir()
     filepath.rmdir()
 
 
@@ -45,8 +47,8 @@ class TestVisualizeFeatures(TestCase):
             }
         }
         # temp directory for holding temporary results
-        output_filepath = Path('tmp/')
-        output_filepath.mkdir(parents=True, exist_ok=True)
+        output_filepath = 'tmp/'
+        Path(output_filepath).mkdir(parents=True, exist_ok=True)
 
         # run the function with the mock data
         predictions = visualize_features(model=model,
@@ -62,15 +64,15 @@ class TestVisualizeFeatures(TestCase):
             self.assertEqual(len(predictions['grade']), 15, 'should have made predictions for 15 links testing grade')
 
             # tests for saving plots and naming convention
-            self.assertTrue(Path.exists(output_filepath.joinpath(f'{model_name}_{estimator_name}_grade.png')),
+            self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{model_name}_{estimator_name}_grade.png')),
                             'should save grade plot as png')
-            self.assertTrue(Path.exists(output_filepath.joinpath(f'{model_name}_{estimator_name}_gpsspeed.png')),
+            self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{model_name}_{estimator_name}_gpsspeed.png')),
                             'should save gpsspeed plot as png')
-            _clean_temp_files(output_filepath)
+            _clean_temp_files(Path(output_filepath))
 
         except AssertionError as error:
             # clean up temp files
-            _clean_temp_files(output_filepath)
+            _clean_temp_files(Path(output_filepath))
             raise AssertionError(error)
 
     def test_missing_feature(self):
@@ -96,7 +98,7 @@ class TestVisualizeFeatures(TestCase):
                                    feature_ranges=feature_ranges,
                                    num_links=15,
                                    output_filepath=output_filepath)
-                _clean_temp_files(output_filepath)
+                _clean_temp_files(Path(output_filepath))
 
         except AssertionError as error:
             # clean up temp files

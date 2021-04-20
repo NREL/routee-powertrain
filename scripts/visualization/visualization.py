@@ -36,9 +36,9 @@ class VisualConfig(NamedTuple):
         num_links: the number of test links or data points the model will predict over
         feature_ranges: a dictionary with value ranges to generate test links
     """
-    models_path: Path
+    models_path: str
 
-    output_path: Path
+    output_path: str
 
     num_links: int
 
@@ -52,10 +52,10 @@ class VisualConfig(NamedTuple):
         creates a VisualConfig from a dictionary
         """
         return VisualConfig(
-            models_path=Path(d['models_path']),
-            output_path=Path(d['output_path']) / f"visualization_results_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
+            models_path=d['models_path'],
+            output_path=d['output_path'] + f"visualization_results_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
             num_links=int(d['num_links']),
-            int_features=(d['int_features'],) if 'int_features' in d else (),
+            int_features=(d['int_features']) if 'int_features' in d else (),
             feature_ranges=d['feature_ranges']
         )
 
@@ -87,11 +87,11 @@ def run():
     except FileNotFoundError:
         return _err(f"could not find {args.config_file}")
 
-    vconfig.output_path.mkdir(parents=True, exist_ok=True)
+    Path(vconfig.output_path).mkdir(parents=True, exist_ok=True)
 
     log.info(f"looking for .json files or .pickle files in {vconfig.models_path}")
-    json_model_paths = glob.glob(str(vconfig.models_path / "*.json"))
-    pickle_model_paths = glob.glob(str(vconfig.models_path / "*.pickle"))
+    json_model_paths = glob.glob(vconfig.models_path + "/*.json")
+    pickle_model_paths = glob.glob(vconfig.models_path + "/*.pickle")
     log.info(f'found {len(json_model_paths)} .json files')
     log.info(f'found {len(pickle_model_paths)} .pickle files')
     if not json_model_paths and not pickle_model_paths:
