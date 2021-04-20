@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
 from pathlib import Path
+import traceback
 from typing import Dict, Optional, Tuple
 
 from powertrain.core.model import Model
@@ -76,7 +77,8 @@ def visualize_features(
             prediction = model.predict(links_df)
         except Exception as error:
             log.error(f'unable to predict {current_feature} with model {model_name} due to ERROR:')
-            log.error(f" {str(error)}")
+            log.error(f" {traceback.format_exc()}")
+            log.error(f"{current_feature} plot for model {model_name} skipped..")
             continue
 
         # plot the prediction and save the figure
