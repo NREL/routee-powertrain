@@ -1,3 +1,4 @@
+import logging
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
@@ -6,13 +7,15 @@ from typing import Dict, Optional, Tuple
 
 from powertrain.core.model import Model
 
+log = logging.getLogger(__name__)
+
 
 def visualize_features(
         model: Model,
         feature_ranges: Dict[str, dict],
         num_links: int,
         int_features: Optional[Tuple] = (),
-        output_filepath: Optional[str] = None) -> dict:
+        output_path: Optional[str] = None) -> dict:
     """
     takes a model and generates test links to independently test the model's features
     and creates plots of those predictions
@@ -21,7 +24,7 @@ def visualize_features(
     :param feature_ranges: a dictionary with value ranges to generate test links
     :param num_links: the number of test links or data points the model will predict over
     :param int_features: optional tuple of feature names which will have their links generated in integer increments
-    :param output_filepath: if not none, saves results to this location. Else the plots are displayed rather than saved
+    :param output_path: if not none, saves results to this location. Else the plots are displayed rather than saved
     :return: a dictionary containing the predictions where the key is the feature tested
     :raises Exception due to IOErrors, missing keys in model, or missing config values
     """
@@ -69,7 +72,12 @@ def visualize_features(
         links_df[distance_units] = [.1] * len(links_df)
 
         # make a prediction using the test links
-        prediction = model.predict(links_df)
+        try:
+            prediction = model.predict(links_df)
+        except Exception as error:
+            log.error(f'unable to predict {current_feature} with model {model_name} due to ERROR:')
+            log.error(f" {str(error)}")
+            continue
 
         # plot the prediction and save the figure
         plt.plot(links_df[current_feature],
@@ -80,9 +88,9 @@ def visualize_features(
         plt.ylabel(f'{energy_units}/100{distance_units}')
 
         # if an output filepath is specified, save th results instead of displaying them
-        if output_filepath is not None:
-            Path(output_filepath).joinpath(f'{model_name}').mkdir(parents=True, exist_ok=True)
-            plt.savefig(Path(output_filepath).joinpath(f'{model_name}/{model_name}_{estimator_name}_{current_feature}.png'),
+        if output_path is not None:
+            Path(output_path).joinpath(f'{model_name}').mkdir(parents=True, exist_ok=True)
+            plt.savefig(Path(output_path).joinpath(f'{model_name}/{model_name}_{estimator_name}_{current_feature}.png'),
                         format='png')
         else:
             plt.show()

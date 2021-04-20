@@ -54,7 +54,7 @@ class TestVisualizeFeatures(TestCase):
         predictions = visualize_features(model=model,
                                          feature_ranges=feature_ranges,
                                          num_links=15,
-                                         output_filepath=output_filepath)
+                                         output_path=output_filepath)
         # tests to check the predictions
         try:
             self.assertEqual(list(predictions.keys()), ['gpsspeed', 'grade'], 'should have tested both grade and '
@@ -68,12 +68,12 @@ class TestVisualizeFeatures(TestCase):
                             'should save grade plot as png')
             self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{model_name}_{estimator_name}_gpsspeed.png')),
                             'should save gpsspeed plot as png')
-            _clean_temp_files(Path(output_filepath))
 
         except AssertionError as error:
             # clean up temp files
-            _clean_temp_files(Path(output_filepath))
             raise AssertionError(error)
+        finally:
+            _clean_temp_files(Path(output_filepath))
 
     def test_missing_feature(self):
         """
@@ -97,10 +97,11 @@ class TestVisualizeFeatures(TestCase):
                 visualize_features(model=model,
                                    feature_ranges=feature_ranges,
                                    num_links=15,
-                                   output_filepath=output_filepath)
-                _clean_temp_files(Path(output_filepath))
+                                   output_path=output_filepath)
 
         except AssertionError as error:
             # clean up temp files
-            _clean_temp_files(output_filepath)
             raise AssertionError(error)
+
+        finally:
+            _clean_temp_files(output_filepath)
