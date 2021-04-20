@@ -6,7 +6,7 @@ import logging
 
 from datetime import datetime
 from pathlib import Path
-from typing import NamedTuple, Dict
+from typing import NamedTuple, Dict, Tuple
 
 import yaml
 
@@ -42,6 +42,8 @@ class VisualConfig(NamedTuple):
 
     num_links: int
 
+    int_features: Tuple[str, ...]
+
     feature_ranges: Dict[str, dict]
 
     @classmethod
@@ -53,6 +55,7 @@ class VisualConfig(NamedTuple):
             models_path=Path(d['models_path']),
             output_path=Path(d['output_path']) / f"visualization_results_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
             num_links=int(d['num_links']),
+            int_features=(d['int_features'],) if 'int_features' in d else (),
             feature_ranges=d['feature_ranges']
         )
 
@@ -99,7 +102,11 @@ def run():
         for model_path in json_model_paths:
             try:
                 model = Model.from_json(Path(model_path))
-                visualize_features(model, vconfig.feature_ranges, vconfig.num_links, vconfig.output_path)
+                visualize_features(model,
+                                   vconfig.feature_ranges,
+                                   vconfig.num_links,
+                                   vconfig.int_features,
+                                   vconfig.output_path)
             except Exception as error:
                 _err(f'unable to process model {model_path} due to ERROR:')
                 _err(f" {str(error)}")
@@ -109,7 +116,11 @@ def run():
         for model_path in pickle_model_paths:
             try:
                 model = Model.from_pickle(Path(model_path))
-                visualize_features(model, vconfig.feature_ranges, vconfig.num_links, vconfig.output_path)
+                visualize_features(model,
+                                   vconfig.feature_ranges,
+                                   vconfig.num_links,
+                                   vconfig.int_features,
+                                   vconfig.output_path)
             except Exception as error:
                 _err(f'unable to process model {model_path} due to ERROR:')
                 _err(f" {str(error)}")
