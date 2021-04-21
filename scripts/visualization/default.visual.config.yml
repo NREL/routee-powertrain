@@ -7,14 +7,23 @@ output_path: 'where/to/save/outputs'
 # number of links generated for the test
 num_links: 15
 
+# features to be iterated using integers instead of floats
+int_features:
+  - road_priority
+
 # these ranges will be used when generating predictions using the routee-powertrain models
 feature_ranges:
-  gpsspeed:
+  speed:
     max: 80
     min: 0
     default: 40
-    
+
   grade:
-    max: 0.20
-    min: -0.20
+    max: 6
+    min: -6
+    default: 0
+
+  road_priority:
+    max: 8
+    min: 0
     default: 0
