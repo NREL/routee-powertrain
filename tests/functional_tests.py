@@ -51,6 +51,7 @@ if __name__ == "__main__":
         log.info(f"training estimator {e}..")
         m = Model(e, description=veh_name)
         m.train(train_df)
+        log.info(f"errors: {m.metadata.errors}")
 
         # test out prediction
         log.info(f"predicting {m} over test route..")

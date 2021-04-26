@@ -17,7 +17,7 @@ import yaml
 from pandas.io.sql import DatabaseError
 
 from powertrain import Model
-from powertrain.core.features import Feature, PredictType, FeaturePack
+from powertrain.core.features import Feature, FeaturePack
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
@@ -89,7 +89,6 @@ class BatchConfig(NamedTuple):
 
     n_cores: int
     model_output_type: OutputType
-    prediction_type: PredictType
 
     @classmethod
     def from_dict(cls, d: dict) -> BatchConfig:
@@ -103,7 +102,6 @@ class BatchConfig(NamedTuple):
             estimators=[get_estimator_class(s) for s in d['estimators']],
             n_cores=int(d['n_cores']),
             model_output_type=OutputType.from_string(d['model_output_type']),
-            prediction_type=PredictType.from_string(d['prediction_type'])
         )
 
 
@@ -205,7 +203,7 @@ def train_model(mconfig: ModelConfig) -> int:
     feature_pack = FeaturePack(bconfig.features, bconfig.distance, energy)
 
     for eclass in bconfig.estimators:
-        e = eclass(feature_pack=feature_pack, predict_type=bconfig.prediction_type)
+        e = eclass(feature_pack=feature_pack)
 
         m = Model(e, description=model_name)
         m.train(train_df, trip_column="tripno")
