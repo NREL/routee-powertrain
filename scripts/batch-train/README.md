@@ -73,9 +73,6 @@ n_cores: 28
 
 # what format to write the routee-powertrain model: [json, pickle]
 model_output_type: json
-
-# how the model should predict energy: [energy_raw, energy_rate]
-prediction_type: energy_raw
 ```
 
 
