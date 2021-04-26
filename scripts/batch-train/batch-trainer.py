@@ -201,6 +201,9 @@ def train_model(mconfig: ModelConfig) -> int:
                 f'check to make sure the energy targets match the columns names in the training data.')
 
     train_cols = [f.name for f in bconfig.features] + [bconfig.distance.name] + [energy.name]
+    if bconfig.trip_column:
+        train_cols.append(bconfig.trip_column)
+
     train_df = df[train_cols].dropna()
 
     # drop any nonsense values
