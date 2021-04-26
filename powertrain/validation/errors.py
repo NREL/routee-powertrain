@@ -55,8 +55,9 @@ def compute_errors(
 
     """
     feature_pack = model.feature_pack
+    energy_name = feature_pack.energy.name
 
-    target = np.array(test_df[feature_pack.energy.name])
+    target = np.array(test_df[energy_name])
     target_pred = np.array(model.predict(test_df))
 
     errors = {}
@@ -69,11 +70,14 @@ def compute_errors(
 
     if trip_column:
         test_df['energy_pred'] = target_pred
-        gb = test_df.groupby(trip_column).agg({feature_pack.energy.name: sum, 'energy_pred': sum})
-        t_rpd = relative_percent_difference(gb[feature_pack.energy.name], gb['energy_pred'])
+        gb = test_df.groupby(trip_column).agg({energy_name: sum, 'energy_pred': sum})
+        t_rpd = relative_percent_difference(gb[energy_name], gb['energy_pred'])
         t_wrpd = weighted_relative_percent_difference(gb[feature_pack.energy.name], gb['energy_pred'])
+        t_rmse = np.sqrt(mean_squared_error(gb[energy_name], gb['energy_pred']))
+
         errors['trip_relative_percent_difference'] = t_rpd
         errors['trip_weighted_relative_percent_difference'] = t_wrpd
+        errors['trip_root_mean_squared_error'] = t_rmse
 
     errors['net_error'] = net_energy_error(target, target_pred)
 
