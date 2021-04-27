@@ -10,7 +10,7 @@
                 },
                 {
                     "name": "grade",
-                    "units": "percent_0_100"
+                    "units": "percent_-0.5_0.5"
                 }
             ],
             "distance": {
@@ -22,17 +22,14 @@
                 "units": "gallons"
             }
         },
-        "estimator_predict_type": "ENERGY_RAW",
         "routee_version": "0.4.0",
         "errors": {
-            "root_mean_squared_error": 0.0030992923623894063,
-            "mean_absolute_error": 0.0009638340641331447,
-            "distance_weighted_mean_absolute_error": 0.008195978450434193,
-            "distance_weighted_mean_absolute_percentage_error": 0.7792495468704832,
-            "distance_weighted_relative_percent_difference": 0.43475402814515546,
-            "energy_weighted_relative_percent_difference": 0.398643532551417,
-            "_relative_percent_difference": 0.5965668310594682,
-            "net_error": -0.00021636234208465018
+            "link_root_mean_squared_error": 0.0034686306199336347,
+            "link_weighted_relative_percent_difference": 0.39902459649473027,
+            "trip_relative_percent_difference": 0.25299125838823866,
+            "trip_weighted_relative_percent_difference": 0.14757368750114414,
+            "trip_root_mean_squared_error": 0.018062930451750295,
+            "net_error": -0.0006919117715387719
         }
     },
     "_estimator_json": {
@@ -119,7 +116,7 @@
                 },
                 {
                     "name": "grade",
-                    "units": "percent_0_100"
+                    "units": "percent_-0.5_0.5"
                 }
             ],
             "distance": {
@@ -130,7 +127,6 @@
                 "name": "gge",
                 "units": "gallons"
             }
-        },
-        "predict_type": "ENERGY_RAW"
+        }
     }
 }

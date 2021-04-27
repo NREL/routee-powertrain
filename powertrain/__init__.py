@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from powertrain.core.features import Feature, FeaturePack
 from powertrain.core.model import Model
@@ -15,3 +16,7 @@ formatter = logging.Formatter("%(asctime)s [%(levelname)s] - %(message)s")
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 log.addHandler(stream_handler)
+
+
+def root() -> Path:
+    return Path(__file__).parent.parent

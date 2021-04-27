@@ -10,14 +10,14 @@ from datetime import datetime
 from enum import Enum
 from multiprocessing import Pool
 from pathlib import Path
-from typing import NamedTuple, Dict, List, Union, Type, Tuple
+from typing import NamedTuple, Dict, List, Union, Type, Tuple, Optional
 
 import pandas as pd
 import yaml
 from pandas.io.sql import DatabaseError
 
 from powertrain import Model
-from powertrain.core.features import Feature, PredictType, FeaturePack
+from powertrain.core.features import Feature, FeaturePack
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
@@ -85,11 +85,12 @@ class BatchConfig(NamedTuple):
     distance: Feature
     features: Tuple[Feature, ...]
 
+    trip_column: Optional[str]
+
     estimators: List[Type[Union[ExplicitBin, LinearRegression, RandomForest], ...]]
 
     n_cores: int
     model_output_type: OutputType
-    prediction_type: PredictType
 
     @classmethod
     def from_dict(cls, d: dict) -> BatchConfig:
@@ -100,10 +101,10 @@ class BatchConfig(NamedTuple):
                             d['energy_targets']},
             distance=Feature.from_dict(d['distance']),
             features=tuple(Feature.from_dict(d) for d in d['features']),
+            trip_column=d.get('trip_column'),
             estimators=[get_estimator_class(s) for s in d['estimators']],
             n_cores=int(d['n_cores']),
             model_output_type=OutputType.from_string(d['model_output_type']),
-            prediction_type=PredictType.from_string(d['prediction_type'])
         )
 
 
@@ -158,6 +159,9 @@ def train_model(mconfig: ModelConfig) -> int:
     log.info("reading training data into memory")
     read_columns = [f.name for f in bconfig.features] + [bconfig.distance.name] + [e.name for e in
                                                                                    bconfig.energy_targets.values()]
+    if bconfig.trip_column:
+        read_columns.append(bconfig.trip_column)
+
     query = f"""
             select {", ".join(read_columns)} 
             from links
@@ -197,6 +201,9 @@ def train_model(mconfig: ModelConfig) -> int:
                 f'check to make sure the energy targets match the columns names in the training data.')
 
     train_cols = [f.name for f in bconfig.features] + [bconfig.distance.name] + [energy.name]
+    if bconfig.trip_column:
+        train_cols.append(bconfig.trip_column)
+
     train_df = df[train_cols].dropna()
 
     # drop any nonsense values
@@ -205,10 +212,10 @@ def train_model(mconfig: ModelConfig) -> int:
     feature_pack = FeaturePack(bconfig.features, bconfig.distance, energy)
 
     for eclass in bconfig.estimators:
-        e = eclass(feature_pack=feature_pack, predict_type=bconfig.prediction_type)
+        e = eclass(feature_pack=feature_pack)
 
         m = Model(e, description=model_name)
-        m.train(train_df, trip_column="tripno")
+        m.train(train_df, trip_column=bconfig.trip_column)
 
         if bconfig.model_output_type == OutputType.JSON:
             outfile = bconfig.output_path / f"{model_name}_{eclass.__name__}.json"
