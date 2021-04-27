@@ -10,7 +10,7 @@
                 },
                 {
                     "name": "grade",
-                    "units": "percent_0_100"
+                    "units": "percent_-0.5_0.5"
                 }
             ],
             "distance": {
@@ -22,17 +22,14 @@
                 "units": "kwh"
             }
         },
-        "estimator_predict_type": "ENERGY_RAW",
         "routee_version": "0.4.0",
         "errors": {
-            "root_mean_squared_error": 0.05949659215013588,
-            "mean_absolute_error": 0.01739876946903312,
-            "distance_weighted_mean_absolute_error": 0.1908387623117669,
-            "distance_weighted_mean_absolute_percentage_error": 19.876206036527265,
-            "distance_weighted_relative_percent_difference": 0.9063698608917076,
-            "energy_weighted_relative_percent_difference": 0.4320576024448715,
-            "_relative_percent_difference": 1.0970649670497414,
-            "net_error": 0.0003940590107630446
+            "link_root_mean_squared_error": 0.042639252011721064,
+            "link_weighted_relative_percent_difference": 0.912093218113135,
+            "trip_relative_percent_difference": 0.613143833618749,
+            "trip_weighted_relative_percent_difference": 0.31692054344358883,
+            "trip_root_mean_squared_error": 0.37182876145210964,
+            "net_error": 7.088640714086797e-05
         }
     },
     "_estimator_json": {
@@ -119,7 +116,7 @@
                 },
                 {
                     "name": "grade",
-                    "units": "percent_0_100"
+                    "units": "percent_-0.5_0.5"
                 }
             ],
             "distance": {
@@ -130,7 +127,6 @@
                 "name": "esskwhoutach",
                 "units": "kwh"
             }
-        },
-        "predict_type": "ENERGY_RAW"
+        }
     }
 }

@@ -1,8 +1,14 @@
 import getpass
 import json
+import logging
 from pathlib import Path
 
 from boxsdk import Client, OAuth2
+
+from powertrain import root
+
+log = logging.getLogger()
+log.setLevel(logging.INFO)
 
 # these all come from the box developer app
 CLIENT_ID = input("Client ID:")
@@ -10,10 +16,10 @@ CLIENT_SECRET = getpass.getpass("Client Secret:")
 ACCESS_TOKEN = getpass.getpass("Access Token:")
 
 # pull this from the box url
-FOLDER_ID = "132339394972"
+FOLDER_ID = "136367103198"
 
 # where to write the model links
-OUTDIR = Path("../powertrain/resources/default_models/external_model_links.json")
+OUTDIR = root() / Path("powertrain/resources/default_models/external_model_links.json")
 
 oauth2 = OAuth2(CLIENT_ID, CLIENT_SECRET, access_token=ACCESS_TOKEN)
 client = Client(oauth2)
@@ -25,6 +31,7 @@ files = folder.get_items()
 download_links = {}
 for f in files:
     name = f.name.split(".")[0]
+    log.info(f"working on {name}")
     download_links[name] = f.get_shared_link_download_url(access='open')
 
 with open(OUTDIR, 'w', encoding='utf-8') as f:
