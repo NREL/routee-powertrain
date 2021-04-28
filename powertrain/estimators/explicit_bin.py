@@ -96,7 +96,15 @@ class ExplicitBin(EstimatorInterface):
             'speed': (
                 [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 100],
                 [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80],
-            )
+            ),
+            'entry_angle': (
+                [0, 30, 60, 90, 120, 150, 180],
+                [15, 45, 75, 105, 135, 165],
+            ),
+            'exit_angle': (
+                [0, 30, 60, 90, 120, 150, 180],
+                [15, 45, 75, 105, 135, 165],
+            ),
         }
 
         for f_i in self.feature_pack.feature_list:
@@ -189,8 +197,6 @@ class ExplicitBin(EstimatorInterface):
             'bin_labels': self.bin_labels,
             'feature_pack': self.feature_pack.to_json(),
         }
-
-        print(out_json)
 
         return out_json
 
