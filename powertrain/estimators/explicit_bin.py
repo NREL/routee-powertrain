@@ -190,6 +190,8 @@ class ExplicitBin(EstimatorInterface):
             'feature_pack': self.feature_pack.to_json(),
         }
 
+        print(out_json)
+
         return out_json
 
     @classmethod
