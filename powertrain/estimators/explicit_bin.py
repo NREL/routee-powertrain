@@ -105,6 +105,10 @@ class ExplicitBin(EstimatorInterface):
                 [0, 30, 60, 90, 120, 150, 180],
                 [15, 45, 75, 105, 135, 165],
             ),
+            'ratio_ffs': (
+                [0, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 2.0],
+                [0.25, 0.55, 0.65, 0.75, 0.85, 0.95, 1.5],
+            ),
         }
 
         for f_i in self.feature_pack.feature_list:
