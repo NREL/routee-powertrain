@@ -113,14 +113,9 @@ class ExplicitBin(EstimatorInterface):
             if _unique_vals <= 10:
                 df.loc[:, f_i + '_bins'] = df.loc[:, f_i]
 
-            elif list(bin_defaults.keys())[0] in f_i:
-                self.bin_lims[f_i] = bin_defaults[list(bin_defaults.keys())[0]][0]
-                self.bin_labels[f_i] = bin_defaults[list(bin_defaults.keys())[0]][1]
-                df.loc[:, f_i + '_bins'] = pd.cut(df[f_i], self.bin_lims[f_i], labels=self.bin_labels[f_i])
-
-            elif list(bin_defaults.keys())[1] in f_i:
-                self.bin_lims[f_i] = bin_defaults[list(bin_defaults.keys())[1]][0]
-                self.bin_labels[f_i] = bin_defaults[list(bin_defaults.keys())[1]][1]
+            elif f_i in bin_defaults.keys():
+                self.bin_lims[f_i] = bin_defaults[f_i][0]
+                self.bin_labels[f_i] = bin_defaults[f_i][1]
                 df.loc[:, f_i + '_bins'] = pd.cut(df[f_i], self.bin_lims[f_i], labels=self.bin_labels[f_i])
 
             else:
