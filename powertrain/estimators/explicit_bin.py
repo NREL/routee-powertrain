@@ -55,7 +55,13 @@ class ExplicitBin(EstimatorInterface):
             self,
             feature_pack: FeaturePack,
             model: pd.DataFrame = pd.DataFrame(),
+            bins: Optional[dict] = None,
     ):
+        if not bins:
+            self.bins = {}
+        else:
+            self.bins = bins
+
         self.bin_lims: dict = {}
         self.bin_labels: dict = {}
         self.model = model
@@ -64,7 +70,6 @@ class ExplicitBin(EstimatorInterface):
 
     def train(self,
               data: pd.DataFrame,
-              bins: Optional[dict] = None,
               ):
         """
 
@@ -93,9 +98,9 @@ class ExplicitBin(EstimatorInterface):
         # format: {<keyword>: ([limits], [labels])}
 
         for f_i in self.feature_pack.feature_list:
-            if f_i in bins.keys():
-                self.bin_lims[f_i] = bins[f_i][0]
-                self.bin_labels[f_i] = bins[f_i][1]
+            if f_i in self.bins.keys():
+                self.bin_lims[f_i] = self.bins[f_i][0]
+                self.bin_labels[f_i] = self.bins[f_i][1]
                 df.loc[:, f_i + '_bins'] = pd.cut(df[f_i], self.bin_lims[f_i], labels=self.bin_labels[f_i])
 
             else:
