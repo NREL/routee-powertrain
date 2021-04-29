@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import warnings
-
 import ast
+import warnings
 from typing import Optional
 
 import numpy as np
@@ -10,7 +9,6 @@ import pandas as pd
 
 from powertrain.core.features import FeaturePack
 from powertrain.estimators.estimator_interface import EstimatorInterface
-
 
 
 class ExplicitBin(EstimatorInterface):
@@ -137,7 +135,6 @@ class ExplicitBin(EstimatorInterface):
 
         # Cut and label each attribute - manual
         for f_i in self.feature_pack.feature_list:
-
             # _unique_vals = len(links_df[f_i].unique())
             # if _unique_vals <= 10:
             #     links_df.loc[:, f_i + '_bins'] = links_df.loc[:, f_i]
