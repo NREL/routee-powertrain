@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import warnings
+
 import ast
 
 import numpy as np
@@ -7,6 +9,7 @@ import pandas as pd
 
 from powertrain.core.features import FeaturePack
 from powertrain.estimators.estimator_interface import EstimatorInterface
+
 
 
 class ExplicitBin(EstimatorInterface):
@@ -223,7 +226,7 @@ class ExplicitBin(EstimatorInterface):
 
     def to_json(self) -> dict:
         out_json = {
-            'model': self.model.to_json(orient="index"),
+            'model': self.model.to_json(orient="table"),
             'bin_lims': self.bin_lims,
             'bin_labels': self.bin_labels,
             'feature_pack': self.feature_pack.to_json(),
@@ -234,12 +237,16 @@ class ExplicitBin(EstimatorInterface):
     @classmethod
     def from_json(cls, json: dict) -> ExplicitBin:
         feature_pack = FeaturePack.from_json(json['feature_pack'])
-        model_df = pd.read_json(json['model'], orient="index")
-        if isinstance(model_df.index, pd.MultiIndex):
+        try:
+            model_df = pd.read_json(json['model'], orient="table")
+        except KeyError:
+            model_df = pd.read_json(json['model'], orient="index")
             model_df.index = pd.MultiIndex.from_tuples(
                 [ast.literal_eval(i) for i in model_df.index],
                 names=[f for f in feature_pack.feature_list]
             )
+            warnings.warn("This ExplicitBin model uses an old json format that will be deprecated")
+
         eb = ExplicitBin(feature_pack=feature_pack, model=model_df)
         eb.bin_lims = json['bin_lims']
         eb.bin_labels = json['bin_labels']
