@@ -10,7 +10,9 @@ class TestPredict(TestCase):
     def test_eb_model_predict(self):
         route = mock_route()
 
-        eb_model = mock_model()
+        route = pd.DataFrame([{'distance': 1, 'speed': 65, 'grade': 0.1}])
+
+        eb_model = Model.from_json("/Users/nreinick/Downloads/speed_grade/2016_Toyota_Camry_LookupTable.json")
 
         predictions = eb_model.predict(route)
 

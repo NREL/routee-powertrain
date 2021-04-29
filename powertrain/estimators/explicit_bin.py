@@ -195,18 +195,18 @@ class ExplicitBin(EstimatorInterface):
         # Cut and label each attribute - manual
         for f_i in self.feature_pack.feature_list:
 
-            _unique_vals = len(links_df[f_i].unique())
-            if _unique_vals <= 10:
-                links_df.loc[:, f_i + '_bins'] = links_df.loc[:, f_i]
-
-            else:
-                bin_lims = self.bin_lims[f_i]
-                bin_labels = self.bin_labels[f_i]
-                _min = bin_lims[0] + .000001
-                _max = bin_lims[-1] - .000001
-                # clip any values that exceed the lower or upper bin limits
-                links_df.loc[:, f_i] = links_df[f_i].clip(lower=_min, upper=_max)
-                links_df.loc[:, f_i + '_bins'] = pd.cut(links_df[f_i], bin_lims, labels=bin_labels)
+            # _unique_vals = len(links_df[f_i].unique())
+            # if _unique_vals <= 10:
+            #     links_df.loc[:, f_i + '_bins'] = links_df.loc[:, f_i]
+            #
+            # else:
+            bin_lims = self.bin_lims[f_i]
+            bin_labels = self.bin_labels[f_i]
+            _min = bin_lims[0] + .000001
+            _max = bin_lims[-1] - .000001
+            # clip any values that exceed the lower or upper bin limits
+            links_df.loc[:, f_i] = links_df[f_i].clip(lower=_min, upper=_max)
+            links_df.loc[:, f_i + '_bins'] = pd.cut(links_df[f_i], bin_lims, labels=bin_labels)
 
         # merge energy rates from grouped table to link/route df
         bin_cols = [i + '_bins' for i in self.feature_pack.feature_list]
