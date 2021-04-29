@@ -3,6 +3,7 @@ from __future__ import annotations
 import warnings
 
 import ast
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -65,11 +66,13 @@ class ExplicitBin(EstimatorInterface):
 
     def train(self,
               data: pd.DataFrame,
+              bins: Optional[dict] = None,
               ):
         """
-        train method for the base estimator (linear regression)
+
         Args:
             data:
+            bins:
 
         Returns:
 
@@ -91,70 +94,10 @@ class ExplicitBin(EstimatorInterface):
         # Default bin limits and labels for grade and speed
         # format: {<keyword>: ([limits], [labels])}
 
-        bin_defaults = {
-            'grade': (
-                [-15, -5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 15],
-                [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6],
-            ),
-            'speed': (
-                [0.0,
-                 8.0,
-                 16.0,
-                 24.0,
-                 32.0,
-                 40.0,
-                 48.0,
-                 56.0,
-                 64.0,
-                 72.0,
-                 80.0,
-                 88.0,
-                 96.0,
-                 104.0,
-                 112.0,
-                 120.0,
-                 128.0,
-                 160.0],
-                [0.0,
-                 8.0,
-                 16.0,
-                 24.0,
-                 32.0,
-                 40.0,
-                 48.0,
-                 56.0,
-                 64.0,
-                 72.0,
-                 80.0,
-                 88.0,
-                 96.0,
-                 104.0,
-                 112.0,
-                 120.0,
-                 128.0]
-            ),
-            'entry_angle': (
-                [-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180],
-                [-165, -135, -105, -75, -45, -15, 15, 45, 75, 105, 135, 165],
-            ),
-            'exit_angle': (
-                [-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180],
-                [-165, -135, -105, -75, -45, -15, 15, 45, 75, 105, 135, 165],
-            ),
-            'ratio_ffs': (
-                [0, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 2.0],
-                [0.25, 0.55, 0.65, 0.75, 0.85, 0.95, 1.5],
-            ),
-        }
-
         for f_i in self.feature_pack.feature_list:
-            _unique_vals = len(df[f_i].unique())
-
-            if _unique_vals <= 10:
-                df.loc[:, f_i + '_bins'] = df.loc[:, f_i]
-            elif f_i in bin_defaults.keys():
-                self.bin_lims[f_i] = bin_defaults[f_i][0]
-                self.bin_labels[f_i] = bin_defaults[f_i][1]
+            if f_i in bins.keys():
+                self.bin_lims[f_i] = bins[f_i][0]
+                self.bin_labels[f_i] = bins[f_i][1]
                 df.loc[:, f_i + '_bins'] = pd.cut(df[f_i], self.bin_lims[f_i], labels=self.bin_labels[f_i])
 
             else:
