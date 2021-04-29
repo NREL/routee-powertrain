@@ -1,6 +1,9 @@
+from pathlib import Path
 from unittest import TestCase
 
-from tests.mock_resources import mock_route, mock_model
+from powertrain import Model
+from powertrain.estimators.explicit_bin import ExplicitBin
+from tests.mock_resources import *
 
 
 class TestPredict(TestCase):
@@ -14,4 +17,19 @@ class TestPredict(TestCase):
         self.assertEqual(len(predictions), len(route), 'should produce same number of links')
 
         # TODO: check that predicted energy is in reasonable range for this test route.
+
+    def test_eb_single_index(self):
+        outfile = Path(".tmpfile.json")
+
+        train_data, feature_pack = mock_data_single_feature()
+        eb = ExplicitBin(feature_pack)
+        m = Model(eb)
+
+        m.train(train_data)
+
+        m.to_json(outfile)
+
+        new_m = Model.from_json(outfile)
+
+        outfile.unlink()
 
