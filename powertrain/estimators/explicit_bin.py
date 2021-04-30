@@ -10,6 +10,25 @@ import pandas as pd
 from powertrain.core.features import FeaturePack
 from powertrain.estimators.estimator_interface import EstimatorInterface
 
+BIN_DEFAULTS = {
+    'grade_percent': (
+        [-15, -5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 15],
+        [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6],
+    ),
+    'speed_mph': (
+        [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 100],
+        [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80],
+    ),
+    'entry_angle_degrees': (
+        [0, 30, 60, 90, 120, 150, 180],
+        [15, 45, 75, 105, 135, 165],
+    ),
+    'exit_angle_degrees': (
+        [0, 30, 60, 90, 120, 150, 180],
+        [15, 45, 75, 105, 135, 165],
+    ),
+}
+
 
 class ExplicitBin(EstimatorInterface):
     """Energy consumption rates matrix with same dimensions as link features.

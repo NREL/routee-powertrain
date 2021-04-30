@@ -2,17 +2,15 @@ from pathlib import Path
 from unittest import TestCase
 
 from powertrain import Model
-from powertrain.estimators.explicit_bin import ExplicitBin
+from powertrain.estimators.explicit_bin import ExplicitBin, BIN_DEFAULTS
 from tests.mock_resources import *
 
 
 class TestPredict(TestCase):
     def test_eb_model_predict(self):
-        route = mock_route()
+        route = pd.DataFrame([{'miles': 1, 'gpsspeed': 65, 'grade': 0.1}])
 
-        route = pd.DataFrame([{'distance': 1, 'speed': 65, 'grade': 0.1}])
-
-        eb_model = Model.from_json("/Users/nreinick/Downloads/speed_grade/2016_Toyota_Camry_LookupTable.json")
+        eb_model = mock_model()
 
         predictions = eb_model.predict(route)
 
@@ -24,7 +22,13 @@ class TestPredict(TestCase):
         outfile = Path(".tmpfile.json")
 
         train_data, feature_pack = mock_data_single_feature()
-        eb = ExplicitBin(feature_pack)
+
+        bins = {
+            'speed': BIN_DEFAULTS['speed_mph'],
+        }
+
+        eb = ExplicitBin(feature_pack, bins=bins)
+
         m = Model(eb)
 
         m.train(train_data)

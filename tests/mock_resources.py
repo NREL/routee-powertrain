@@ -19,20 +19,20 @@ def mock_model():
 def mock_data_single_feature():
     data = [
         {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 1, 'energy': 1},
+        {'distance': 1, 'speed': 2, 'energy': 1},
+        {'distance': 1, 'speed': 3, 'energy': 1},
+        {'distance': 1, 'speed': 4, 'energy': 1},
+        {'distance': 1, 'speed': 5, 'energy': 1},
+        {'distance': 1, 'speed': 6, 'energy': 1},
+        {'distance': 1, 'speed': 7, 'energy': 1},
+        {'distance': 1, 'speed': 8, 'energy': 1},
+        {'distance': 1, 'speed': 9, 'energy': 1},
+        {'distance': 1, 'speed': 10, 'energy': 1},
+        {'distance': 1, 'speed': 12, 'energy': 1},
     ]
 
     feature_pack = FeaturePack(
-        features=[Feature(name="speed", units="")],
+        features=(Feature(name="speed", units=""),),
         distance=Feature(name="distance", units=""),
         energy=Feature(name="energy", units=""),
     )
