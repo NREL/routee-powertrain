@@ -11,7 +11,6 @@ import numpy as np
 from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 
-from powertrain.core.core_utils import test_train_split
 from powertrain.core.metadata import Metadata
 from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
