@@ -32,7 +32,8 @@ def visualize_features(
 
     # grab the necessary metadata from the model
     feature_meta = model.metadata.estimator_features['features']
-    distance_units = model.metadata.estimator_features['distance']['name']
+    distance_name = model.metadata.estimator_features['distance']['name']
+    distance_units = model.metadata.estimator_features['distance']['units']
     energy_units = model.metadata.estimator_features['energy']['units']
     model_name = model.metadata.model_description
     estimator_name = model.metadata.estimator_name
@@ -44,7 +45,7 @@ def visualize_features(
     # if any features are missing in config, throw an error
     if not all(feature in feature_ranges.keys() for feature in feature_dict.keys()):
         missing_features = set(feature_dict.keys()) - set(feature_ranges.keys())
-        raise KeyError(f'feature range config is missing {missing_features} for model {model_name}')
+        raise KeyError(f'feature range config is missing {missing_features} for model {model_name} {estimator_name}')
 
     # dict for holding the prediction series
     predictions = {}
@@ -66,38 +67,44 @@ def visualize_features(
                                                     feature_ranges[current_feature]['max'],
                                                     num=num_links)
         # for every other feature, set it to its default value for the all links
-        for other_feature in feature_ranges:
+        for other_feature in feature_dict.keys():
             if other_feature != current_feature:
                 links_df[other_feature] = [(feature_ranges[other_feature]['default'])] * len(links_df)
         # set distance to be a constant and label it with the distance name found in the metadata
-        links_df[distance_units] = [.1] * len(links_df)
+        links_df[distance_name] = [.1] * len(links_df)
 
         # make a prediction using the test links
         try:
             prediction = model.predict(links_df)
-        except Exception as error:
-            log.error(f'unable to predict {current_feature} with model {model_name} due to ERROR:')
+        except:
+            log.error(f'unable to predict {current_feature} with model {model_name} {estimator_name} due to ERROR:')
             log.error(f" {traceback.format_exc()}")
-            log.error(f"{current_feature} plot for model {model_name} skipped..")
+            log.error(f"{current_feature} plot for model {model_name} {estimator_name} skipped..")
             continue
 
         # plot the prediction and save the figure
         plt.plot(links_df[current_feature],
-                 prediction * 100 / links_df[distance_units],
+                 prediction * 100 / links_df[distance_name],
                  label=model_name)
-        plt.title(f'{model_name}_{estimator_name}')
+        plt.title(f'{estimator_name} [{current_feature}]')
         plt.xlabel(f'{current_feature} [{current_units}]')
         plt.ylabel(f'{energy_units}/100{distance_units}')
 
         # if an output filepath is specified, save th results instead of displaying them
         if output_path is not None:
-            Path(output_path).joinpath(f'{model_name}').mkdir(parents=True, exist_ok=True)
-            plt.savefig(Path(output_path).joinpath(f'{model_name}/{model_name}_{estimator_name}_{current_feature}.png'),
-                        format='png')
+            try:
+                Path(output_path).joinpath(f'{model_name}').mkdir(parents=True, exist_ok=True)
+                plt.savefig(Path(output_path).joinpath(f'{model_name}/{estimator_name}_[{current_feature}].png'),
+                            format='png')
+            except:
+                log.error(f'unable to save plot for {current_feature} with model {model_name} {estimator_name} due to '
+                          f'ERROR:')
+                log.error(f" {traceback.format_exc()}")
+                log.error(f"{current_feature} plot for model {model_name} {estimator_name} skipped..")
         else:
             plt.show()
-        plt.clf()
 
+        plt.clf()
         predictions[current_feature] = prediction
 
     return predictions

@@ -6,6 +6,7 @@ import logging
 
 from datetime import datetime
 from pathlib import Path
+import traceback
 from typing import NamedTuple, Dict, Tuple
 
 import yaml
@@ -109,7 +110,7 @@ def run():
                                    vconfig.output_path)
             except Exception as error:
                 _err(f'unable to process model {model_path} due to ERROR:')
-                _err(f" {str(error)}")
+                _err(f" {traceback.format_exc()}")
 
     if pickle_model_paths:
         log.info(f'processing .pickle files')
@@ -121,9 +122,9 @@ def run():
                                    vconfig.num_links,
                                    vconfig.int_features,
                                    vconfig.output_path)
-            except Exception as error:
+            except Exception:
                 _err(f'unable to process model {model_path} due to ERROR:')
-                _err(f" {str(error)}")
+                _err(f" {traceback.format_exc()}")
 
     log.info('done!')
 
