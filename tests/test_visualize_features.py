@@ -64,9 +64,9 @@ class TestVisualizeFeatures(TestCase):
             self.assertEqual(len(predictions['grade']), 15, 'should have made predictions for 15 links testing grade')
 
             # tests for saving plots and naming convention
-            self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{model_name}_{estimator_name}_grade.png')),
+            self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{estimator_name}_[grade].png')),
                             'should save grade plot as png')
-            self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{model_name}_{estimator_name}_gpsspeed.png')),
+            self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{estimator_name}_[gpsspeed].png')),
                             'should save gpsspeed plot as png')
 
         except AssertionError as error:
