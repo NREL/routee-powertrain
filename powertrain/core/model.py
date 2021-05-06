@@ -60,7 +60,8 @@ class Model:
     def train(
             self,
             data: DataFrame,
-            trip_column: Optional[str] = None
+            trip_column: Optional[str] = None,
+            **kwargs,
     ):
         """
 
@@ -80,7 +81,7 @@ class Model:
         # splitting test data between train and validate --> 20% here
         train, test = test_train_split(pass_data.dropna(), 0.2)
 
-        self._estimator.train(pass_data)
+        self._estimator.train(pass_data, **kwargs)
 
         model_errors = compute_errors(test, self, trip_column)
 

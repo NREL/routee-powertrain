@@ -22,7 +22,7 @@ class EstimatorInterface(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def train(self, data: DataFrame):
+    def train(self, data: DataFrame, **kwargs):
         """
         abstract train method
 

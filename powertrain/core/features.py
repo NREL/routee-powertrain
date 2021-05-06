@@ -3,23 +3,23 @@ from __future__ import annotations
 from typing import NamedTuple, Tuple, List, Optional
 
 
-class Range(NamedTuple):
+class FeatureRange(NamedTuple):
     lower: float
     upper: float
 
     @classmethod
-    def from_dict(cls, d: Optional[dict]) -> Optional[Range]:
+    def from_dict(cls, d: Optional[dict]) -> Optional[FeatureRange]:
         if not d:
             return None
 
-        return Range(**d)
+        return FeatureRange(**d)
 
 
 class Feature(NamedTuple):
     name: str
     units: str
 
-    range: Optional[Range] = None
+    feature_range: Optional[FeatureRange] = None
 
     @classmethod
     def from_dict(cls, d: dict) -> Feature:
@@ -28,9 +28,9 @@ class Feature(NamedTuple):
         elif 'units' not in d:
             raise ValueError("must provide feature units when building from dictionary")
 
-        range = Range.from_dict(d.get('range'))
+        frange = FeatureRange.from_dict(d.get('range'))
 
-        return Feature(name=d['name'], units=d['units'], range=range)
+        return Feature(name=d['name'], units=d['units'], feature_range=frange)
 
 
 class FeaturePack(NamedTuple):
