@@ -2,18 +2,38 @@ import os
 
 import pandas as pd
 
-from powertrain import load_pretrained_model
+from powertrain import load_pretrained_model, FeaturePack, Feature
 
 
 def mock_route() -> pd.DataFrame:
     route_path = os.path.join("routee-powertrain-test-data", "trip_11394_1_metropia_austin_v2.csv")
     route_df = pd.read_csv(route_path)
-    route_df = route_df.rename(columns={
-        'mean_mph': 'gpsspeed',
-    })
 
     return route_df
 
 
 def mock_model():
     return load_pretrained_model("2016_Leaf_24_kWh_ExplicitBin")
+
+
+def mock_data_single_feature():
+    data = [
+        {'distance': 1, 'speed': 1, 'energy': 1},
+        {'distance': 1, 'speed': 2, 'energy': 1},
+        {'distance': 1, 'speed': 3, 'energy': 1},
+        {'distance': 1, 'speed': 4, 'energy': 1},
+        {'distance': 1, 'speed': 5, 'energy': 1},
+        {'distance': 1, 'speed': 6, 'energy': 1},
+        {'distance': 1, 'speed': 7, 'energy': 1},
+        {'distance': 1, 'speed': 8, 'energy': 1},
+        {'distance': 1, 'speed': 9, 'energy': 1},
+        {'distance': 1, 'speed': 10, 'energy': 1},
+        {'distance': 1, 'speed': 12, 'energy': 1},
+    ]
+
+    feature_pack = FeaturePack(
+        features=(Feature(name="speed", units=""),),
+        distance=Feature(name="distance", units=""),
+        energy=Feature(name="energy", units=""),
+    )
+    return pd.DataFrame(data), feature_pack

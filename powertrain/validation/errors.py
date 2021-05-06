@@ -81,4 +81,12 @@ def compute_errors(
 
     errors['net_error'] = net_energy_error(target, target_pred)
 
+    total_dist = test_df[feature_pack.distance.name].sum()
+
+    pred_energy = np.sum(target_pred)
+    actual_energy = np.sum(target)
+
+    errors['actual_dist_per_energy'] = total_dist / actual_energy
+    errors['pred_dist_per_energy'] = total_dist / pred_energy
+
     return errors

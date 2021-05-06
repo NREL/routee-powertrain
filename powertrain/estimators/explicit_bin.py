@@ -1,12 +1,33 @@
 from __future__ import annotations
 
 import ast
+import warnings
+from typing import Optional
 
 import numpy as np
 import pandas as pd
 
 from powertrain.core.features import FeaturePack
 from powertrain.estimators.estimator_interface import EstimatorInterface
+
+BIN_DEFAULTS = {
+    'grade_percent': (
+        [-15, -5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 15],
+        [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6],
+    ),
+    'speed_mph': (
+        [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 100],
+        [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80],
+    ),
+    'entry_angle_degrees': (
+        [0, 30, 60, 90, 120, 150, 180],
+        [15, 45, 75, 105, 135, 165],
+    ),
+    'exit_angle_degrees': (
+        [0, 30, 60, 90, 120, 150, 180],
+        [15, 45, 75, 105, 135, 165],
+    ),
+}
 
 
 class ExplicitBin(EstimatorInterface):
@@ -53,7 +74,13 @@ class ExplicitBin(EstimatorInterface):
             self,
             feature_pack: FeaturePack,
             model: pd.DataFrame = pd.DataFrame(),
+            bins: Optional[dict] = None,
     ):
+        if not bins:
+            self.bins = {}
+        else:
+            self.bins = bins
+
         self.bin_lims: dict = {}
         self.bin_labels: dict = {}
         self.model = model
@@ -64,9 +91,10 @@ class ExplicitBin(EstimatorInterface):
               data: pd.DataFrame,
               ):
         """
-        train method for the base estimator (linear regression)
+
         Args:
             data:
+            bins:
 
         Returns:
 
@@ -88,34 +116,10 @@ class ExplicitBin(EstimatorInterface):
         # Default bin limits and labels for grade and speed
         # format: {<keyword>: ([limits], [labels])}
 
-        bin_defaults = {
-            'grade': (
-                [-15, -5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 15],
-                [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6],
-            ),
-            'speed': (
-                [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 100],
-                [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80],
-            ),
-            'entry_angle': (
-                [0, 30, 60, 90, 120, 150, 180],
-                [15, 45, 75, 105, 135, 165],
-            ),
-            'exit_angle': (
-                [0, 30, 60, 90, 120, 150, 180],
-                [15, 45, 75, 105, 135, 165],
-            ),
-        }
-
         for f_i in self.feature_pack.feature_list:
-            _unique_vals = len(df[f_i].unique())
-
-            if _unique_vals <= 10:
-                df.loc[:, f_i + '_bins'] = df.loc[:, f_i]
-
-            elif f_i in bin_defaults.keys():
-                self.bin_lims[f_i] = bin_defaults[f_i][0]
-                self.bin_labels[f_i] = bin_defaults[f_i][1]
+            if f_i in self.bins.keys():
+                self.bin_lims[f_i] = self.bins[f_i][0]
+                self.bin_labels[f_i] = self.bins[f_i][1]
                 df.loc[:, f_i + '_bins'] = pd.cut(df[f_i], self.bin_lims[f_i], labels=self.bin_labels[f_i])
 
             else:
@@ -155,19 +159,18 @@ class ExplicitBin(EstimatorInterface):
 
         # Cut and label each attribute - manual
         for f_i in self.feature_pack.feature_list:
-
-            _unique_vals = len(links_df[f_i].unique())
-            if _unique_vals <= 10:
-                links_df.loc[:, f_i + '_bins'] = links_df.loc[:, f_i]
-
-            else:
-                bin_lims = self.bin_lims[f_i]
-                bin_labels = self.bin_labels[f_i]
-                _min = bin_lims[0] + .000001
-                _max = bin_lims[-1] - .000001
-                # clip any values that exceed the lower or upper bin limits
-                links_df.loc[:, f_i] = links_df[f_i].clip(lower=_min, upper=_max)
-                links_df.loc[:, f_i + '_bins'] = pd.cut(links_df[f_i], bin_lims, labels=bin_labels)
+            # _unique_vals = len(links_df[f_i].unique())
+            # if _unique_vals <= 10:
+            #     links_df.loc[:, f_i + '_bins'] = links_df.loc[:, f_i]
+            #
+            # else:
+            bin_lims = self.bin_lims[f_i]
+            bin_labels = self.bin_labels[f_i]
+            _min = bin_lims[0] + .000001
+            _max = bin_lims[-1] - .000001
+            # clip any values that exceed the lower or upper bin limits
+            links_df.loc[:, f_i] = links_df[f_i].clip(lower=_min, upper=_max)
+            links_df.loc[:, f_i + '_bins'] = pd.cut(links_df[f_i], bin_lims, labels=bin_labels)
 
         # merge energy rates from grouped table to link/route df
         bin_cols = [i + '_bins' for i in self.feature_pack.feature_list]
@@ -187,7 +190,7 @@ class ExplicitBin(EstimatorInterface):
 
     def to_json(self) -> dict:
         out_json = {
-            'model': self.model.to_json(orient="index"),
+            'model': self.model.to_json(orient="table"),
             'bin_lims': self.bin_lims,
             'bin_labels': self.bin_labels,
             'feature_pack': self.feature_pack.to_json(),
@@ -198,11 +201,16 @@ class ExplicitBin(EstimatorInterface):
     @classmethod
     def from_json(cls, json: dict) -> ExplicitBin:
         feature_pack = FeaturePack.from_json(json['feature_pack'])
-        model_df = pd.read_json(json['model'], orient="index")
-        model_df.index = pd.MultiIndex.from_tuples(
-            [ast.literal_eval(i) for i in model_df.index],
-            names=[f for f in feature_pack.feature_list]
-        )
+        try:
+            model_df = pd.read_json(json['model'], orient="table")
+        except KeyError:
+            model_df = pd.read_json(json['model'], orient="index")
+            model_df.index = pd.MultiIndex.from_tuples(
+                [ast.literal_eval(i) for i in model_df.index],
+                names=[f for f in feature_pack.feature_list]
+            )
+            warnings.warn("This ExplicitBin model uses an old json format that will be deprecated")
+
         eb = ExplicitBin(feature_pack=feature_pack, model=model_df)
         eb.bin_lims = json['bin_lims']
         eb.bin_labels = json['bin_labels']

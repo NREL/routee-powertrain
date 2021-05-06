@@ -41,9 +41,20 @@ feature_pack = FeaturePack(features, distance, energy)
 train_df = df[['miles', 'gpsspeed', 'grade', energy.name]].dropna()
 train_df = train_df[train_df.miles > 0]
 
+bins = {
+    'gpsspeed': (
+        [0, 10, 20, 30, 40, 50, 60, 70, 80],
+        [5, 15, 25, 35, 45, 55, 65, 75],
+    ),
+    'grade': (
+        [-15, -10, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 10, 15],
+        [-12.5, -7.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 7.5, 12.5],
+    ),
+}
+
 ln_e = LinearRegression(feature_pack=feature_pack)
 rf_e = RandomForest(feature_pack=feature_pack)
-eb_e = ExplicitBin(feature_pack=feature_pack)
+eb_e = ExplicitBin(feature_pack=feature_pack, bins=bins)
 
 if __name__ == "__main__":
 
