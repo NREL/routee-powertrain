@@ -8,7 +8,7 @@ from typing import Optional, Union
 from urllib import request
 
 import numpy as np
-from pandas import DataFrame, Series
+from pandas import DataFrame
 
 from powertrain.core.core_utils import test_train_split
 from powertrain.core.metadata import Metadata
@@ -16,6 +16,7 @@ from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
+from powertrain.estimators.rf_lookup import RandomForestLookup
 from powertrain.utils.fs import get_version
 from powertrain.validation.errors import compute_errors
 
@@ -23,6 +24,7 @@ _registered_estimators = {
     'LinearRegression': LinearRegression,
     'ExplicitBin': ExplicitBin,
     'RandomForest': RandomForest,
+    'RandomForestLookup': RandomForestLookup,
 }
 
 log = logging.getLogger(__name__)

@@ -14,6 +14,9 @@ class FeatureRange(NamedTuple):
 
         return FeatureRange(**d)
 
+    def to_json(self) -> dict:
+        return self._asdict()
+
 
 class Feature(NamedTuple):
     name: str
@@ -28,9 +31,19 @@ class Feature(NamedTuple):
         elif 'units' not in d:
             raise ValueError("must provide feature units when building from dictionary")
 
-        frange = FeatureRange.from_dict(d.get('range'))
+        frange = FeatureRange.from_dict(d.get('feature_range'))
 
         return Feature(name=d['name'], units=d['units'], feature_range=frange)
+
+    def to_json(self) -> dict:
+        out = {
+            'name': self.name,
+            'units': self.units,
+        }
+        if self.feature_range:
+            out['feature_range'] = self.feature_range.to_json()
+
+        return out
 
 
 class FeaturePack(NamedTuple):
@@ -44,7 +57,7 @@ class FeaturePack(NamedTuple):
 
     def to_json(self) -> dict:
         return {
-            'features': [f._asdict() for f in self.features],
+            'features': [f.to_json() for f in self.features],
             'distance': self.distance._asdict(),
             'energy': self.energy._asdict(),
         }
