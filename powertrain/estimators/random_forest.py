@@ -78,6 +78,7 @@ class RandomForest(EstimatorInterface):
         out_json = {
             'model': serialize_random_forest_regressor(self.model),
             'feature_pack': self.feature_pack.to_json(),
+            'feature_importance': {fname: fi for fname, fi in zip(self.feature_pack.feature_list, self.model.feature_importances_)},
             'cores': self.cores
         }
 

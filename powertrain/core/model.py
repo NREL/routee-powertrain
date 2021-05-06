@@ -9,8 +9,8 @@ from urllib import request
 
 import numpy as np
 from pandas import DataFrame
+from sklearn.model_selection import train_test_split
 
-from powertrain.core.core_utils import test_train_split
 from powertrain.core.metadata import Metadata
 from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
@@ -63,6 +63,7 @@ class Model:
             self,
             data: DataFrame,
             trip_column: Optional[str] = None,
+            random_seed: int = 123,
             **kwargs,
     ):
         """
@@ -70,6 +71,7 @@ class Model:
         Args:
             data:
             trip_column:
+            random_seed:
 
         Returns:
 
@@ -81,7 +83,7 @@ class Model:
         pass_data = pass_data[~pass_data.isin([np.nan, np.inf, -np.inf]).any(1)]
 
         # splitting test data between train and validate --> 20% here
-        train, test = test_train_split(pass_data.dropna(), 0.2)
+        train, test = train_test_split(pass_data.dropna(), test_size=0.2, random_state=random_seed)
 
         self._estimator.train(pass_data, **kwargs)
 
