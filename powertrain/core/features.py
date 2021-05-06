@@ -1,11 +1,28 @@
 from __future__ import annotations
 
-from typing import NamedTuple, Tuple, List
+from typing import NamedTuple, Tuple, List, Optional
+
+
+class FeatureRange(NamedTuple):
+    lower: float
+    upper: float
+
+    @classmethod
+    def from_dict(cls, d: Optional[dict]) -> Optional[FeatureRange]:
+        if not d:
+            return None
+
+        return FeatureRange(**d)
+
+    def to_json(self) -> dict:
+        return self._asdict()
 
 
 class Feature(NamedTuple):
     name: str
     units: str
+
+    feature_range: Optional[FeatureRange] = None
 
     @classmethod
     def from_dict(cls, d: dict) -> Feature:
@@ -14,7 +31,19 @@ class Feature(NamedTuple):
         elif 'units' not in d:
             raise ValueError("must provide feature units when building from dictionary")
 
-        return Feature(name=d['name'], units=d['units'])
+        frange = FeatureRange.from_dict(d.get('feature_range'))
+
+        return Feature(name=d['name'], units=d['units'], feature_range=frange)
+
+    def to_json(self) -> dict:
+        out = {
+            'name': self.name,
+            'units': self.units,
+        }
+        if self.feature_range:
+            out['feature_range'] = self.feature_range.to_json()
+
+        return out
 
 
 class FeaturePack(NamedTuple):
@@ -28,7 +57,7 @@ class FeaturePack(NamedTuple):
 
     def to_json(self) -> dict:
         return {
-            'features': [f._asdict() for f in self.features],
+            'features': [f.to_json() for f in self.features],
             'distance': self.distance._asdict(),
             'energy': self.energy._asdict(),
         }

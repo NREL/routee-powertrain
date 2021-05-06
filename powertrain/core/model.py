@@ -16,6 +16,7 @@ from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
+from powertrain.estimators.rf_lookup import RandomForestLookup
 from powertrain.utils.fs import get_version
 from powertrain.validation.errors import compute_errors
 
@@ -23,6 +24,7 @@ _registered_estimators = {
     'LinearRegression': LinearRegression,
     'ExplicitBin': ExplicitBin,
     'RandomForest': RandomForest,
+    'RandomForestLookup': RandomForestLookup,
 }
 
 log = logging.getLogger(__name__)
@@ -62,6 +64,7 @@ class Model:
             data: DataFrame,
             trip_column: Optional[str] = None,
             random_seed: int = 123,
+            **kwargs,
     ):
         """
 
@@ -82,7 +85,7 @@ class Model:
         # splitting test data between train and validate --> 20% here
         train, test = train_test_split(pass_data.dropna(), test_size=0.2, random_state=random_seed)
 
-        self._estimator.train(pass_data)
+        self._estimator.train(pass_data, **kwargs)
 
         model_errors = compute_errors(test, self, trip_column)
 
