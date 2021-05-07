@@ -7,7 +7,7 @@ from powertrain.io.api import read_model
 from powertrain.io.load import load_pretrained_model, load_route, list_available_models
 
 name = "powertrain"
-__version__ = "0.4.1"
+__version__ = "0.5.0"
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
