@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Optional, NamedTuple, Tuple, Union
+import operator
+from functools import reduce
+from typing import Optional, NamedTuple, Tuple
 
 import numpy as np
 from pandas import DataFrame, Series
@@ -29,7 +30,6 @@ class LookupMatrix(NamedTuple):
             'energy_matrix': self.energy_matrix.tolist(),
         }
         return out
-
 
 
 class RandomForestLookup(EstimatorInterface):
@@ -71,10 +71,10 @@ class RandomForestLookup(EstimatorInterface):
         else:
             cores = kwargs['cores']
 
-        if 'grid_points' not in kwargs:
-            grid_points = 50
+        if 'grid_shape' not in kwargs:
+            grid_shape = (50,) * len(self.feature_pack.features)
         else:
-            grid_points = kwargs['grid_points']
+            grid_shape = kwargs['grid_shape']
 
         rf_model = RandomForestRegressor(n_estimators=20,
                                          max_features='auto',
@@ -88,11 +88,18 @@ class RandomForestLookup(EstimatorInterface):
 
         rf_model = rf_model.fit(x.values, y.values)
 
-        points = tuple(np.linspace(f.feature_range.lower, f.feature_range.upper, grid_points) for f in self.feature_pack.features)
-        predictions = rf_model.predict(np.stack(list(map(np.ravel, np.meshgrid(*points))), axis=1))
+        points = tuple(
+            np.linspace(
+                f.feature_range.lower,
+                f.feature_range.upper,
+                shape
+            ) for f, shape in zip(self.feature_pack.features, grid_shape)
+        )
+        mesh = np.meshgrid(*points)
+        pred_input = np.stack(list(map(np.ravel, mesh)), axis=1)
+        predictions = rf_model.predict(pred_input)
 
-        outshape = tuple(grid_points for _ in range(len(self.feature_pack.features)))
-        energy_matrix = np.reshape(predictions, outshape).T
+        energy_matrix = np.reshape(predictions, grid_shape, order='F')
 
         self.model = LookupMatrix(points, energy_matrix)
 
@@ -133,7 +140,7 @@ class RandomForestLookup(EstimatorInterface):
 
     def get_dataframe(self) -> DataFrame:
         bins = np.stack(list(map(np.ravel, np.meshgrid(*self.model.points))), axis=1)
-        outshape = (len(self.model.points[0])**len(self.model.points), )
+        outshape = tuple([reduce(operator.mul, [len(p) for p in self.model.points])])
         energy = self.model.energy_matrix.T.reshape(outshape)
         out_df = DataFrame(bins, columns=self.feature_pack.feature_list)
         out_df["energy_rate"] = energy
