@@ -45,7 +45,7 @@ def visualize_features(
     # if any features are missing in config, throw an error
     if not all(feature in feature_ranges.keys() for feature in feature_dict.keys()):
         missing_features = set(feature_dict.keys()) - set(feature_ranges.keys())
-        raise KeyError(f'feature range config is missing {missing_features} for model {model_name} {estimator_name}')
+        raise KeyError(f'feature range is missing {missing_features} for model {model_name} {estimator_name}')
 
     # dict for holding the prediction series
     predictions = {}
@@ -108,3 +108,70 @@ def visualize_features(
         predictions[current_feature] = prediction
 
     return predictions
+
+
+def contour_plot(model: Model,
+                 x_feature: str,
+                 y_feature: str,
+                 feature_ranges: {str, dict},
+                 vector_len: int,
+                 output_path: Optional[str] = None):
+
+    # get the necessary information from the metadata
+    feature_meta = model.metadata.estimator_features['features']
+    distance_name = model.metadata.estimator_features['distance']['name']
+    model_name = model.metadata.model_description
+
+    # get all of the feature units from the metadata
+    feature_dict = {}
+    for feature in feature_meta: feature_dict[feature['name']] = feature['units']
+
+    if not all(feature in feature_ranges.keys() for feature in feature_dict.keys()):
+        missing_features = set(feature_dict.keys()) - set(feature_ranges.keys())
+        raise KeyError(f'feature range is missing {missing_features} for model {model_name}')
+
+    # check that both of the test features are supported by the model
+    if not all(feature in feature_dict.keys() for feature in [x_feature, y_feature]):
+        missing_features = {x_feature, y_feature} - set(feature_dict.keys())
+        raise KeyError(f'model {model_name} does not support the feature(s): {missing_features}')
+
+    # generate two feature vectors based on the feature ranges and vector length provided
+    feature_1 = np.linspace(feature_ranges[x_feature]['min'],
+                            feature_ranges[x_feature]['max'],
+                            num=vector_len)
+    feature_2 = np.linspace(feature_ranges[y_feature]['min'],
+                            feature_ranges[y_feature]['max'],
+                            num=vector_len)
+    # generate xx and yy matrices
+    xx, yy = np.meshgrid(feature_1, feature_2)
+
+    # for each row in the xx and yy matrices, generate test links
+    # and predict using the model to generate an energy matrix
+    energy_matrix = []
+    other_features = set(feature_dict.keys()) - {x_feature, y_feature}
+    for i in range(vector_len):
+        links_df = DataFrame()
+        links_df[x_feature] = xx[i]
+        links_df[y_feature] = yy[i]
+        for other_feature in other_features:
+            links_df[other_feature] = [(feature_ranges[other_feature]['default'])] * len(links_df)
+        links_df[distance_name] = [1] * len(links_df)
+        energy_matrix.append(list(model.predict(links_df)))
+
+    plt.figure(figsize=(10, 8))
+    g = plt.contourf(xx, yy, energy_matrix, levels=50)
+    plt.colorbar(g)
+    plt.xlabel(f"{x_feature} ({feature_dict[x_feature]})")
+    plt.ylabel(f"{y_feature} ({feature_dict[y_feature]})")
+    plt.title(f"energy consumption rate vs {x_feature} and {y_feature}")
+
+    # if an output filepath is specified, save th results instead of displaying them
+    if output_path is not None:
+        try:
+            plt.savefig(Path(output_path).joinpath(f'/{model_name}_[{x_feature}_{y_feature}].png'),
+                        format='png')
+        except:
+            log.error(f'unable to save contour plot for {model_name} due to ERROR:')
+            log.error(f" {traceback.format_exc()}")
+    else:
+        plt.show()
