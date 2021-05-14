@@ -3,30 +3,44 @@ from unittest import TestCase
 from os import remove
 from pathlib import Path
 
-from powertrain.validation.feature_visualization import visualize_features
+from powertrain.validation.feature_visualization import visualize_features, contour_plot
 
 from tests.mock_resources import mock_model
 
 
-def _clean_temp_files(filepath: Path):
+def _clean_temp_files_multi_directory(filepath: str):
     """
-    removes the given directory and all temp files within
+    removes the given directory, sub directories, and all temp files within
 
     :param filepath: directory to be deleted
     """
-    for dir in filepath.glob('*'):
+    for dir in Path(filepath).glob('*'):
         for f in dir.glob('*'):
             try:
                 remove(f)
             except OSError as e:
                 print("Error: %s : %s" % (f, e.strerror))
         dir.rmdir()
-    filepath.rmdir()
+    Path(filepath).rmdir()
+
+
+def _clean_temp_files_single_directory(filepath: str):
+    """
+    removes the given directory and all temp files within
+
+    :param filepath: directory to be deleted
+    """
+    for f in Path(filepath).glob('*'):
+        try:
+            remove(f)
+        except OSError as e:
+            print("Error: %s : %s" % (f, e.strerror))
+    Path(filepath).rmdir()
 
 
 class TestVisualizeFeatures(TestCase):
 
-    def test_successful_run(self):
+    def test_visualize_features_successful_run(self):
         """
         test to verify that the predictions returned are the correct length, contain the tests for each of the features
         in the model, and plots are saved to the correct location with the correct naming scheme
@@ -41,8 +55,8 @@ class TestVisualizeFeatures(TestCase):
                 'default': 40
             },
             'grade': {
-                'max': 0.20,
-                'min': -0.20,
+                'max': 0.5,
+                'min': -0.5,
                 'default': 0
             }
         }
@@ -66,16 +80,17 @@ class TestVisualizeFeatures(TestCase):
             # tests for saving plots and naming convention
             self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{estimator_name}_[grade].png')),
                             'should save grade plot as png')
-            self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{estimator_name}_[gpsspeed].png')),
-                            'should save gpsspeed plot as png')
+            self.assertTrue(
+                Path.exists(Path(output_filepath).joinpath(f'{model_name}/{estimator_name}_[gpsspeed].png')),
+                'should save gpsspeed plot as png')
 
         except AssertionError as error:
             # clean up temp files
             raise AssertionError(error)
         finally:
-            _clean_temp_files(Path(output_filepath))
+            _clean_temp_files_multi_directory(output_filepath)
 
-    def test_missing_feature(self):
+    def test_visualize_features_missing_feature(self):
         """
         test to verify that a KeyError is thrown when the config is missing a required feature
         """
@@ -104,4 +119,113 @@ class TestVisualizeFeatures(TestCase):
             raise AssertionError(error)
 
         finally:
-            _clean_temp_files(output_filepath)
+            _clean_temp_files_multi_directory(output_filepath)
+
+    def test_contour_plot_successful_run(self):
+        """
+        test to verify a contour plot is successfully saved to the tmp directory
+        """
+        model = mock_model()
+        model_name = model.metadata.model_description
+        feature_ranges = {
+            'gpsspeed': {
+                'max': 80,
+                'min': 0,
+                'default': 40
+            },
+            'grade': {
+                'max': 0.5,
+                'min': -0.5,
+                'default': 0
+            }
+        }
+        # temp directory for holding temporary results
+        output_filepath = 'tmp/'
+        Path(output_filepath).mkdir(parents=True, exist_ok=True)
+
+        # run the function with the mock data
+        contour_plot(model=model,
+                     x_feature='gpsspeed',
+                     y_feature='grade',
+                     feature_ranges=feature_ranges,
+                     vector_len=100,
+                     output_path=output_filepath)
+        # tests to check the predictions
+        try:
+            # tests for saving plots and naming convention
+            self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}_[gpsspeed_grade].png')),
+                            'should save contour plot as png')
+        except AssertionError as error:
+            # clean up temp files
+            raise AssertionError(error)
+        finally:
+            _clean_temp_files_single_directory(output_filepath)
+
+    def test_contour_plot_incompatible_feature(self):
+        """
+        test to verify a KeyError is thrown if the x/y test features are not supported by the model
+        """
+        model = mock_model()
+        feature_ranges = {
+            'gpsspeed': {
+                'max': 80,
+                'min': 0,
+                'default': 40
+            },
+            'grade': {
+                'max': 0.5,
+                'min': -0.5,
+                'default': 0
+            }
+        }
+        # temp directory for holding temporary results
+        output_filepath = 'tmp/'
+        Path(output_filepath).mkdir(parents=True, exist_ok=True)
+
+        try:
+            with self.assertRaises(KeyError):
+                contour_plot(model=model,
+                             x_feature='warp_speed',
+                             y_feature='grade',
+                             feature_ranges=feature_ranges,
+                             vector_len=10,
+                             output_path=output_filepath)
+
+        except AssertionError as error:
+            # clean up temp files
+            raise AssertionError(error)
+
+        finally:
+            _clean_temp_files_single_directory(output_filepath)
+
+    def test_contour_plot_missing_feature(self):
+        """
+        test to verify that a KeyError is thrown if a required feature is missing from the feature ranges
+        """
+        model = mock_model()
+        feature_ranges = {
+            'gpsspeed': {
+                'max': 80,
+                'min': 0,
+                'default': 40
+            }
+        }
+        # temp directory for holding temporary results
+        output_filepath = 'tmp/'
+        Path(output_filepath).mkdir(parents=True, exist_ok=True)
+
+        try:
+            with self.assertRaises(KeyError):
+                contour_plot(model=model,
+                             x_feature='gpsspeed',
+                             y_feature='grade',
+                             feature_ranges=feature_ranges,
+                             vector_len=10,
+                             output_path=output_filepath)
+
+        except AssertionError as error:
+            # clean up temp files
+            raise AssertionError(error)
+
+        finally:
+            _clean_temp_files_single_directory(output_filepath)
