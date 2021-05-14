@@ -209,7 +209,7 @@ class ExplicitBin(EstimatorInterface):
                 [ast.literal_eval(i) for i in model_df.index],
                 names=[f for f in feature_pack.feature_list]
             )
-            warnings.warn("This ExplicitBin model uses an old json format that will be deprecated")
+            warnings.warn("This ExplicitBin model uses an old json format that will be deprecated in a future version.")
 
         eb = ExplicitBin(feature_pack=feature_pack, model=model_df)
         eb.bin_lims = json['bin_lims']
