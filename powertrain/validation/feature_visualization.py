@@ -58,10 +58,9 @@ def visualize_features(
         # using the feature range config, generate evenly spaced ascending values for the current feature
         links_df = DataFrame()
         if current_feature in int_features:
-            difference = int(feature_ranges[current_feature]['max'] - feature_ranges[current_feature]['min'])
             links_df[current_feature] = np.arange(start=feature_ranges[current_feature]['min'],
                                                   stop=feature_ranges[current_feature]['max'] + 1,
-                                                  step=round(difference / min([num_links, difference])))
+                                                  step=1)
         else:
             links_df[current_feature] = np.linspace(feature_ranges[current_feature]['min'],
                                                     feature_ranges[current_feature]['max'],
