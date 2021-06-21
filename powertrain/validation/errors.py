@@ -64,6 +64,7 @@ def compute_errors(
 
     rmse = np.sqrt(mean_squared_error(target, target_pred))
     errors['link_root_mean_squared_error'] = rmse
+    errors['link_norm_root_mean_squared_error'] = rmse/(sum(test_df[energy_name])/len(test_df))
 
     ew_rpe = weighted_relative_percent_difference(target, target_pred)
     errors['link_weighted_relative_percent_difference'] = ew_rpe
@@ -78,6 +79,7 @@ def compute_errors(
         errors['trip_relative_percent_difference'] = t_rpd
         errors['trip_weighted_relative_percent_difference'] = t_wrpd
         errors['trip_root_mean_squared_error'] = t_rmse
+        errors['trip_norm_root_mean_squared_error'] = t_rmse/(sum(gb[energy_name])/len(gb))
 
     errors['net_error'] = net_energy_error(target, target_pred)
 
