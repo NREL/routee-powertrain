@@ -1,10 +1,11 @@
 import logging
+import traceback
+from pathlib import Path
+from typing import Dict, Optional, Tuple
+
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
-from pathlib import Path
-import traceback
-from typing import Dict, Optional, Tuple
 
 from powertrain.core.model import Model
 
@@ -56,25 +57,31 @@ def visualize_features(
         # setup a set of test links
         # make <num_links> number of links
         # using the feature range config, generate evenly spaced ascending values for the current feature
-        links_df = DataFrame()
-        if current_feature in int_features:
-            links_df[current_feature] = np.arange(start=feature_ranges[current_feature]['min'],
-                                                  stop=feature_ranges[current_feature]['max'] + 1,
-                                                  step=1)
-        else:
-            links_df[current_feature] = np.linspace(feature_ranges[current_feature]['min'],
-                                                    feature_ranges[current_feature]['max'],
-                                                    num=num_links)
-        # for every other feature, set it to its default value for the all links
-        for other_feature in feature_units_dict.keys():
-            if other_feature != current_feature:
-                links_df[other_feature] = [(feature_ranges[other_feature]['default'])] * len(links_df)
+        sample_points = []
+        for feature in feature_units_dict.keys():
+            if feature in int_features:
+                points = np.arange(start=feature_ranges[feature]['min'],
+                                   stop=feature_ranges[feature]['max'] + 1,
+                                   step=1)
+            else:
+                points = np.linspace(feature_ranges[current_feature]['min'],
+                                     feature_ranges[feature]['max'],
+                                     num=num_links)
+
+            sample_points.append(points)
+
+        mesh = np.meshgrid(*sample_points)
+
+        pred_input = np.stack(list(map(np.ravel, mesh)), axis=1)
+
+        links_df = DataFrame(pred_input, columns=[f for f in feature_units_dict.keys()])
+
         # set distance to be a constant and label it with the distance name found in the metadata
         links_df[distance_name] = [.1] * len(links_df)
 
         # make a prediction using the test links
         try:
-            prediction = model.predict(links_df)
+            links_df['energy_pred'] = model.predict(links_df)
         except:
             log.error(f'unable to predict {current_feature} with model {model_name} {estimator_name} due to ERROR:')
             log.error(f" {traceback.format_exc()}")
@@ -82,9 +89,9 @@ def visualize_features(
             continue
 
         # plot the prediction and save the figure
-        plt.plot(links_df[current_feature],
-                 prediction * 100 / links_df[distance_name],
-                 label=model_name)
+        prediction = links_df.groupby(current_feature).energy_pred.mean()
+
+        prediction.plot()
         plt.title(f'{estimator_name} [{current_feature}]')
         plt.xlabel(f'{current_feature} [{current_units}]')
         plt.ylabel(f'{energy_units}/100{distance_units}')
