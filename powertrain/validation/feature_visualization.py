@@ -110,8 +110,6 @@ def contour_plot(model: Model,
                  x_feature: str,
                  y_feature: str,
                  feature_ranges: {str, dict},
-                 vector_len: int,
-                 int_features: Optional[Tuple] = (),
                  output_path: Optional[str] = None):
     """
         takes a model and generates a contour plot of the two test features: x_Feature and y_feature.
@@ -120,8 +118,6 @@ def contour_plot(model: Model,
         :param x_feature: one of the features used to generate the energy matrix and will be the x-axis feature
         :param y_feature: one of the features used to generate the energy matrix and will be the y-axis feature
         :param feature_ranges: a dictionary with value ranges to generate test links
-        :param vector_len: the length of the x and y feature vectors used to generate the energy matrix
-        :param int_features: optional tuple of feature names which will have their vector generated in int increments
         :param output_path: if not none, saves results to this location. Else the plot is displayed rather than saved
         :raises Exception due to IOErrors, KeyError due to missing features ranges required by the model,
         KeyError due to incompatible x/y features
@@ -145,41 +141,27 @@ def contour_plot(model: Model,
         missing_features = {x_feature, y_feature} - set(feature_units_dict.keys())
         raise KeyError(f'model {model_name} does not support the feature(s): {missing_features}')
 
-    # generate two feature vectors based on the feature ranges and vector length provided
-    # if a vector is in the integer vector list, the vector will generate with np.arange instead
-    if x_feature in int_features:
-        x_vector = np.arange(feature_ranges[x_feature]['min'],
-                             feature_ranges[x_feature]['max'],
-                             step=1)
-    else:
-        x_vector = np.linspace(feature_ranges[x_feature]['min'],
-                               feature_ranges[x_feature]['max'],
-                               num=vector_len)
+    points = {
+        n: np.linspace(
+            f['min'],
+            f['max'],
+            f['steps'],
+        ) for n, f in feature_ranges.items()
+    }
 
-    if y_feature in int_features:
-        y_vector = np.arange(feature_ranges[y_feature]['min'],
-                             feature_ranges[y_feature]['max'],
-                             step=1)
-    else:
-        y_vector = np.linspace(feature_ranges[y_feature]['min'],
-                               feature_ranges[y_feature]['max'],
-                               num=vector_len)
+    mesh = np.meshgrid(*[v for v in points.values()])
 
-    # generate xx and yy matrices
-    xx, yy = np.meshgrid(x_vector, y_vector)
+    pred_input = np.stack(list(map(np.ravel, mesh)), axis=1)
 
-    # for each row in the xx and yy matrices, generate test links
-    # and predict using the model to generate an energy matrix
-    energy_matrix = []
-    other_features = set(feature_units_dict.keys()) - {x_feature, y_feature}
-    for i in range(len(xx)):
-        links_df = DataFrame()
-        links_df[x_feature] = xx[i]
-        links_df[y_feature] = yy[i]
-        for other_feature in other_features:
-            links_df[other_feature] = [(feature_ranges[other_feature]['default'])] * len(links_df)
-        links_df[distance_name] = [1] * len(links_df)
-        energy_matrix.append(list(model.predict(links_df)))
+    df = DataFrame(pred_input, columns=[n for n in feature_ranges.keys()])
+
+    df[distance_name] = 1
+
+    df['energy'] = model.predict(df)
+
+    energy_matrix = df.groupby([y_feature, x_feature]).energy.mean().unstack().values()
+
+    xx, yy = np.meshgrid(points[x_feature], points[y_feature])
 
     plt.figure(figsize=(10, 8))
     g = plt.contourf(xx, yy, energy_matrix, levels=50)
