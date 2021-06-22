@@ -67,7 +67,7 @@ def visualize_features(
         links_df = DataFrame(pred_input, columns=[f for f in feature_units_dict.keys()])
 
         # set distance to be a constant and label it with the distance name found in the metadata
-        links_df[distance_name] = [.1] * len(links_df)
+        links_df[distance_name] = [100] * len(links_df)
 
         # make a prediction using the test links
         try:
