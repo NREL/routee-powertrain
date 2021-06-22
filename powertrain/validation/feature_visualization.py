@@ -159,7 +159,7 @@ def contour_plot(model: Model,
 
     df['energy'] = model.predict(df)
 
-    energy_matrix = df.groupby([y_feature, x_feature]).energy.mean().unstack().values()
+    energy_matrix = df.groupby([y_feature, x_feature]).energy.mean().unstack().values
 
     xx, yy = np.meshgrid(points[x_feature], points[y_feature])
 
