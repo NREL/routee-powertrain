@@ -89,7 +89,7 @@ def visualize_features(
             continue
 
         # plot the prediction and save the figure
-        prediction = links_df.groupby(current_feature).energy_pred.mean()
+        prediction = links_df.groupby(current_feature).energy_pred.median()
 
         prediction.plot()
         plt.title(f'{estimator_name} [{current_feature}]')
