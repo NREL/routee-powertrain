@@ -41,10 +41,6 @@ class VisualConfig(NamedTuple):
 
     output_path: str
 
-    num_links: int
-
-    int_features: Tuple[str, ...]
-
     feature_ranges: Dict[str, dict]
 
     @classmethod
@@ -55,8 +51,6 @@ class VisualConfig(NamedTuple):
         return VisualConfig(
             models_path=d['models_path'],
             output_path=d['output_path'] + f"visualization_results_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
-            num_links=int(d['num_links']),
-            int_features=(d['int_features']) if 'int_features' in d else (),
             feature_ranges=d['feature_ranges']
         )
 
@@ -105,8 +99,6 @@ def run():
                 model = Model.from_json(Path(model_path))
                 visualize_features(model,
                                    vconfig.feature_ranges,
-                                   vconfig.num_links,
-                                   vconfig.int_features,
                                    vconfig.output_path)
             except Exception as error:
                 _err(f'unable to process model {model_path} due to ERROR:')
@@ -119,8 +111,6 @@ def run():
                 model = Model.from_pickle(Path(model_path))
                 visualize_features(model,
                                    vconfig.feature_ranges,
-                                   vconfig.num_links,
-                                   vconfig.int_features,
                                    vconfig.output_path)
             except Exception:
                 _err(f'unable to process model {model_path} due to ERROR:')

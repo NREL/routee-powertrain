@@ -52,12 +52,12 @@ class TestVisualizeFeatures(TestCase):
             'gpsspeed': {
                 'max': 80,
                 'min': 0,
-                'default': 40
+                'steps': 40
             },
             'grade': {
                 'max': 0.5,
                 'min': -0.5,
-                'default': 0
+                'steps': 20
             }
         }
         # temp directory for holding temporary results
@@ -67,15 +67,14 @@ class TestVisualizeFeatures(TestCase):
         # run the function with the mock data
         predictions = visualize_features(model=model,
                                          feature_ranges=feature_ranges,
-                                         num_links=15,
                                          output_path=output_filepath)
         # tests to check the predictions
         try:
             self.assertEqual(list(predictions.keys()), ['gpsspeed', 'grade'], 'should have tested both grade and '
                                                                               'gpsspeed')
-            self.assertEqual(len(predictions['gpsspeed']), 15, 'should have made predictions for 15 links testing '
+            self.assertEqual(len(predictions['gpsspeed']), 40, 'should have made predictions for 15 links testing '
                                                                'gpsspeed')
-            self.assertEqual(len(predictions['grade']), 15, 'should have made predictions for 15 links testing grade')
+            self.assertEqual(len(predictions['grade']), 20, 'should have made predictions for 15 links testing grade')
 
             # tests for saving plots and naming convention
             self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{estimator_name}_[grade].png')),
@@ -99,7 +98,7 @@ class TestVisualizeFeatures(TestCase):
             'gpsspeed': {
                 'max': 80,
                 'min': 0,
-                'default': 40
+                'steps': 40
             }
         }
 
@@ -111,7 +110,6 @@ class TestVisualizeFeatures(TestCase):
             with self.assertRaises(KeyError):
                 visualize_features(model=model,
                                    feature_ranges=feature_ranges,
-                                   num_links=15,
                                    output_path=output_filepath)
 
         except AssertionError as error:
@@ -131,12 +129,12 @@ class TestVisualizeFeatures(TestCase):
             'gpsspeed': {
                 'max': 80,
                 'min': 0,
-                'default': 40
+                'steps': 40
             },
             'grade': {
                 'max': 0.5,
                 'min': -0.5,
-                'default': 0
+                'steps': 20
             }
         }
         # temp directory for holding temporary results
@@ -148,7 +146,6 @@ class TestVisualizeFeatures(TestCase):
                      x_feature='gpsspeed',
                      y_feature='grade',
                      feature_ranges=feature_ranges,
-                     vector_len=100,
                      output_path=output_filepath)
         # tests to check the predictions
         try:
@@ -170,12 +167,12 @@ class TestVisualizeFeatures(TestCase):
             'gpsspeed': {
                 'max': 80,
                 'min': 0,
-                'default': 40
+                'steps': 40
             },
             'grade': {
                 'max': 0.5,
                 'min': -0.5,
-                'default': 0
+                'steps': 20
             }
         }
         # temp directory for holding temporary results
@@ -188,7 +185,6 @@ class TestVisualizeFeatures(TestCase):
                              x_feature='warp_speed',
                              y_feature='grade',
                              feature_ranges=feature_ranges,
-                             vector_len=10,
                              output_path=output_filepath)
 
         except AssertionError as error:
@@ -207,7 +203,7 @@ class TestVisualizeFeatures(TestCase):
             'gpsspeed': {
                 'max': 80,
                 'min': 0,
-                'default': 40
+                'steps': 40
             }
         }
         # temp directory for holding temporary results
@@ -220,7 +216,6 @@ class TestVisualizeFeatures(TestCase):
                              x_feature='gpsspeed',
                              y_feature='grade',
                              feature_ranges=feature_ranges,
-                             vector_len=10,
                              output_path=output_filepath)
 
         except AssertionError as error:
