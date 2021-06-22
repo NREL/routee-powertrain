@@ -15,8 +15,6 @@ log = logging.getLogger(__name__)
 def visualize_features(
         model: Model,
         feature_ranges: Dict[str, dict],
-        num_links: int,
-        int_features: Optional[Tuple] = (),
         output_path: Optional[str] = None) -> dict:
     """
     takes a model and generates test links to independently test the model's features
@@ -24,8 +22,6 @@ def visualize_features(
 
     :param model: the model to be tested
     :param feature_ranges: a dictionary with value ranges to generate test links
-    :param num_links: the number of test links or data points the model will predict over
-    :param int_features: optional tuple of feature names which will have their links generated in integer increments
     :param output_path: if not none, saves results to this location. Else the plots are displayed rather than saved
     :return: a dictionary containing the predictions where the key is the feature tested
     :raises Exception due to IOErrors, KeyError due to missing features ranges required by the model
@@ -83,7 +79,7 @@ def visualize_features(
             continue
 
         # plot the prediction and save the figure
-        prediction = links_df.groupby(current_feature).energy_pred.median()
+        prediction = links_df.groupby(current_feature).energy_pred.mean()
 
         prediction.plot()
         plt.title(f'{estimator_name} [{current_feature}]')
