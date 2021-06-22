@@ -59,15 +59,9 @@ def visualize_features(
         # using the feature range config, generate evenly spaced ascending values for the current feature
         sample_points = []
         for feature in feature_units_dict.keys():
-            if feature in int_features:
-                points = np.arange(start=feature_ranges[feature]['min'],
-                                   stop=feature_ranges[feature]['max'] + 1,
-                                   step=1)
-            else:
-                points = np.linspace(feature_ranges[current_feature]['min'],
-                                     feature_ranges[feature]['max'],
-                                     num=num_links)
-
+            points = np.linspace(feature_ranges[feature]['min'],
+                                 feature_ranges[feature]['max'],
+                                 feature_ranges[feature]['steps'])
             sample_points.append(points)
 
         mesh = np.meshgrid(*sample_points)
