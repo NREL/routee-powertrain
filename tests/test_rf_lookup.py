@@ -16,7 +16,8 @@ class TestRandomForestLookup(TestCase):
 
         features = (
             Feature('gpsspeed', units='mph', feature_range=FeatureRange(0, 100)),
-            Feature('grade', units='decimal', feature_range=FeatureRange(-0.2, 0.2))
+            Feature('grade', units='decimal', feature_range=FeatureRange(-0.2, 0.2)),
+            Feature('pseudo_acc', units='decimal', feature_range=FeatureRange(-6000, 6000))
         )
         distance = Feature('miles', units='mi')
         energy = Feature('gge', units='gallons')
@@ -27,5 +28,5 @@ class TestRandomForestLookup(TestCase):
 
         rf_lookup = RandomForestLookup(feature_pack)
 
-        rf_lookup.train(data, grid_shape=(100, 50))
+        rf_lookup.train(data, grid_shape=(10, 5, 20))
         rf_lookup.predict(data)
