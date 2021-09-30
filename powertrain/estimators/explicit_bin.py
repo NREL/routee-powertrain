@@ -87,14 +87,11 @@ class ExplicitBin(EstimatorInterface):
         self.feature_pack: FeaturePack = feature_pack
         self.energy_rate_target: str = feature_pack.energy.name + '_per_100' + feature_pack.distance.name
 
-    def train(self,
-              data: pd.DataFrame,
-              ):
+    def train(self, data: pd.DataFrame, **kwargs):
         """
 
         Args:
             data:
-            bins:
 
         Returns:
 
@@ -140,7 +137,7 @@ class ExplicitBin(EstimatorInterface):
         self.model = df.dropna(subset=_bin_cols). \
             groupby(_bin_cols).agg(_agg_funs)
 
-        energy_rate = 100.0 * self.model[self.feature_pack.energy.name] / self.model[self.feature_pack.distance.name]
+        energy_rate = self.model[self.feature_pack.energy.name] / self.model[self.feature_pack.distance.name]
         self.model.loc[:, self.energy_rate_target] = energy_rate
 
     def predict(self, data: pd.DataFrame) -> pd.Series:
@@ -177,16 +174,13 @@ class ExplicitBin(EstimatorInterface):
         links_df = pd.merge(links_df, self.model[[self.energy_rate_target]],
                             how='left', left_on=bin_cols, right_index=True)
 
-        links_df.loc[:, self.feature_pack.energy.name] = (
-                links_df[self.energy_rate_target] * links_df[self.feature_pack.distance.name] / 100.0)
-
         # TODO: more robust method to deal with missing bin values
         _nan_count = len(links_df) - len(links_df.dropna(how='any'))
         if _nan_count > 0:
             print(f'WARNING: prediction for {_nan_count}/{len(links_df)} '
                   'records set to zero because of nan values from table lookup process')
 
-        return links_df[self.feature_pack.energy.name].fillna(0)
+        return links_df[self.energy_rate_target].fillna(0)
 
     def to_json(self) -> dict:
         out_json = {

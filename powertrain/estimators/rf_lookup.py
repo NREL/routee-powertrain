@@ -124,9 +124,8 @@ class RandomForestLookup(EstimatorInterface):
         x = np.array(raw_x).T
 
         _energy_pred_rates = interpn(self.model.points, self.model.energy_matrix, x)
-        _energy_pred = _energy_pred_rates * data[self.feature_pack.distance.name].values
 
-        energy_pred = Series(_energy_pred, index=data.index)
+        energy_pred = Series(_energy_pred_rates, index=data.index)
 
         return energy_pred
 

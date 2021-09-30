@@ -13,7 +13,7 @@ def mock_route() -> pd.DataFrame:
 
 
 def mock_model():
-    return load_pretrained_model("2016_Leaf_24_kWh_ExplicitBin")
+    return load_pretrained_model("ICE")
 
 
 def mock_data_single_feature():
