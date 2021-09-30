@@ -12,6 +12,8 @@ from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 
 from powertrain.core.metadata import Metadata
+from powertrain.core.powertrain_type import PowertrainType
+from powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
 from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
@@ -47,15 +49,26 @@ class Model:
             Unique description of the vehicle to be modeled.
         estimator (routee.estimator.base.BaseEstimator):
             Estimator to use for predicting route energy usage.
-            
+        powertrain_type (str):
+            Optional powertrain type (BEV, ICE, HEV) used for applying real world correction factors.
+
+
     """
 
-    def __init__(self, estimator: EstimatorInterface, description: Optional[str] = None):
+    def __init__(
+            self,
+            estimator: EstimatorInterface,
+            description: Optional[str] = None,
+            powertrain_type: Optional[str] = None,
+    ):
+        ptype = PowertrainType.from_string(powertrain_type)
+
         self.metadata = Metadata(
             model_description=description,
             estimator_name=estimator.__class__.__name__,
             estimator_features=estimator.feature_pack.to_json(),
-            routee_version=get_version()
+            routee_version=get_version(),
+            powertrain_type=ptype,
         )
         self._estimator = estimator
 
@@ -91,20 +104,34 @@ class Model:
 
         self.metadata = self.metadata.set_errors(model_errors)
 
-    def predict(self, links_df: DataFrame):
-        """Apply the trained energy model to to predict consumption.
+    def predict(self, links_df: DataFrame, apply_real_world_adjustment: bool = False):
+        """
+        Apply the trained energy model to to predict consumption.
 
         Args:
             links_df (pandas.DataFrame):
                 Columns that match self.features and self.distance that describe
                 vehicle passes over links in the road network.
+            apply_real_world_adjustment (bool):
+                If true, applies a real world adjustment factor to correct for environmental variables.
+                Useful if the model was trained using FASTSim data.
 
         Returns:
             energy_pred (pandas.Series):
                 Predicted energy consumption for every row in links_df.
-                
+
         """
-        return self._estimator.predict(links_df)
+        distance_col = self._estimator.feature_pack.distance.name
+
+        energy_pred_rates = self._estimator.predict(links_df)
+
+        if apply_real_world_adjustment:
+            adjustment_factor = ADJUSTMENT_FACTORS[self.metadata.powertrain_type]
+            energy_pred_rates = energy_pred_rates * adjustment_factor
+
+        energy_pred = energy_pred_rates * links_df[distance_col]
+
+        return energy_pred
 
     def to_json(self, outfile: Path):
         """Dumps a powertrain model to a json file for persistence and sharing.
