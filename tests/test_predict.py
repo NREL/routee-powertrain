@@ -7,17 +7,6 @@ from tests.mock_resources import *
 
 
 class TestPredict(TestCase):
-    def test_eb_model_predict(self):
-        route = pd.DataFrame([{'miles': 1, 'gpsspeed': 65, 'grade': 0.1}])
-
-        eb_model = mock_model()
-
-        predictions = eb_model.predict(route)
-
-        self.assertEqual(len(predictions), len(route), 'should produce same number of links')
-
-        # TODO: check that predicted energy is in reasonable range for this test route.
-
     def test_eb_single_index(self):
         outfile = Path(".tmpfile.json")
 
