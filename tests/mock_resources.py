@@ -16,24 +16,34 @@ def mock_model():
     return load_pretrained_model("ICE")
 
 
+def mock_ev_data():
+    path = os.path.join("routee-powertrain-test-data", "test_data_2016_Nissan_Leaf_30_kWh.csv")
+    return pd.read_csv(path)
+
+
+def mock_ice_data():
+    path = os.path.join("routee-powertrain-test-data", "test_data_2016_TOYOTA_Corolla_4cyl_2WD.csv")
+    return pd.read_csv(path)
+
+
 def mock_data_single_feature():
     data = [
-        {'distance': 1, 'speed': 1, 'energy': 1},
-        {'distance': 1, 'speed': 2, 'energy': 1},
-        {'distance': 1, 'speed': 3, 'energy': 1},
-        {'distance': 1, 'speed': 4, 'energy': 1},
-        {'distance': 1, 'speed': 5, 'energy': 1},
-        {'distance': 1, 'speed': 6, 'energy': 1},
-        {'distance': 1, 'speed': 7, 'energy': 1},
-        {'distance': 1, 'speed': 8, 'energy': 1},
-        {'distance': 1, 'speed': 9, 'energy': 1},
-        {'distance': 1, 'speed': 10, 'energy': 1},
-        {'distance': 1, 'speed': 12, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 1, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 2, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 3, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 4, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 5, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 6, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 7, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 8, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 9, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 10, 'energy': 1},
+        {'miles': 1, 'gpsspeed': 12, 'energy': 1},
     ]
 
     feature_pack = FeaturePack(
-        features=(Feature(name="speed", units=""),),
-        distance=Feature(name="distance", units=""),
+        features=(Feature(name="gpsspeed", units=""),),
+        distance=Feature(name="miles", units=""),
         energy=Feature(name="energy", units=""),
     )
     return pd.DataFrame(data), feature_pack

@@ -87,7 +87,10 @@ class ExplicitBin(EstimatorInterface):
         self.feature_pack: FeaturePack = feature_pack
         self.energy_rate_target: str = feature_pack.energy.name + '_per_100' + feature_pack.distance.name
 
-    def train(self, data: pd.DataFrame, **kwargs):
+    def train(self,
+              data: pd.DataFrame,
+              **kwargs,
+              ):
         """
 
         Args:
@@ -122,9 +125,11 @@ class ExplicitBin(EstimatorInterface):
             else:
                 _min_i = float(_mins[f_i])
                 _max_i = float(_maxs[f_i])
-                self.bin_lims[f_i] = np.linspace(_min_i, _max_i, num=10)
-                self.bin_labels[f_i] = None
-                df.loc[:, f_i + '_bins'] = pd.cut(df[f_i], self.bin_lims[f_i])
+                bin_lims = np.linspace(_min_i, _max_i, num=10)
+                bin_labels = (bin_lims[1:] + bin_lims[:-1]) / 2
+                self.bin_lims[f_i] = [round(l, 2) for l in bin_lims]
+                self.bin_labels[f_i] = [round(l, 2) for l in bin_labels]
+                df.loc[:, f_i + '_bins'] = pd.cut(df[f_i], self.bin_lims[f_i], labels=self.bin_labels[f_i])
 
         # TODO: Test all bin limit permutations and select the one with the least errors
 
