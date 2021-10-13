@@ -9,7 +9,7 @@ from powertrain.resources.sample_routes import sample_route_dir
 
 local_models = {
     'ICE': default_model_dir() / "2016_TOYOTA_Camry_4cyl_2WD-speed&grade.json",
-    'BEV': default_model_dir() / "2016_TESLA_Model_S60_2WD-speed&grade.json",
+    'EV': default_model_dir() / "2016_TESLA_Model_S60_2WD-speed&grade.json",
 }
 
 
