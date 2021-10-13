@@ -11,12 +11,12 @@ log = logging.getLogger()
 log.setLevel(logging.INFO)
 
 # these all come from the box developer app
-CLIENT_ID = input("Client ID:")
-CLIENT_SECRET = getpass.getpass("Client Secret:")
-ACCESS_TOKEN = getpass.getpass("Access Token:")
+CLIENT_ID = input("Client ID: ")
+CLIENT_SECRET = getpass.getpass("Client Secret: ")
+ACCESS_TOKEN = getpass.getpass("Access Token: ")
 
 # pull this from the box url
-FOLDER_ID = "136367103198"
+FOLDER_ID = input("Box Folder Id: ")
 
 # where to write the model links
 OUTDIR = root() / Path("powertrain/resources/default_models/external_model_links.json")

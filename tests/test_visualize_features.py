@@ -49,7 +49,7 @@ class TestVisualizeFeatures(TestCase):
         model_name = model.metadata.model_description
         estimator_name = model.metadata.estimator_name
         feature_ranges = {
-            'gpsspeed': {
+            'speed': {
                 'max': 80,
                 'min': 0,
                 'steps': 40
@@ -70,18 +70,18 @@ class TestVisualizeFeatures(TestCase):
                                          output_path=output_filepath)
         # tests to check the predictions
         try:
-            self.assertEqual(list(predictions.keys()), ['gpsspeed', 'grade'], 'should have tested both grade and '
-                                                                              'gpsspeed')
-            self.assertEqual(len(predictions['gpsspeed']), 40, 'should have made predictions for 15 links testing '
-                                                               'gpsspeed')
+            self.assertEqual(list(predictions.keys()), ['speed', 'grade'], 'should have tested both grade and '
+                                                                              'speed')
+            self.assertEqual(len(predictions['speed']), 40, 'should have made predictions for 15 links testing '
+                                                               'speed')
             self.assertEqual(len(predictions['grade']), 20, 'should have made predictions for 15 links testing grade')
 
             # tests for saving plots and naming convention
             self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}/{estimator_name}_[grade].png')),
                             'should save grade plot as png')
             self.assertTrue(
-                Path.exists(Path(output_filepath).joinpath(f'{model_name}/{estimator_name}_[gpsspeed].png')),
-                'should save gpsspeed plot as png')
+                Path.exists(Path(output_filepath).joinpath(f'{model_name}/{estimator_name}_[speed].png')),
+                'should save speed plot as png')
 
         except AssertionError as error:
             # clean up temp files
@@ -95,7 +95,7 @@ class TestVisualizeFeatures(TestCase):
         """
         model = mock_model()
         feature_ranges = {
-            'gpsspeed': {
+            'speed': {
                 'max': 80,
                 'min': 0,
                 'steps': 40
@@ -126,7 +126,7 @@ class TestVisualizeFeatures(TestCase):
         model = mock_model()
         model_name = model.metadata.model_description
         feature_ranges = {
-            'gpsspeed': {
+            'speed': {
                 'max': 80,
                 'min': 0,
                 'steps': 40
@@ -143,14 +143,14 @@ class TestVisualizeFeatures(TestCase):
 
         # run the function with the mock data
         contour_plot(model=model,
-                     x_feature='gpsspeed',
+                     x_feature='speed',
                      y_feature='grade',
                      feature_ranges=feature_ranges,
                      output_path=output_filepath)
         # tests to check the predictions
         try:
             # tests for saving plots and naming convention
-            self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}_[gpsspeed_grade].png')),
+            self.assertTrue(Path.exists(Path(output_filepath).joinpath(f'{model_name}_[speed_grade].png')),
                             'should save contour plot as png')
         except AssertionError as error:
             # clean up temp files
@@ -164,7 +164,7 @@ class TestVisualizeFeatures(TestCase):
         """
         model = mock_model()
         feature_ranges = {
-            'gpsspeed': {
+            'speed': {
                 'max': 80,
                 'min': 0,
                 'steps': 40
@@ -200,7 +200,7 @@ class TestVisualizeFeatures(TestCase):
         """
         model = mock_model()
         feature_ranges = {
-            'gpsspeed': {
+            'speed': {
                 'max': 80,
                 'min': 0,
                 'steps': 40
@@ -213,7 +213,7 @@ class TestVisualizeFeatures(TestCase):
         try:
             with self.assertRaises(KeyError):
                 contour_plot(model=model,
-                             x_feature='gpsspeed',
+                             x_feature='speed',
                              y_feature='grade',
                              feature_ranges=feature_ranges,
                              output_path=output_filepath)

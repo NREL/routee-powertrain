@@ -8,10 +8,8 @@ from powertrain.resources.default_models import default_model_dir
 from powertrain.resources.sample_routes import sample_route_dir
 
 local_models = {
-    'ICE': default_model_dir() / "2016_TOYOTA_Corolla_4cyl_2WD_ExplicitBin.json",
-    'EV': default_model_dir() / "2016_Leaf_24_kWh_ExplicitBin.json",
-    'PHEV (Charge Sustain)': default_model_dir() / "2016_CHEVROLET_Volt_Charge_Sustaining_ExplicitBin.json",
-    'PHEV (Charge Deplete)': default_model_dir() / "2016_CHEVROLET_Volt_Charge_Depleting_ExplicitBin.json",
+    'ICE': default_model_dir() / "2016_TOYOTA_Camry_4cyl_2WD-speed&grade.json",
+    'EV': default_model_dir() / "2016_TESLA_Model_S60_2WD-speed&grade.json",
 }
 
 

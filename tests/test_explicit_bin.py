@@ -9,7 +9,7 @@ from tests.mock_resources import *
 
 class TestPredict(TestCase):
     def test_eb_model_predict(self):
-        route = pd.DataFrame([{'miles': 1, 'gpsspeed': 65, 'grade': 0.1}])
+        route = pd.DataFrame([{'distance': 1, 'speed': 65, 'grade': 0.1}])
 
         eb_model = mock_model()
 

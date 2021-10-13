@@ -44,7 +44,7 @@ setup(
     install_requires=[
         "pandas",
         "numpy",
-        "scikit-learn",
+        "scikit-learn<=0.22",
         "PyYAML",
     ],
     extras_require={

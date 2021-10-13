@@ -39,7 +39,7 @@ class RandomForest(EstimatorInterface):
         self.feature_pack: FeaturePack = feature_pack
         self.cores = cores
 
-    def train(self, data: DataFrame):
+    def train(self, data: DataFrame, **kwargs):
         """
         train method for the base estimator (linear regression)
         Args:
@@ -68,9 +68,8 @@ class RandomForest(EstimatorInterface):
         """
         x = data[self.feature_pack.feature_list]
         _energy_pred_rates = self.model.predict(x.values)
-        _energy_pred = _energy_pred_rates * data[self.feature_pack.distance.name]
 
-        energy_pred = Series(_energy_pred, index=data.index)
+        energy_pred = Series(_energy_pred_rates, index=data.index)
 
         return energy_pred
 
