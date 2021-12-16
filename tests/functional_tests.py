@@ -16,11 +16,13 @@ from powertrain.core.model import Model
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
+
+from tests import test_dir
 from tests.mock_resources import mock_route
 
 log.basicConfig(level=log.INFO)
 
-data_path = Path("routee-powertrain-test-data") / Path("links_fastsim_2014mazda3.csv")
+data_path = test_dir() / Path("routee-powertrain-test-data") / Path("links_fastsim_2014mazda3.csv")
 
 out_path = Path("tmp")
 out_path.mkdir(exist_ok=True)
@@ -30,10 +32,7 @@ veh_name = "FUNC TEST - 2014 Mazda 3"
 df = pd.read_csv(data_path, index_col=False)
 df['grade'] = df.grade * 100.0
 
-features = (
-    Feature('gpsspeed', units='mph'),
-    Feature('grade', units='decimal')
-)
+features = (Feature('gpsspeed', units='mph'), Feature('grade', units='decimal'))
 distance = Feature('miles', units='mi')
 energy = Feature('gge', units='gallons')
 feature_pack = FeaturePack(features, distance, energy)
