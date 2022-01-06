@@ -9,13 +9,13 @@ def root() -> Path:
 
 # file utils
 def read(path: Path):
-    with codecs.open(os.path.join(path), 'r') as fp:
+    with codecs.open(os.path.join(path), "r") as fp:
         return fp.read()
 
 
 def get_version(path: Path = root() / "__init__.py"):
-    for line in path.open('r').readlines():
-        if line.startswith('__version__'):
+    for line in path.open("r").readlines():
+        if line.startswith("__version__"):
             delim = '"' if '"' in line else "'"
             return line.split(delim)[1]
     else:

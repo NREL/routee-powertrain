@@ -22,7 +22,11 @@ from tests.mock_resources import mock_route
 
 log.basicConfig(level=log.INFO)
 
-data_path = test_dir() / Path("routee-powertrain-test-data") / Path("links_fastsim_2014mazda3.csv")
+data_path = (
+    test_dir()
+    / Path("routee-powertrain-test-data")
+    / Path("links_fastsim_2014mazda3.csv")
+)
 
 out_path = Path("tmp")
 out_path.mkdir(exist_ok=True)
@@ -30,22 +34,22 @@ out_path.mkdir(exist_ok=True)
 veh_name = "FUNC TEST - 2014 Mazda 3"
 
 df = pd.read_csv(data_path, index_col=False)
-df['grade'] = df.grade * 100.0
+df["grade"] = df.grade * 100.0
 
-features = (Feature('gpsspeed', units='mph'), Feature('grade', units='decimal'))
-distance = Feature('miles', units='mi')
-energy = Feature('gge', units='gallons')
+features = (Feature("gpsspeed", units="mph"), Feature("grade", units="decimal"))
+distance = Feature("miles", units="mi")
+energy = Feature("gge", units="gallons")
 feature_pack = FeaturePack(features, distance, energy)
 
-train_df = df[['miles', 'gpsspeed', 'grade', energy.name]].dropna()
+train_df = df[["miles", "gpsspeed", "grade", energy.name]].dropna()
 train_df = train_df[train_df.miles > 0]
 
 bins = {
-    'gpsspeed': (
+    "gpsspeed": (
         [0, 10, 20, 30, 40, 50, 60, 70, 80],
         [5, 15, 25, 35, 45, 55, 65, 75],
     ),
-    'grade': (
+    "grade": (
         [-15, -10, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 10, 15],
         [-12.5, -7.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 7.5, 12.5],
     ),
@@ -87,7 +91,9 @@ if __name__ == "__main__":
         if math.isclose(energy1, energy2):
             log.info("\n\n ✅ Successfully saved and loaded model in json format! \n\n")
         else:
-            log.info("\n\n ❌ The model loaded from json did not predict the same energy  \n\n")
+            log.info(
+                "\n\n ❌ The model loaded from json did not predict the same energy  \n\n"
+            )
 
         log.info("removing json file..")
         json_outfile.unlink()
@@ -107,9 +113,13 @@ if __name__ == "__main__":
         log.info(f"predicted {energy3} gge over test route..")
 
         if math.isclose(energy1, energy3):
-            log.info("\n\n ✅ Successfully saved and loaded model in pickle format! \n\n")
+            log.info(
+                "\n\n ✅ Successfully saved and loaded model in pickle format! \n\n"
+            )
         else:
-            log.info("\n\n ❌ The model loaded from pickle did not predict the same energy  \n\n")
+            log.info(
+                "\n\n ❌ The model loaded from pickle did not predict the same energy  \n\n"
+            )
 
         log.info("removing pickle file..")
         pickle_outfile.unlink()

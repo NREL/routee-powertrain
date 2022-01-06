@@ -3,8 +3,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from mlxtend.feature_selection import SequentialFeatureSelector as SFS
 from mlxtend.plotting import plot_sequential_feature_selection as plot_sfs
+
 # random forest regressor
 from sklearn.ensemble import RandomForestRegressor
+
 # optimal feature selection
 from sklearn.feature_selection import RFE
 from sklearn.feature_selection import RFECV
@@ -18,8 +20,9 @@ from . import util_featureSelector as util
 
 # defining utility functions to check feature correlations
 
+
 class FeatureCorrelation:
-    def __init__(self, df, correlation_features=None, method='pearson', threshold=0.4):
+    def __init__(self, df, correlation_features=None, method="pearson", threshold=0.4):
         self.df = df
         self.correlation_features = correlation_features
         self.method = method
@@ -34,7 +37,7 @@ class FeatureCorrelation:
         df = self.df[correlation_features]
 
         # Get correlation with output variable
-        methods = ['pearson', 'kendall', 'spearman']
+        methods = ["pearson", "kendall", "spearman"]
         if self.method in methods:
             self.cor = df.corr(method=self.method)
         else:
@@ -61,7 +64,9 @@ class FeatureCorrelation:
         # Selecting highly correlated features
         relevant_features = cor_target[cor_target > self.threshold]
         print("----------------------------------------------")
-        print(f"Features with high correlation (>={self.threshold}) are: {relevant_features}.")
+        print(
+            f"Features with high correlation (>={self.threshold}) are: {relevant_features}."
+        )
         print("----------------------------------------------")
         return relevant_features
 
@@ -70,15 +75,20 @@ class FeatureCorrelation:
         sns.heatmap(self.cor, annot=True, cmap=plt.cm.Reds)
         plt.show()
 
-    #####################################################################################################    
-    #####################################################################################################   
-    #################################################################################################### 
+    #####################################################################################################
+    #####################################################################################################
+    ####################################################################################################
 
 
 class N_FeatureSearch:
-
-    def __init__(self, df, target_feature=None, n_features=6, search_method=None,
-                 training_model=RandomForestRegressor()):
+    def __init__(
+        self,
+        df,
+        target_feature=None,
+        n_features=6,
+        search_method=None,
+        training_model=RandomForestRegressor(),
+    ):
         self.df = df
         self.target_feature = target_feature
         self.n_features = n_features
@@ -90,14 +100,16 @@ class N_FeatureSearch:
     def sequential_feature_search(self):
         forward_val, floating_val = util.get_sfs_vals(self.search_method)
 
-        sfs_rf = SFS(self.training_model,
-                     k_features=self.n_features,
-                     forward=forward_val,
-                     floating=floating_val,
-                     scoring='r2',
-                     # for regressions, 'f1'/'accuracy' for classification or use='neg_mean_squared_error'
-                     cv=0,
-                     n_jobs=-1)
+        sfs_rf = SFS(
+            self.training_model,
+            k_features=self.n_features,
+            forward=forward_val,
+            floating=floating_val,
+            scoring="r2",
+            # for regressions, 'f1'/'accuracy' for classification or use='neg_mean_squared_error'
+            cv=0,
+            n_jobs=-1,
+        )
         sfs_rf.fit(self.feature_matrix, self.target_matrix)
 
         # output
@@ -107,17 +119,21 @@ class N_FeatureSearch:
         print(f"Best features: {sfs_rf.k_feature_names_}")
         print(f"CV Score: {sfs_rf.k_score_}")
 
-        fig = plot_sfs(sfs_rf.get_metric_dict(), kind='std_err')
+        fig = plot_sfs(sfs_rf.get_metric_dict(), kind="std_err")
         plt.title(f"{self.search_method} (w. StdErr)")
         plt.grid()
         plt.show()
 
     def sfs_rfe(self):
-        selector = RFE(self.training_model, n_features_to_select=self.n_features, step=1)
+        selector = RFE(
+            self.training_model, n_features_to_select=self.n_features, step=1
+        )
         selector = selector.fit(self.feature_matrix, self.target_matrix)
         feat_idx = selector.support_
         best_features = self.feature_matrix.columns[feat_idx]
-        best_score = selector.score(self.feature_matrix, self.target_matrix)  # note: check it again!S
+        best_score = selector.score(
+            self.feature_matrix, self.target_matrix
+        )  # note: check it again!S
         # output
         print(f"Training Model: {self.training_model.__class__.__name__}.")
         print(f"Sequential Feature Selection Method: {self.search_method}")
@@ -126,20 +142,22 @@ class N_FeatureSearch:
         print(f"CV Score: {best_score}")
 
     def all_sfs(self):
-        selection_methods = ['sfs', 'sbe', 'fsfs', 'fsbe']
+        selection_methods = ["sfs", "sbe", "fsfs", "fsbe"]
         best_features = []
 
         counter = 0
         for selection in selection_methods:
             forward_val, floating_val = util.get_sfs_vals(selection)
-            sfs_rf = SFS(self.training_model,
-                         k_features=self.n_features,
-                         forward=forward_val,
-                         floating=floating_val,
-                         scoring='r2',
-                         # for regressions, 'f1'/'accuracy' for classification or use='neg_mean_squared_error'
-                         cv=0,
-                         n_jobs=-1)
+            sfs_rf = SFS(
+                self.training_model,
+                k_features=self.n_features,
+                forward=forward_val,
+                floating=floating_val,
+                scoring="r2",
+                # for regressions, 'f1'/'accuracy' for classification or use='neg_mean_squared_error'
+                cv=0,
+                n_jobs=-1,
+            )
             sfs_rf.fit(self.feature_matrix, self.target_matrix)
             best_features.append(sfs_rf.k_feature_names_)
 
@@ -150,13 +168,14 @@ class N_FeatureSearch:
             print(f"Best features: {sfs_rf.k_feature_names_}")
             print(f"CV Score: {sfs_rf.k_score_}")
 
-            fig = plot_sfs(sfs_rf.get_metric_dict(), kind='std_err')
+            fig = plot_sfs(sfs_rf.get_metric_dict(), kind="std_err")
             plt.title(f"{selection} (w. StdErr)")
             plt.grid()
             plt.show()
 
             counter += 1
         print(f"Best features: {set(best_features)}.")
+
     #####################################################################################################
     #####################################################################################################
     ## Optimal feature selector
@@ -173,8 +192,9 @@ class Optimal_FeatureSearch(N_FeatureSearch):
         rfe.fit(self.feature_matrix, self.target_matrix)
         best_features = features[rfe.support_]
         n_best_features = len(best_features)  # can also use--> rfe.n_features_
-        score = rfe.score(self.feature_matrix,
-                          self.target_matrix)  # Reduce X to the selected features and then return the score of the underlying estimator.
+        score = rfe.score(
+            self.feature_matrix, self.target_matrix
+        )  # Reduce X to the selected features and then return the score of the underlying estimator.
 
         # output
         print(f"Training Model: {self.training_model.__class__.__name__}.")
@@ -224,13 +244,16 @@ class Optimal_FeatureSearch(N_FeatureSearch):
         #         plt.show()
         from sklearn.preprocessing import StandardScaler
         from sklearn.pipeline import make_pipeline
-        sfs_rf = SFS(self.training_model,
-                     k_features=(1, n_features),
-                     forward=forward_val,
-                     floating=floating_val,
-                     scoring='r2',  # for regressions or use='neg_mean_squared_error'
-                     cv=0,
-                     n_jobs=-1)
+
+        sfs_rf = SFS(
+            self.training_model,
+            k_features=(1, n_features),
+            forward=forward_val,
+            floating=floating_val,
+            scoring="r2",  # for regressions or use='neg_mean_squared_error'
+            cv=0,
+            n_jobs=-1,
+        )
 
         pipe = make_pipeline(StandardScaler(), sfs_rf)
 
@@ -242,8 +265,11 @@ class Optimal_FeatureSearch(N_FeatureSearch):
         print(f"Sequential Feature Selection Method: {self.search_method}")
         print("---------------------------------------------")
         print(f"Best Features: {self.feature_matrix.columns[[sfs_rf.k_feature_idx_]]}")
-        print(f"Best number of feature: {len(self.feature_matrix.columns[[sfs_rf.k_feature_idx_]])}")
+        print(
+            f"Best number of feature: {len(self.feature_matrix.columns[[sfs_rf.k_feature_idx_]])}"
+        )
         print(f"Best score: {sfs_rf.k_score_}.")
 
-        plot_sfs(sfs_rf.get_metric_dict(), kind='std_err');
+        plot_sfs(sfs_rf.get_metric_dict(), kind="std_err")
+
     #####################################################################################################

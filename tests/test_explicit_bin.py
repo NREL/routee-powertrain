@@ -9,13 +9,15 @@ from tests.mock_resources import *
 
 class TestPredict(TestCase):
     def test_eb_model_predict(self):
-        route = pd.DataFrame([{'distance': 1, 'speed': 65, 'grade': 0.1}])
+        route = pd.DataFrame([{"distance": 1, "speed": 65, "grade": 0.1}])
 
         eb_model = mock_model()
 
         predictions = eb_model.predict(route)
 
-        self.assertEqual(len(predictions), len(route), 'should produce same number of links')
+        self.assertEqual(
+            len(predictions), len(route), "should produce same number of links"
+        )
 
         # TODO: check that predicted energy is in reasonable range for this test route.
 
@@ -49,7 +51,10 @@ class TestPredict(TestCase):
         r2 = new_m.predict(route)
         energy2 = round(r2.sum(), 2)
 
-        self.assertTrue(math.isclose(energy1, energy2), "original model and json model should predict similar energy")
+        self.assertTrue(
+            math.isclose(energy1, energy2),
+            "original model and json model should predict similar energy",
+        )
 
         # clean up
         outfile.unlink()
@@ -60,7 +65,7 @@ class TestPredict(TestCase):
         train_data, feature_pack = mock_data_single_feature()
 
         bins = {
-            'speed': BIN_DEFAULTS['speed_mph'],
+            "speed": BIN_DEFAULTS["speed_mph"],
         }
 
         eb = ExplicitBin(feature_pack, bins=bins)
@@ -74,4 +79,3 @@ class TestPredict(TestCase):
         _ = Model.from_json(outfile)
 
         outfile.unlink()
-

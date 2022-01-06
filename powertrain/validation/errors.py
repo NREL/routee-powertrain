@@ -17,12 +17,20 @@ def net_energy_error(target: np.ndarray, target_pred: np.ndarray) -> float:
     return net_error
 
 
-def weighted_relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> float:
+def weighted_relative_percent_difference(
+    target: np.ndarray, target_pred: np.ndarray
+) -> float:
     epsilon = np.finfo(np.float64).eps
 
     w = np.array(np.abs(target) / np.sum(np.abs(target)))
 
-    error_norm = np.abs(2 * ((target - target_pred) / np.maximum((np.abs(target) + np.abs(target_pred)), epsilon)))
+    error_norm = np.abs(
+        2
+        * (
+            (target - target_pred)
+            / np.maximum((np.abs(target) + np.abs(target_pred)), epsilon)
+        )
+    )
 
     mean_error = np.average(error_norm, weights=w)
 
@@ -32,7 +40,13 @@ def weighted_relative_percent_difference(target: np.ndarray, target_pred: np.nda
 def relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> float:
     epsilon = np.finfo(np.float64).eps
 
-    error_norm = np.abs(2 * ((target - target_pred) / np.maximum((np.abs(target) + np.abs(target_pred)), epsilon)))
+    error_norm = np.abs(
+        2
+        * (
+            (target - target_pred)
+            / np.maximum((np.abs(target) + np.abs(target_pred)), epsilon)
+        )
+    )
 
     mean_error = np.average(error_norm)
 
@@ -40,9 +54,8 @@ def relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> 
 
 
 def compute_errors(
-        test_df: pd.DataFrame,
-        model: Model,
-        trip_column: Optional[str] = None) -> Dict[str, float]:
+    test_df: pd.DataFrame, model: Model, trip_column: Optional[str] = None
+) -> Dict[str, float]:
     """
     Computes the error metrics for a set of predictions relative to the ground truth data
 
@@ -63,32 +76,38 @@ def compute_errors(
     errors = {}
 
     rmse = np.sqrt(mean_squared_error(target, target_pred))
-    errors['link_root_mean_squared_error'] = rmse
-    errors['link_norm_root_mean_squared_error'] = rmse/(sum(test_df[energy_name])/len(test_df))
+    errors["link_root_mean_squared_error"] = rmse
+    errors["link_norm_root_mean_squared_error"] = rmse / (
+        sum(test_df[energy_name]) / len(test_df)
+    )
 
     ew_rpe = weighted_relative_percent_difference(target, target_pred)
-    errors['link_weighted_relative_percent_difference'] = ew_rpe
+    errors["link_weighted_relative_percent_difference"] = ew_rpe
 
     if trip_column:
-        test_df['energy_pred'] = target_pred
-        gb = test_df.groupby(trip_column).agg({energy_name: sum, 'energy_pred': sum})
-        t_rpd = relative_percent_difference(gb[energy_name], gb['energy_pred'])
-        t_wrpd = weighted_relative_percent_difference(gb[feature_pack.energy.name], gb['energy_pred'])
-        t_rmse = np.sqrt(mean_squared_error(gb[energy_name], gb['energy_pred']))
+        test_df["energy_pred"] = target_pred
+        gb = test_df.groupby(trip_column).agg({energy_name: sum, "energy_pred": sum})
+        t_rpd = relative_percent_difference(gb[energy_name], gb["energy_pred"])
+        t_wrpd = weighted_relative_percent_difference(
+            gb[feature_pack.energy.name], gb["energy_pred"]
+        )
+        t_rmse = np.sqrt(mean_squared_error(gb[energy_name], gb["energy_pred"]))
 
-        errors['trip_relative_percent_difference'] = t_rpd
-        errors['trip_weighted_relative_percent_difference'] = t_wrpd
-        errors['trip_root_mean_squared_error'] = t_rmse
-        errors['trip_norm_root_mean_squared_error'] = t_rmse/(sum(gb[energy_name])/len(gb))
+        errors["trip_relative_percent_difference"] = t_rpd
+        errors["trip_weighted_relative_percent_difference"] = t_wrpd
+        errors["trip_root_mean_squared_error"] = t_rmse
+        errors["trip_norm_root_mean_squared_error"] = t_rmse / (
+            sum(gb[energy_name]) / len(gb)
+        )
 
-    errors['net_error'] = net_energy_error(target, target_pred)
+    errors["net_error"] = net_energy_error(target, target_pred)
 
     total_dist = test_df[feature_pack.distance.name].sum()
 
     pred_energy = np.sum(target_pred)
     actual_energy = np.sum(target)
 
-    errors['actual_dist_per_energy'] = total_dist / actual_energy
-    errors['pred_dist_per_energy'] = total_dist / pred_energy
+    errors["actual_dist_per_energy"] = total_dist / actual_energy
+    errors["pred_dist_per_energy"] = total_dist / pred_energy
 
     return errors

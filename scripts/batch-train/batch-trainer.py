@@ -29,11 +29,10 @@ file_handler = logging.FileHandler("batch-trainer.log")
 file_handler.setFormatter(formatter)
 log.addHandler(file_handler)
 
-parser = argparse.ArgumentParser(description="batch run for training routee-powertrain models")
-parser.add_argument(
-    'config_file',
-    help='the configuration for this run'
+parser = argparse.ArgumentParser(
+    description="batch run for training routee-powertrain models"
 )
+parser.add_argument("config_file", help="the configuration for this run")
 
 
 class EnergyType(Enum):
@@ -47,7 +46,9 @@ class EnergyType(Enum):
         elif string.lower() == "gasoline":
             return cls.GASOLINE
         else:
-            raise TypeError(f"energy type {string} not supported by this script; try [electric | gasoline]")
+            raise TypeError(
+                f"energy type {string} not supported by this script; try [electric | gasoline]"
+            )
 
 
 class OutputType(Enum):
@@ -61,17 +62,21 @@ class OutputType(Enum):
         elif string.lower() == "pickle":
             return OutputType.PICKLE
         else:
-            raise TypeError(f"output type {string} not supported by this script; try [json | pickle]")
+            raise TypeError(
+                f"output type {string} not supported by this script; try [json | pickle]"
+            )
 
 
 def get_estimator_class(s: str):
     registered_estimators = {
-        'explicit_bin': ExplicitBin,
-        'random_forest': RandomForest,
-        'linear_regression': LinearRegression,
+        "explicit_bin": ExplicitBin,
+        "random_forest": RandomForest,
+        "linear_regression": LinearRegression,
     }
     if s not in registered_estimators:
-        raise TypeError(f"{s} is not a valid estimator type; try one of {list(registered_estimators.keys())}")
+        raise TypeError(
+            f"{s} is not a valid estimator type; try one of {list(registered_estimators.keys())}"
+        )
 
     else:
         return registered_estimators[s]
@@ -95,16 +100,19 @@ class BatchConfig(NamedTuple):
     @classmethod
     def from_dict(cls, d: dict) -> BatchConfig:
         return BatchConfig(
-            training_data_path=Path(d['training_data_path']),
-            output_path=Path(d['output_path']) / datetime.now().strftime('%Y-%m-%d_%H-%M-%S'),
-            energy_targets={EnergyType.from_string(d['energy_type']): Feature.from_dict(d) for d in
-                            d['energy_targets']},
-            distance=Feature.from_dict(d['distance']),
-            features=tuple(Feature.from_dict(d) for d in d['features']),
-            trip_column=d.get('trip_column'),
-            estimators=[get_estimator_class(s) for s in d['estimators']],
-            n_cores=int(d['n_cores']),
-            model_output_type=OutputType.from_string(d['model_output_type']),
+            training_data_path=Path(d["training_data_path"]),
+            output_path=Path(d["output_path"])
+            / datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+            energy_targets={
+                EnergyType.from_string(d["energy_type"]): Feature.from_dict(d)
+                for d in d["energy_targets"]
+            },
+            distance=Feature.from_dict(d["distance"]),
+            features=tuple(Feature.from_dict(d) for d in d["features"]),
+            trip_column=d.get("trip_column"),
+            estimators=[get_estimator_class(s) for s in d["estimators"]],
+            n_cores=int(d["n_cores"]),
+            model_output_type=OutputType.from_string(d["model_output_type"]),
         )
 
 
@@ -112,6 +120,7 @@ class ModelConfig(NamedTuple):
     """
     config for a single model
     """
+
     batch_config: BatchConfig
     training_file: Path
 
@@ -139,7 +148,7 @@ def load_config(config_file: str) -> BatchConfig:
     if not config_file.is_file():
         raise FileNotFoundError(f"couldn't find config file: {config_file}")
 
-    with open(config_file, 'r') as stream:
+    with open(config_file, "r") as stream:
         d = yaml.safe_load(stream)
         return BatchConfig.from_dict(d)
 
@@ -157,8 +166,11 @@ def train_model(mconfig: ModelConfig) -> int:
     sql_con = sqlite3.connect(mconfig.training_file)
 
     log.info("reading training data into memory")
-    read_columns = [f.name for f in bconfig.features] + [bconfig.distance.name] + [e.name for e in
-                                                                                   bconfig.energy_targets.values()]
+    read_columns = (
+        [f.name for f in bconfig.features]
+        + [bconfig.distance.name]
+        + [e.name for e in bconfig.energy_targets.values()]
+    )
     if bconfig.trip_column:
         read_columns.append(bconfig.trip_column)
 
@@ -170,7 +182,7 @@ def train_model(mconfig: ModelConfig) -> int:
 
     try:
         train_metadata = pd.read_sql_query("select * from metadata", sql_con)
-        energy_type = train_metadata.loc[0, 'energy_type']
+        energy_type = train_metadata.loc[0, "energy_type"]
         energy = bconfig.energy_targets.get(EnergyType.from_string(energy_type))
         if not energy:
             return _err(
@@ -178,7 +190,9 @@ def train_model(mconfig: ModelConfig) -> int:
                 f"but could not find a matching energy target in the config"
             )
     except (DatabaseError, KeyError):
-        log.error("attempted to load key 'energy_type' from 'metadata' table in training data but could not find it")
+        log.error(
+            "attempted to load key 'energy_type' from 'metadata' table in training data but could not find it"
+        )
         log.info("will attempt to infer the energy type based on the training data")
 
         energy = None
@@ -197,10 +211,13 @@ def train_model(mconfig: ModelConfig) -> int:
 
         if not energy:
             return _err(
-                f'failed to infer the energy target for {model_name}; '
-                f'check to make sure the energy targets match the columns names in the training data.')
+                f"failed to infer the energy target for {model_name}; "
+                f"check to make sure the energy targets match the columns names in the training data."
+            )
 
-    train_cols = [f.name for f in bconfig.features] + [bconfig.distance.name] + [energy.name]
+    train_cols = (
+        [f.name for f in bconfig.features] + [bconfig.distance.name] + [energy.name]
+    )
     if bconfig.trip_column:
         train_cols.append(bconfig.trip_column)
 
@@ -250,16 +267,24 @@ def run() -> int:
 
     log.info(f"working on {len(train_files)} model with {bconfig.n_cores} cores")
     with Pool(bconfig.n_cores) as p:
-        results = p.map(safe_train, [ModelConfig(batch_config=bconfig, training_file=Path(f)) for f in train_files])
+        results = p.map(
+            safe_train,
+            [
+                ModelConfig(batch_config=bconfig, training_file=Path(f))
+                for f in train_files
+            ],
+        )
 
     c = Counter(results)
     if c.get(-1):
-        log.error(f"{c[-1]} model(s) failed to train; check the logs to see what happened")
+        log.error(
+            f"{c[-1]} model(s) failed to train; check the logs to see what happened"
+        )
     else:
         log.info(f"training {len(train_files)} model(s) completed successfully! 😎")
 
     return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

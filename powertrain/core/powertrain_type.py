@@ -16,6 +16,8 @@ class PowertrainType(Enum):
             return PowertrainType.UNDEFINED
         e = cls.__members__.get(s.upper())
         if not e:
-            raise TypeError(f"{s} is not a recognized powertrain type"
-                            f"Try one of these: {PowertrainType.__members__.keys()}")
+            raise TypeError(
+                f"{s} is not a recognized powertrain type"
+                f"Try one of these: {PowertrainType.__members__.keys()}"
+            )
         return e
