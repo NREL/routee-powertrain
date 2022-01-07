@@ -8,8 +8,8 @@ def read_model(infile: str):
 
     Args:
         infile (str):
-            Path and filename for saved file to read. 
-            
+            Path and filename for saved file to read.
+
     """
     path = Path(infile)
 
@@ -18,4 +18,6 @@ def read_model(infile: str):
     elif path.suffix == ".pickle":
         return Model.from_pickle(path)
     else:
-        raise ImportError(f"file type of {path.suffix} not supported by routee-powertrain")
+        raise ImportError(
+            f"file type of {path.suffix} not supported by routee-powertrain"
+        )

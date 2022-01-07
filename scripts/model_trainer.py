@@ -12,7 +12,9 @@ from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
 
-RAW_DATA_PATH = "/projects/mbap/data/fastsim_results/2020_11_9/FASTSim_py_veh_db_w_phevs/*.db"
+RAW_DATA_PATH = (
+    "/projects/mbap/data/fastsim_results/2020_11_9/FASTSim_py_veh_db_w_phevs/*.db"
+)
 
 outpath = Path("/projects/mbap/data/routee_results/2020_11_9")
 outpath.mkdir(exist_ok=True)
@@ -21,27 +23,27 @@ outpath.mkdir(exist_ok=True)
 def train_model(file):
     vehicle_name = os.path.splitext(os.path.basename(file))[0]
 
-    print(f'Working on vehicle: {vehicle_name}')
+    print(f"Working on vehicle: {vehicle_name}")
 
     features = (
-        Feature('gpsspeed', units='mph'),
-        Feature('grade', units='percent_0_100'),
+        Feature("gpsspeed", units="mph"),
+        Feature("grade", units="percent_0_100"),
     )
-    distance = Feature('miles', units='mi')
+    distance = Feature("miles", units="mi")
 
     sql_con = sqlite3.connect(file)
 
-    df = pd.read_sql_query('SELECT * FROM links', sql_con)
-    df['grade'] = df.grade.apply(lambda x: x * 100)
+    df = pd.read_sql_query("SELECT * FROM links", sql_con)
+    df["grade"] = df.grade.apply(lambda x: x * 100)
 
     if df.gge.sum() > 0:
-        energy = Feature('gge', units='gallons')
+        energy = Feature("gge", units="gallons")
     elif df.esskwhoutach.sum() > 0:
-        energy = Feature('esskwhoutach', units='kwh')
+        energy = Feature("esskwhoutach", units="kwh")
     else:
-        raise RuntimeError('There is no energy in this data file..')
+        raise RuntimeError("There is no energy in this data file..")
 
-    train_df = df[['miles', 'gpsspeed', 'grade', energy.name]].dropna()
+    train_df = df[["miles", "gpsspeed", "grade", energy.name]].dropna()
     feature_pack = FeaturePack(features, distance, energy)
 
     ln_e = LinearRegression(feature_pack=feature_pack)

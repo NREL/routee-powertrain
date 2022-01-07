@@ -11,15 +11,10 @@ class XGBoost(EstimatorInterface):
     """
 
     def __init__(
-            self,
-            feature_pack: FeaturePack,
+        self,
+        feature_pack: FeaturePack,
     ):
-        mod = XGBRegressor(
-            n_estimators=100,
-            reg_lambda=1,
-            gamma=0,
-            max_depth=3
-        )
+        mod = XGBRegressor(n_estimators=100, reg_lambda=1, gamma=0, max_depth=3)
         self.model: XGBRegressor = mod
 
         self.feature_pack: FeaturePack = feature_pack
@@ -35,7 +30,9 @@ class XGBoost(EstimatorInterface):
         """
 
         # convert absolute consumption to rate consumption
-        energy_rate = data[self.feature_pack.energy.name] / data[self.feature_pack.distance.name]
+        energy_rate = (
+            data[self.feature_pack.energy.name] / data[self.feature_pack.distance.name]
+        )
 
         x = data[self.feature_pack.feature_list]
         y = energy_rate

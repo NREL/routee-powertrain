@@ -5,7 +5,10 @@ from typing import Optional
 from pandas import DataFrame, Series
 from sklearn.ensemble import RandomForestRegressor
 
-from powertrain.core.core_utils import serialize_random_forest_regressor, deserialize_random_forest_regressor
+from powertrain.core.core_utils import (
+    serialize_random_forest_regressor,
+    deserialize_random_forest_regressor,
+)
 from powertrain.core.features import FeaturePack
 from powertrain.estimators.estimator_interface import EstimatorInterface
 
@@ -17,22 +20,24 @@ class RandomForest(EstimatorInterface):
     Args:
         cores (int):
             Number of cores to use during training.
-            
+
     """
 
     def __init__(
-            self,
-            feature_pack: FeaturePack,
-            cores: int = 4,
-            model: Optional[RandomForestRegressor] = None,
+        self,
+        feature_pack: FeaturePack,
+        cores: int = 4,
+        model: Optional[RandomForestRegressor] = None,
     ):
         if not model:
-            model = RandomForestRegressor(n_estimators=20,
-                                          max_features='auto',
-                                          max_depth=10,
-                                          min_samples_split=10,
-                                          n_jobs=cores,
-                                          random_state=52)
+            model = RandomForestRegressor(
+                n_estimators=20,
+                max_features="auto",
+                max_depth=10,
+                min_samples_split=10,
+                n_jobs=cores,
+                random_state=52,
+            )
 
         self.model: RandomForestRegressor = model
 
@@ -75,25 +80,26 @@ class RandomForest(EstimatorInterface):
 
     def to_json(self) -> dict:
         out_json = {
-            'model': serialize_random_forest_regressor(self.model),
-            'feature_pack': self.feature_pack.to_json(),
-            'feature_importance': {fname: fi for fname, fi in zip(self.feature_pack.feature_list, self.model.feature_importances_)},
-            'cores': self.cores
+            "model": serialize_random_forest_regressor(self.model),
+            "feature_pack": self.feature_pack.to_json(),
+            "feature_importance": {
+                fname: fi
+                for fname, fi in zip(
+                    self.feature_pack.feature_list, self.model.feature_importances_
+                )
+            },
+            "cores": self.cores,
         }
 
         return out_json
 
     @classmethod
     def from_json(cls, json: dict) -> RandomForest:
-        model_dict = json['model']
+        model_dict = json["model"]
         model = deserialize_random_forest_regressor(model_dict)
 
-        feature_pack = FeaturePack.from_json(json['feature_pack'])
-        cores = json['cores']
+        feature_pack = FeaturePack.from_json(json["feature_pack"])
+        cores = json["cores"]
 
-        e = RandomForest(
-            feature_pack=feature_pack,
-            cores=cores,
-            model=model
-        )
+        e = RandomForest(feature_pack=feature_pack, cores=cores, model=model)
         return e

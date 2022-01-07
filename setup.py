@@ -5,18 +5,18 @@ from setuptools import setup, find_packages
 
 # Get the long description from the README file
 here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 
 def read(rel_path):
-    with codecs.open(os.path.join(here, rel_path), 'r') as fp:
+    with codecs.open(os.path.join(here, rel_path), "r") as fp:
         return fp.read()
 
 
 def get_version(rel_path):
     for line in read(rel_path).splitlines():
-        if line.startswith('__version__'):
+        if line.startswith("__version__"):
             delim = '"' if '"' in line else "'"
             return line.split(delim)[1]
     else:
@@ -26,10 +26,9 @@ def get_version(rel_path):
 setup(
     name="routee-powertrain",
     version=get_version(os.path.join("powertrain", "__init__.py")),
-    description=
-    "RouteE is a tool for predicting energy usage over a set of road links.",
+    description="RouteE is a tool for predicting energy usage over a set of road links.",
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     url="https://github.nrel.gov/MBAP/routee",
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -37,21 +36,18 @@ setup(
         "License :: Other/Proprietary License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3.8",
-        "Topic :: Scientific/Engineering"
+        "Topic :: Scientific/Engineering",
     ],
     packages=find_packages(),
     python_requires=">=3.7",
     install_requires=[
         "pandas",
         "numpy",
-        "scikit-learn<=0.22",
+        "scikit-learn",
         "PyYAML",
     ],
     extras_require={
-        "optional": [
-            "matplotlib",
-            "xgboost"
-        ],
+        "optional": ["matplotlib", "xgboost"],
     },
     include_package_data=True,
     package_data={

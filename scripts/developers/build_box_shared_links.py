@@ -32,7 +32,7 @@ download_links = {}
 for f in files:
     name = f.name.split(".")[0]
     log.info(f"working on {name}")
-    download_links[name] = f.get_shared_link_download_url(access='open')
+    download_links[name] = f.get_shared_link_download_url(access="open")
 
-with open(OUTDIR, 'w', encoding='utf-8') as f:
+with open(OUTDIR, "w", encoding="utf-8") as f:
     json.dump(download_links, f, ensure_ascii=False, indent=4)
