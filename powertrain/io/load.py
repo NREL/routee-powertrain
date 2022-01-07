@@ -41,12 +41,6 @@ def load_pretrained_model(name: str) -> Model:
     """
     A helper function to load a pretrained model.
 
-    This only loads the default models that are packaged with the repo:
-     - powertrain.resources.default_models
-
-    In the future, this might be able to load models from an external source like Box
-
-
     Args:
         name: the name of the file to load
 
