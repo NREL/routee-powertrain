@@ -92,7 +92,13 @@ class Model:
         """
         log.info(f"training estimator {self._estimator.__class__.__name__}")
 
-        pass_data = data.copy(deep=True)
+        if trip_column:
+            data_columns = self._estimator.feature_pack.all_names + [trip_column] 
+        else:
+            data_columns = self._estimator.feature_pack.all_names 
+            
+
+        pass_data = data[data_columns].copy(deep=True)
         pass_data["energy_rate"] = (
             data[self.feature_pack.energy.name] / data[self.feature_pack.distance.name]
         )
@@ -103,7 +109,7 @@ class Model:
             pass_data.dropna(), test_size=0.2, random_state=random_seed
         )
 
-        self._estimator.train(pass_data, **kwargs)
+        self._estimator.train(train, **kwargs)
 
         model_errors = compute_errors(test, self, trip_column)
 

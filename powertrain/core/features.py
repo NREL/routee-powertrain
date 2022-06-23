@@ -52,6 +52,10 @@ class FeaturePack(NamedTuple):
     energy: Feature
 
     @property
+    def all_names(self) -> List[str]:
+        return self.feature_list + [self.distance.name, self.energy.name] 
+
+    @property
     def feature_list(self) -> List[str]:
         return [f.name for f in self.features]
 
