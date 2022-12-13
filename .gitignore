@@ -9,7 +9,10 @@ data/
 *.egg-info/
 *.log
 
+build/
+
 config.yml
 
+py-notebooks/
 .ipynb_checkpoints
 __pycache__
