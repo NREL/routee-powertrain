@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 import logging
 import pickle
+from urllib import request
 from pkg_resources import packaging
 from pathlib import Path
-from typing import Optional, Union
-from urllib import request
+from typing import Dict, Optional, Union
 
 import numpy as np
 from pandas import DataFrame
@@ -15,6 +15,7 @@ from sklearn.model_selection import train_test_split
 from powertrain.core.metadata import Metadata
 from powertrain.core.powertrain_type import PowertrainType
 from powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
+from powertrain.core.features import Feature
 from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
@@ -145,7 +146,8 @@ class Model:
         return energy_pred
 
     def to_json(self, outfile: Path):
-        """Dumps a powertrain model to a json file for persistence and sharing.
+        """
+        Dumps a powertrain model to a json file for persistence and sharing.
 
         Args:
             outfile (str):
@@ -160,7 +162,8 @@ class Model:
             json.dump(out_dict, f, ensure_ascii=False, indent=4)
 
     def to_pickle(self, outfile: Path):
-        """Dumps a powertrain model to a pickle file for persistence and sharing.
+        """
+        Dumps a powertrain model to a pickle file for persistence and sharing.
 
         Args:
             outfile (str):
@@ -173,6 +176,48 @@ class Model:
         }
         with open(outfile, "wb") as f:
             pickle.dump(out_dict, f)
+
+    def to_lookup_table(self, feature_bins: Dict[str, int]) -> DataFrame:
+        """
+        Returns a lookup table for the model.
+
+        Args:
+            feature_bins (dict): A dictionary of features and their number of bins.
+
+
+        Returns:
+            lookup_table (pandas.DataFrame):
+                A lookup table for the model.
+
+        """
+        if any([f.feature_range is None for f in self.feature_pack.features]):
+            raise ValueError("Feature ranges must be set to generate lookup table")
+        elif set(feature_bins.keys()) != set(self.feature_pack.feature_list):
+            raise ValueError("Feature names must match model feature pack")
+
+        # build a grid mesh over the feature ranges
+        points = tuple(
+            np.linspace(
+                f.feature_range.lower,
+                f.feature_range.upper,
+                feature_bins[f.name],
+            ) for f in self.feature_pack.features 
+        )
+
+        mesh = np.meshgrid(*points)
+    
+        pred_matrix = np.stack(list(map(np.ravel, mesh)), axis=1)
+
+        pred_df = DataFrame(pred_matrix, columns=self.feature_pack.feature_list)
+        pred_df[self.feature_pack.distance.name] = 1
+
+        predictions = self.predict(pred_df)
+
+        lookup = pred_df.drop(columns=[self.feature_pack.distance.name])
+        energy_key = f"{self.feature_pack.energy.units}_per_{self.feature_pack.distance.units}"
+        lookup[energy_key] = predictions
+
+        return lookup
 
     @property
     def feature_pack(self):
@@ -226,7 +271,7 @@ class Model:
         """
         if filetype.lower() != "json":
             raise NotImplementedError("only json filetypes are supported")
-
+        
         with request.urlopen(url) as u:
             in_json = json.loads(u.read().decode("utf-8"))
             metadata = Metadata.from_json(in_json["metadata"])
