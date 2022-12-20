@@ -1,0 +1,14 @@
+{% if tree['left'][i] != tree['right'][i] %}
+    if (x[{{ tree['features'][i] }}] <= {{ tree['thresholds'][i] }}) {
+        {% with i = tree['left'][i] %}
+            {% include 'tree_regressor.jinja' %}
+        {% endwith %}
+    }
+    else {
+        {% with i = tree['right'][i] %}
+            {% include 'tree_regressor.jinja' %}
+        {% endwith %}
+    }
+{% else %}
+    y_pred += {{ tree['values'][i].mean() }};
+{% endif %}

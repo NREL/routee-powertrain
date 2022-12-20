@@ -18,5 +18,5 @@ stream_handler.setFormatter(formatter)
 log.addHandler(stream_handler)
 
 
-def root() -> Path:
-    return Path(__file__).parent.parent
+def package_root() -> Path:
+    return Path(__file__).parent

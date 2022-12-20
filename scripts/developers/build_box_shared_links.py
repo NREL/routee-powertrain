@@ -5,7 +5,7 @@ from pathlib import Path
 
 from boxsdk import Client, OAuth2
 
-from powertrain import root
+from powertrain import package_root
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
@@ -19,7 +19,7 @@ ACCESS_TOKEN = getpass.getpass("Access Token: ")
 FOLDER_ID = input("Box Folder Id: ")
 
 # where to write the model links
-OUTDIR = root() / Path("powertrain/resources/default_models/external_model_links.json")
+OUTDIR = package_root() / Path("resources/default_models/external_model_links.json")
 
 oauth2 = OAuth2(CLIENT_ID, CLIENT_SECRET, access_token=ACCESS_TOKEN)
 client = Client(oauth2)
