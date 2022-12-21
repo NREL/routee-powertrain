@@ -5,9 +5,13 @@ from pathlib import Path
 from powertrain.utils.minify import minify_source
 
 TEMPLATE_PATH = Path(__file__).parent.parent / "resources" / "templates"
+INPUT_PRECISION = 4
+OUTPUT_PRECISION = 8 
 JINJA_DEFAULTS = {
     "f": {
         "enumerate": enumerate,
+        'round_inputs': lambda x: round(x, INPUT_PRECISION),
+        'round_outputs': lambda x: round(x, OUTPUT_PRECISION),
     },
 }
 

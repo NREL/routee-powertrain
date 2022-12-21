@@ -1,5 +1,5 @@
 {% if tree['left'][i] != tree['right'][i] %}
-    if (x[{{ tree['features'][i] }}] <= {{ tree['thresholds'][i] }}) {
+    if (x[{{ tree['features'][i] }}] <= {{ f.round_inputs(tree['thresholds'][i]) }}) {
         {% with i = tree['left'][i] %}
             {% include 'tree_regressor.jinja' %}
         {% endwith %}
@@ -10,5 +10,5 @@
         {% endwith %}
     }
 {% else %}
-    y_pred += {{ tree['values'][i].mean() }};
+    y += {{ f.round_outputs(tree['values'][i].mean()) }};
 {% endif %}

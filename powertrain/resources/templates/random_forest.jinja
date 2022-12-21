@@ -1,6 +1,6 @@
 double predict_{{name}} (double distance_miles, double *x) {
 
-    double y_pred = 0.0;
+    double y = 0.0;
 
     {% for k, tree in f.enumerate(trees) %}
         {% with i = 0 %}
@@ -9,7 +9,7 @@ double predict_{{name}} (double distance_miles, double *x) {
         {% endwith %}
     {% endfor %}
 
-    double energy_rate = y_pred / {{ n_estimators }};
+    double energy_rate = y / {{ n_estimators }};
     double energy = energy_rate * distance_miles;
     return energy;
 }
