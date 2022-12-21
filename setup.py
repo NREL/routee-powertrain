@@ -1,7 +1,7 @@
 import codecs
 import os
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 # Get the long description from the README file
 here = os.path.abspath(os.path.dirname(__file__))
@@ -48,6 +48,7 @@ setup(
     ],
     extras_require={
         "optional": ["matplotlib", "xgboost"],
+        "dev": ["black", "mypy", "ruff", "pytest"],
     },
     include_package_data=True,
     package_data={

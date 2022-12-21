@@ -3,19 +3,18 @@ from __future__ import annotations
 import json
 import logging
 import pickle
-from urllib import request
-from pkg_resources import packaging
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Type, Union
+from urllib import request
 
 import numpy as np
+from packaging import version
 from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 
 from powertrain.core.metadata import Metadata
 from powertrain.core.powertrain_type import PowertrainType
 from powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
-from powertrain.core.features import Feature
 from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
@@ -28,7 +27,7 @@ from powertrain.utils.port import (
 )
 from powertrain.validation.errors import compute_errors
 
-_registered_estimators = {
+_registered_estimators: dict[str, Type[EstimatorInterface]] = {
     "LinearRegression": LinearRegression,
     "ExplicitBin": ExplicitBin,
     "RandomForest": RandomForest,
@@ -69,6 +68,9 @@ class Model:
         powertrain_type: Optional[str] = None,
     ):
         ptype = PowertrainType.from_string(powertrain_type)
+
+        if description is None:
+            description = "GenericModel"
 
         self.metadata = Metadata(
             model_description=description,
@@ -171,7 +173,7 @@ class Model:
 
         if name is None:
             name = self.metadata.model_description
-        
+
         name = parse_port_name(name)
 
         header_file = outpath / f"{name}.h"
@@ -274,9 +276,7 @@ class Model:
             in_json = json.load(f)
             metadata = Metadata.from_json(in_json["metadata"])
 
-            if packaging.version.parse(
-                metadata.routee_version
-            ) < packaging.version.parse(CURRENT_VERSION):
+            if version.parse(metadata.routee_version) < version.parse(CURRENT_VERSION):
                 raise Exception(
                     f"This model was trained with routee version {metadata.routee_version} "
                     f"and is incompatible with current version {CURRENT_VERSION}"

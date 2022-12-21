@@ -1,7 +1,7 @@
 import logging
 import traceback
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -78,7 +78,7 @@ def visualize_features(
         # make a prediction using the test links
         try:
             links_df["energy_pred"] = model.predict(links_df)
-        except:
+        except Exception:
             log.error(
                 f"unable to predict {current_feature} with model {model_name} {estimator_name} due to ERROR:"
             )
@@ -108,7 +108,7 @@ def visualize_features(
                     ),
                     format="png",
                 )
-            except:
+            except Exception:
                 log.error(
                     f"unable to save plot for {current_feature} with model {model_name} {estimator_name} due to "
                     f"ERROR:"
@@ -130,7 +130,7 @@ def contour_plot(
     model: Model,
     x_feature: str,
     y_feature: str,
-    feature_ranges: {str, dict},
+    feature_ranges: Dict[str, Dict],
     output_path: Optional[str] = None,
 ):
     """
@@ -211,7 +211,7 @@ def contour_plot(
                 ),
                 format="png",
             )
-        except:
+        except Exception:
             log.error(f"unable to save contour plot for {model_name} due to ERROR:")
             log.error(f" {traceback.format_exc()}")
     else:

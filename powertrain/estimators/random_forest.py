@@ -6,8 +6,8 @@ from pandas import DataFrame, Series
 from sklearn.ensemble import RandomForestRegressor
 
 from powertrain.core.core_utils import (
-    serialize_random_forest_regressor,
     deserialize_random_forest_regressor,
+    serialize_random_forest_regressor,
 )
 from powertrain.core.features import FeaturePack
 from powertrain.estimators.estimator_interface import EstimatorInterface

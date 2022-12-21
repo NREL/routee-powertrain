@@ -137,8 +137,8 @@ class ExplicitBin(EstimatorInterface):
                 _max_i = float(_maxs[f_i])
                 bin_lims = np.linspace(_min_i, _max_i, num=10)
                 bin_labels = (bin_lims[1:] + bin_lims[:-1]) / 2
-                self.bin_lims[f_i] = [round(l, 2) for l in bin_lims]
-                self.bin_labels[f_i] = [round(l, 2) for l in bin_labels]
+                self.bin_lims[f_i] = [round(lim, 2) for lim in bin_lims]
+                self.bin_labels[f_i] = [round(lim, 2) for lim in bin_labels]
                 df.loc[:, f_i + "_bins"] = pd.cut(
                     df[f_i], self.bin_lims[f_i], labels=self.bin_labels[f_i]
                 )
