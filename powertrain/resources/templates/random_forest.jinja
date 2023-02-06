@@ -1,0 +1,15 @@
+double predict_{{name}} (double distance_miles, double *x) {
+
+    double y = 0.0;
+
+    {% for k, tree in f.enumerate(trees) %}
+        {% with i = 0 %}
+            // tree #{{ k + 1 }}
+            {% include 'tree_regressor.jinja' %}
+        {% endwith %}
+    {% endfor %}
+
+    double energy_rate = y / {{ n_estimators }};
+    double energy = energy_rate * distance_miles;
+    return energy;
+}

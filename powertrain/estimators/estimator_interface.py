@@ -1,25 +1,20 @@
 from __future__ import annotations
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
+from typing import Any
 
 from pandas import DataFrame, Series
 
 from powertrain.core.features import FeaturePack
-from powertrain.utils.abc_utils import ABCMeta, abstract_attribute
 
 
-class EstimatorInterface(metaclass=ABCMeta):
+class EstimatorInterface(ABC):
     """
     abstract base class for a routee-powertrain estimator
     """
 
-    @abstract_attribute
-    def model(self):
-        pass
-
-    @abstract_attribute
-    def feature_pack(self) -> FeaturePack:
-        pass
+    model: Any
+    feature_pack: FeaturePack
 
     @abstractmethod
     def train(self, data: DataFrame, **kwargs):

@@ -30,8 +30,6 @@ class Feature_Selection:
             method=method,
             threshold=threshold,
         )
-        if target_feature is not None:
-            correlated_features = corr_obj.get_correlated_features(target_feature)
         if multicolinearity is not False:
             corr_obj.get_multicolinearity()
         if show_correlation is not False:

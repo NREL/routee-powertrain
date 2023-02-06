@@ -3,27 +3,31 @@ from __future__ import annotations
 import json
 import logging
 import pickle
-from urllib import request
-from pkg_resources import packaging
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Type, Union
+from urllib import request
 
 import numpy as np
+from packaging import version
 from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 
 from powertrain.core.metadata import Metadata
 from powertrain.core.powertrain_type import PowertrainType
 from powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
-from powertrain.core.features import Feature
 from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
 from powertrain.utils.fs import get_version
+from powertrain.utils.port import (
+    c_header_from_random_forest,
+    c_source_from_random_forest,
+    parse_port_name,
+)
 from powertrain.validation.errors import compute_errors
 
-_registered_estimators = {
+_registered_estimators: dict[str, Type[EstimatorInterface]] = {
     "LinearRegression": LinearRegression,
     "ExplicitBin": ExplicitBin,
     "RandomForest": RandomForest,
@@ -65,6 +69,9 @@ class Model:
     ):
         ptype = PowertrainType.from_string(powertrain_type)
 
+        if description is None:
+            description = "GenericModel"
+
         self.metadata = Metadata(
             model_description=description,
             estimator_name=estimator.__class__.__name__,
@@ -94,10 +101,9 @@ class Model:
         log.info(f"training estimator {self._estimator.__class__.__name__}")
 
         if trip_column:
-            data_columns = self._estimator.feature_pack.all_names + [trip_column] 
+            data_columns = self._estimator.feature_pack.all_names + [trip_column]
         else:
-            data_columns = self._estimator.feature_pack.all_names 
-            
+            data_columns = self._estimator.feature_pack.all_names
 
         pass_data = data[data_columns].copy(deep=True)
         pass_data["energy_rate"] = (
@@ -144,6 +150,43 @@ class Model:
         energy_pred = energy_pred_rates * links_df[distance_col]
 
         return energy_pred
+
+    def to_c_code(self, outdir: Union[Path, str] = Path(), name: Optional[str] = None):
+        """
+        Dumps a powertrain model to a C header and source file.
+        Useful for integrating models into C or Rust code.
+
+        NOTE: currently only compatible with the RandomForest estimator
+
+        Args:
+            outdir:
+                Where to place the C source files.
+            name:
+                The name of the model
+        """
+        outpath = Path(outdir)
+
+        if not isinstance(self._estimator, RandomForest):
+            raise TypeError(
+                "This function is only compatible iwth the RandomForest estimator"
+            )
+
+        if name is None:
+            name = self.metadata.model_description
+
+        name = parse_port_name(name)
+
+        header_file = outpath / f"{name}.h"
+        source_file = outpath / f"{name}.c"
+
+        header_str = c_header_from_random_forest(self._estimator, name)
+        source_str = c_source_from_random_forest(self._estimator, name)
+
+        with header_file.open("w") as hf:
+            hf.write(header_str)
+
+        with source_file.open("w") as sf:
+            sf.write(source_str)
 
     def to_json(self, outfile: Path):
         """
@@ -201,11 +244,12 @@ class Model:
                 f.feature_range.lower,
                 f.feature_range.upper,
                 feature_bins[f.name],
-            ) for f in self.feature_pack.features 
+            )
+            for f in self.feature_pack.features
         )
 
         mesh = np.meshgrid(*points)
-    
+
         pred_matrix = np.stack(list(map(np.ravel, mesh)), axis=1)
 
         pred_df = DataFrame(pred_matrix, columns=self.feature_pack.feature_list)
@@ -214,7 +258,9 @@ class Model:
         predictions = self.predict(pred_df)
 
         lookup = pred_df.drop(columns=[self.feature_pack.distance.name])
-        energy_key = f"{self.feature_pack.energy.units}_per_{self.feature_pack.distance.units}"
+        energy_key = (
+            f"{self.feature_pack.energy.units}_per_{self.feature_pack.distance.units}"
+        )
         lookup[energy_key] = predictions
 
         return lookup
@@ -230,9 +276,7 @@ class Model:
             in_json = json.load(f)
             metadata = Metadata.from_json(in_json["metadata"])
 
-            if packaging.version.parse(
-                metadata.routee_version
-            ) < packaging.version.parse(CURRENT_VERSION):
+            if version.parse(metadata.routee_version) < version.parse(CURRENT_VERSION):
                 raise Exception(
                     f"This model was trained with routee version {metadata.routee_version} "
                     f"and is incompatible with current version {CURRENT_VERSION}"
@@ -271,7 +315,7 @@ class Model:
         """
         if filetype.lower() != "json":
             raise NotImplementedError("only json filetypes are supported")
-        
+
         with request.urlopen(url) as u:
             in_json = json.loads(u.read().decode("utf-8"))
             metadata = Metadata.from_json(in_json["metadata"])
