@@ -67,39 +67,6 @@ def remove_everything_past(subs, line):
     return regex.sub("", line)
 
 
-def remove_multiline_comments(lines):
-    start, end = "/*", "*/"
-    escaped_start, escaped_end = "/\*", "\*/"
-    in_comment = False
-    newlines = []
-    for line in lines:
-        if not in_comment:
-            start_pos = line.find(start)
-            if start_pos != -1:
-                in_comment = True
-                end_pos = line.find(end)
-                # inline multiline comment
-                if start_pos < end_pos:
-                    line = remove_everything_between(escaped_start, escaped_end, line)
-                    in_comment = False
-                else:
-                    line = remove_everything_past(escaped_start, line)
-        else:
-            end_pos = line.find(end)
-            if end_pos != -1:
-                line = remove_everything_before(escaped_end, line)
-                in_comment = False
-                start_pos = line.find(start)
-                # start of another comment on the same line
-                if start_pos != -1:
-                    line = remove_everything_past(escaped_start, line)
-                    in_comment = True
-            else:
-                line = ""
-        newlines.append(line)
-    return newlines
-
-
 def remove_inline_comments(lines):
     return map(lambda x: remove_everything_past("//", x), lines)
 
@@ -140,7 +107,7 @@ def fix_unary_operators(lines):
     # Use capture groups to separate, e.g. in "#define MACROVALUE", "#define MACRO" from "VALUE"
     # pattern will detect problems like "#define FLUSH-2"
     # Format braces here -----------v
-    pattern = "^(#[a-z]+ +[\w\d]+)([{}][\w\d]+)$".format(regex_unary_ops)
+    pattern = rf"^(#[a-z]+ +[\w\d]+)([{regex_unary_ops}][\w\d]+)$"
     # Simply add one more space between macro name and value
     repl = r"\1" + " " + r"\2"
     # Process each preprocessor line and modify it inplace as we need to keep order
@@ -193,11 +160,6 @@ def minify_source(orig_source, args=None):
     - fix unary operators that we could have taken for binary operators (e.g. -)
     - re-concatening all lines and final fixes to possible over-spacing
     """
-    # Unpacking argument parameters, dealing with the case there are no args
-    keep_newlines = getattr(args, "keep_newlines", False)
-    keep_multiline_comments = getattr(args, "keep_multiline", False)
-    keep_inline_comments = getattr(args, "keep_inline", False)
-
     lines = orig_source.split("\n")
 
     # Things to do BEFORE processing spaced ops:
@@ -205,17 +167,13 @@ def minify_source(orig_source, args=None):
     # - reinsert newlines on preprocessor directives
     # so they stay on their own line even minified
     lines = clear_whitespace_first_pass(lines)
-    if keep_newlines is False:
-        lines = reinsert_preprocessor_newlines(lines)
+    lines = reinsert_preprocessor_newlines(lines)
 
     # for each operator: remove space on each side of the op, on every line.
     # Escape ops that could be regex control characters.
     for op in OPS:
         lines = map(minify_operator(op), lines)
-    if keep_inline_comments is False:
-        lines = remove_inline_comments(lines)
-    if keep_multiline_comments is False:
-        lines = remove_multiline_comments(lines)
+    lines = remove_inline_comments(lines)
     # Finally convert all remaining multispaces to a single space
     multi_spaces = re.compile(r"[  ]+ *")
     lines = list(map(lambda string: multi_spaces.sub(" ", string), lines))
@@ -223,11 +181,7 @@ def minify_source(orig_source, args=None):
     # e.g. "#define ABC -1" becomes "#define ABC-1", so we can fix it here
     lines = fix_unary_operators(lines)
 
-    minified = ""
-    if keep_newlines is True:
-        minified = args.newline.join(lines)
-    else:
-        minified = fix_duplicate_newlines("".join(lines))
+    minified = fix_duplicate_newlines("".join(lines))
 
     # There is no syntactic requirement of an operator being spaced from a '{' in C so
     # if we added unnecessary space when processing spaced ops, we can fix it here

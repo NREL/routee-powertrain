@@ -1,10 +1,9 @@
 import logging
 from pathlib import Path
 
-from powertrain.core.features import Feature, FeaturePack
-from powertrain.core.model import Model
-from powertrain.io.api import read_model
-from powertrain.io.load import load_pretrained_model, load_route, list_available_models
+from .core.model import Model
+from .io.api import read_model
+from .io.load import list_available_models, load_pretrained_model
 
 name = "powertrain"
 __version__ = "0.6.1"

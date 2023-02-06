@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import Dict, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Optional
 
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error
 
 if TYPE_CHECKING:
-    from powertrain import Model
+    from powertrain.core.model import Model
 
 
 def net_energy_error(target: np.ndarray, target_pred: np.ndarray) -> float:
