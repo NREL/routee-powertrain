@@ -174,7 +174,7 @@ class ExplicitBin(EstimatorInterface):
                 Predicted target for every row in links_df
         """
         links_df = data[
-            self.feature_pack.feature_list + [self.feature_pack.distance.name]
+            self.feature_pack.feature_list
         ].astype(float)
 
         # Cut and label each attribute - manual
