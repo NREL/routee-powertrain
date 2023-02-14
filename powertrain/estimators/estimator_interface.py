@@ -17,7 +17,7 @@ class EstimatorInterface(ABC):
     feature_pack: FeaturePack
 
     @abstractmethod
-    def train(self, data: DataFrame, **kwargs):
+    def train(self, data: DataFrame):
         """
         abstract train method
 
