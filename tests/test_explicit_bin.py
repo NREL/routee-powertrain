@@ -27,7 +27,7 @@ class TestPredict(TestCase):
         train_data = mock_ice_data()
 
         feature_pack = FeaturePack(
-            features=(Feature(name="gpsspeed", units=""),),
+            features=(Feature(name="speed", units=""),),
             distance=Feature(name="miles", units=""),
             energy=Feature(name="gge", units=""),
         )
