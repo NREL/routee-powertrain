@@ -29,7 +29,7 @@ class RandomForest(EstimatorInterface):
         cores: int = 4,
         model: Optional[RandomForestRegressor] = None,
     ):
-        if not model:
+        if model is None:
             model = RandomForestRegressor(
                 n_estimators=20,
                 max_features="auto",
