@@ -1,5 +1,3 @@
-import math
-from pathlib import Path
 from unittest import TestCase
 
 from powertrain import Model
@@ -19,4 +17,3 @@ class TestPredict(TestCase):
         rf_model = Model(est)
 
         rf_model.train(data)
-
