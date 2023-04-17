@@ -37,7 +37,8 @@ class SmartCoreRandomForest(EstimatorInterface):
         x = x.values.tolist()
         y = list(data.energy_rate.values)
 
-        self.model = RustRandomForest().train(x, y)
+        self.model = RustRandomForest()
+        self.model.train(x, y)
 
     def predict(self, data: DataFrame) -> Series:
         """Apply the estimator to to predict consumption.
