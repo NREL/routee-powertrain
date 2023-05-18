@@ -19,6 +19,7 @@ from powertrain.estimators.estimator_interface import EstimatorInterface
 from powertrain.estimators.explicit_bin import ExplicitBin
 from powertrain.estimators.linear_regression import LinearRegression
 from powertrain.estimators.random_forest import RandomForest
+from powertrain.estimators.rust_random_forest import SmartCoreRandomForest
 from powertrain.utils.fs import get_version
 from powertrain.utils.port import (
     c_header_from_random_forest,
@@ -31,6 +32,7 @@ _registered_estimators: dict[str, Type[EstimatorInterface]] = {
     "LinearRegression": LinearRegression,
     "ExplicitBin": ExplicitBin,
     "RandomForest": RandomForest,
+    "SmartCoreRandomForest": SmartCoreRandomForest,
 }
 
 log = logging.getLogger(__name__)
