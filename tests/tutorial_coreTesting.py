@@ -36,9 +36,9 @@ warnings.filterwarnings("ignore")
 
 
 from powertrain.core.model import Model
-from powertrain.estimators.explicit_bin import ExplicitBin
-from powertrain.estimators.xgboost import XGBoost
-from powertrain.estimators.random_forest import RandomForest
+from powertrain.trainers.explicit_bin import ExplicitBin
+from powertrain.trainers.xgboost import XGBoost
+from powertrain.trainers.random_forest_old import RandomForest
 from powertrain.core.features import Feature, FeaturePack
 from powertrain.plot.feature_importance import plot_feature_importance
 

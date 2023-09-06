@@ -13,9 +13,9 @@ import pandas as pd
 
 from powertrain.core.features import Feature, FeaturePack
 from powertrain.core.model import Model
-from powertrain.estimators.explicit_bin import ExplicitBin
-from powertrain.estimators.linear_regression import LinearRegression
-from powertrain.estimators.random_forest import RandomForest
+from powertrain.trainers.explicit_bin import ExplicitBin
+from powertrain.trainers.linear_regression import LinearRegression
+from powertrain.trainers.random_forest_old import RandomForest
 
 from tests import test_dir
 from tests.mock_resources import mock_route
@@ -23,9 +23,7 @@ from tests.mock_resources import mock_route
 log.basicConfig(level=log.INFO)
 
 data_path = (
-    test_dir()
-    / Path("routee-powertrain-test-data")
-    / Path("links_fastsim_2014mazda3.csv")
+    test_dir() / Path("routee-powertrain-test-data") / Path("sample_train_data.csv")
 )
 
 out_path = Path("tmp")

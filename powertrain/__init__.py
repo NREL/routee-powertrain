@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 
 from .core.features import Feature, FeaturePack, FeatureRange
-from .core.model import Model
+from .core.model import VehicleModel
 from .io.api import read_model
 from .io.load import list_available_models, load_pretrained_model
 

@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from powertrain.core.model import Model
+from powertrain.core.model import VehicleModel
 
 
-def read_model(infile: str):
+def read_model(infile: str) -> VehicleModel:
     """Function to read model from file.
 
     Args:
@@ -13,11 +13,7 @@ def read_model(infile: str):
     """
     path = Path(infile)
 
-    if path.suffix == ".json":
-        return Model.from_json(Path(path))
-    elif path.suffix == ".pickle":
-        return Model.from_pickle(path)
-    else:
-        raise ImportError(
-            f"file type of {path.suffix} not supported by routee-powertrain"
-        )
+    if path.suffix != ".onnx":
+        raise ValueError("File must be an .onnx file.")
+
+    return VehicleModel.from_file(path)

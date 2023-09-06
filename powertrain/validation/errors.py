@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict
 
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error
 
 if TYPE_CHECKING:
-    from powertrain.core.model import Model
+    from powertrain.core.model import VehicleModel
 
 
 def net_energy_error(target: np.ndarray, target_pred: np.ndarray) -> float:
@@ -53,9 +53,7 @@ def relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> 
     return mean_error
 
 
-def compute_errors(
-    test_df: pd.DataFrame, model: Model, trip_column: Optional[str] = None
-) -> Dict[str, float]:
+def compute_errors(test_df: pd.DataFrame, model: VehicleModel) -> Dict[str, float]:
     """
     Computes the error metrics for a set of predictions relative to the ground truth data
 
@@ -84,7 +82,9 @@ def compute_errors(
     ew_rpe = weighted_relative_percent_difference(target, target_pred)
     errors["link_weighted_relative_percent_difference"] = ew_rpe
 
-    if trip_column:
+    trip_column = model.metadata.trip_column
+
+    if trip_column in test_df.columns:
         test_df["energy_pred"] = target_pred
         gb = test_df.groupby(trip_column).agg({energy_name: sum, "energy_pred": sum})
         t_rpd = relative_percent_difference(gb[energy_name], gb["energy_pred"])

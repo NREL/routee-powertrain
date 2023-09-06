@@ -7,13 +7,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
 
-from powertrain.core.model import Model
+from powertrain.core.model import VehicleModel
 
 log = logging.getLogger(__name__)
 
 
 def visualize_features(
-    model: Model, feature_ranges: Dict[str, dict], output_path: Optional[str] = None
+    model: VehicleModel,
+    feature_ranges: Dict[str, dict],
+    output_path: Optional[str] = None,
 ) -> dict:
     """
     takes a model and generates test links to independently test the model's features
@@ -27,16 +29,14 @@ def visualize_features(
     """
 
     # grab the necessary metadata from the model
-    feature_meta = model.metadata.estimator_features["features"]
-    distance_name = model.metadata.estimator_features["distance"]["name"]
-    distance_units = model.metadata.estimator_features["distance"]["units"]
-    energy_units = model.metadata.estimator_features["energy"]["units"]
+    distance_name = model.metadata.feature_pack.distance.name
+    distance_units = model.metadata.feature_pack.distance.units
+    energy_units = model.metadata.feature_pack.energy.units
     model_name = model.metadata.model_description
-    estimator_name = model.metadata.estimator_name
 
-    feature_units_dict = {}
-    for feature in feature_meta:
-        feature_units_dict[feature["name"]] = feature["units"]
+    feature_units_dict: Dict[str, str] = {}
+    for feature in model.metadata.feature_pack.features:
+        feature_units_dict[feature.name] = feature.units
 
     # check that all features in the metadata are present in the config
     # if any features are missing in config, throw an error
@@ -45,7 +45,7 @@ def visualize_features(
     ):
         missing_features = set(feature_units_dict.keys()) - set(feature_ranges.keys())
         raise KeyError(
-            f"feature range is missing {missing_features} for model {model_name} {estimator_name}"
+            f"feature range is missing {missing_features} for model {model_name}"
         )
 
     # dict for holding the prediction series
@@ -58,11 +58,11 @@ def visualize_features(
         # make <num_links> number of links
         # using the feature range config, generate evenly spaced ascending values for the current feature
         sample_points = []
-        for feature in feature_units_dict.keys():
+        for feature_name in feature_units_dict.keys():
             points = np.linspace(
-                feature_ranges[feature]["min"],
-                feature_ranges[feature]["max"],
-                feature_ranges[feature]["steps"],
+                feature_ranges[feature_name]["min"],
+                feature_ranges[feature_name]["max"],
+                feature_ranges[feature_name]["steps"],
             )
             sample_points.append(points)
 
@@ -80,19 +80,17 @@ def visualize_features(
             links_df["energy_pred"] = model.predict(links_df)
         except Exception:
             log.error(
-                f"unable to predict {current_feature} with model {model_name} {estimator_name} due to ERROR:"
+                f"unable to predict {current_feature} with model {model_name} due to ERROR:"
             )
             log.error(f" {traceback.format_exc()}")
-            log.error(
-                f"{current_feature} plot for model {model_name} {estimator_name} skipped.."
-            )
+            log.error(f"{current_feature} plot for model {model_name} skipped..")
             continue
 
         # plot the prediction and save the figure
         prediction = links_df.groupby(current_feature).energy_pred.mean()
 
         prediction.plot()
-        plt.title(f"{estimator_name} [{current_feature}]")
+        plt.title(f"{model_name} [{current_feature}]")
         plt.xlabel(f"{current_feature} [{current_units}]")
         plt.ylabel(f"{energy_units}/100{distance_units}")
 
@@ -103,20 +101,16 @@ def visualize_features(
                     parents=True, exist_ok=True
                 )
                 plt.savefig(
-                    Path(output_path).joinpath(
-                        f"{model_name}/{estimator_name}_[{current_feature}].png"
-                    ),
+                    Path(output_path).joinpath(f"{model_name}/{current_feature}.png"),
                     format="png",
                 )
             except Exception:
                 log.error(
-                    f"unable to save plot for {current_feature} with model {model_name} {estimator_name} due to "
+                    f"unable to save plot for {current_feature} with model {model_name} due to "
                     f"ERROR:"
                 )
                 log.error(f" {traceback.format_exc()}")
-                log.error(
-                    f"{current_feature} plot for model {model_name} {estimator_name} skipped.."
-                )
+                log.error(f"{current_feature} plot for model {model_name} skipped..")
         else:
             plt.show()
 
@@ -127,7 +121,7 @@ def visualize_features(
 
 
 def contour_plot(
-    model: Model,
+    model: VehicleModel,
     x_feature: str,
     y_feature: str,
     feature_ranges: Dict[str, Dict],
@@ -145,14 +139,14 @@ def contour_plot(
     KeyError due to incompatible x/y features
     """
     # get the necessary information from the metadata
-    feature_meta = model.metadata.estimator_features["features"]
-    distance_name = model.metadata.estimator_features["distance"]["name"]
+    feature_meta = model.metadata.feature_pack
+    distance_name = feature_meta.distance.name
     model_name = model.metadata.model_description
 
     # get all of the feature units from the metadata
     feature_units_dict = {}
-    for feature in feature_meta:
-        feature_units_dict[feature["name"]] = feature["units"]
+    for feature in feature_meta.features:
+        feature_units_dict[feature.name] = feature.units
 
     # check to make sure feature range has all the features required by the model
     if not all(

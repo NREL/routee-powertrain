@@ -8,9 +8,9 @@ import pandas as pd
 
 from powertrain.core.features import Feature, FeaturePack
 from powertrain.core.model import Model
-from powertrain.estimators.explicit_bin import ExplicitBin
-from powertrain.estimators.linear_regression import LinearRegression
-from powertrain.estimators.random_forest import RandomForest
+from powertrain.trainers.explicit_bin import ExplicitBin
+from powertrain.trainers.linear_regression import LinearRegression
+from powertrain.trainers.random_forest_old import RandomForest
 
 RAW_DATA_PATH = (
     "/projects/mbap/data/fastsim_results/2020_11_9/FASTSim_py_veh_db_w_phevs/*.db"

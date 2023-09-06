@@ -18,9 +18,9 @@ from pandas.io.sql import DatabaseError
 
 from powertrain import Model
 from powertrain.core.features import Feature, FeaturePack
-from powertrain.estimators.explicit_bin import ExplicitBin
-from powertrain.estimators.linear_regression import LinearRegression
-from powertrain.estimators.random_forest import RandomForest
+from powertrain.trainers.explicit_bin import ExplicitBin
+from powertrain.trainers.linear_regression import LinearRegression
+from powertrain.trainers.random_forest_old import RandomForest
 
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] - %(message)s")
 log = logging.getLogger(__name__)

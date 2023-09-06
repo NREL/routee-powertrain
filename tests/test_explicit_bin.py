@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest import TestCase
 
 from powertrain import Model
-from powertrain.estimators.explicit_bin import ExplicitBin, BIN_DEFAULTS
+from powertrain.trainers.explicit_bin import ExplicitBin, BIN_DEFAULTS
 from tests.mock_resources import *
 
 

@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 from powertrain.core.features import FeaturePack
-from powertrain.estimators.estimator_interface import EstimatorInterface
+from powertrain.trainers.estimator_interface import EstimatorInterface
 
 BIN_DEFAULTS = {
     "grade_percent": (
@@ -217,14 +217,14 @@ class ExplicitBin(EstimatorInterface):
             "model": self.model.to_json(orient="table"),
             "bin_lims": self.bin_lims,
             "bin_labels": self.bin_labels,
-            "feature_pack": self.feature_pack.to_json(),
+            "feature_pack": self.feature_pack.to_dict(),
         }
 
         return out_json
 
     @classmethod
     def from_json(cls, json: dict) -> ExplicitBin:
-        feature_pack = FeaturePack.from_json(json["feature_pack"])
+        feature_pack = FeaturePack.from_dict(json["feature_pack"])
         try:
             model_df = pd.read_json(json["model"], orient="table")
         except KeyError:

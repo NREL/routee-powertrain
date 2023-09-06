@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from powertrain import Model
-from powertrain.estimators.random_forest import RandomForest, RandomForestRegressor
+from powertrain.trainers.random_forest_old import RandomForest, RandomForestRegressor
 from tests.mock_resources import *
 
 

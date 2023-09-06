@@ -35,7 +35,7 @@ class Feature(NamedTuple):
 
         return Feature(name=d["name"], units=d["units"], feature_range=frange)
 
-    def to_json(self) -> dict:
+    def to_dict(self) -> dict:
         out: dict[Any, Any] = {
             "name": self.name,
             "units": self.units,
@@ -59,15 +59,15 @@ class FeaturePack(NamedTuple):
     def feature_list(self) -> List[str]:
         return [f.name for f in self.features]
 
-    def to_json(self) -> dict:
+    def to_dict(self) -> dict:
         return {
-            "features": [f.to_json() for f in self.features],
+            "features": [f.to_dict() for f in self.features],
             "distance": self.distance._asdict(),
             "energy": self.energy._asdict(),
         }
 
     @classmethod
-    def from_json(cls, json: dict) -> FeaturePack:
+    def from_dict(cls, json: dict) -> FeaturePack:
         features = tuple(Feature.from_dict(d) for d in json["features"])
         distance = Feature.from_dict(json["distance"])
         energy = Feature.from_dict(json["energy"])
