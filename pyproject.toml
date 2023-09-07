@@ -1,11 +1,43 @@
-[tool.black]
-line-length = 88 
+[build-system]
+requires = ["setuptools>=63.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
-[tool.ruff]
-line-length = 88 
-ignore = ["E501"]
-exclude = ["docs/", "scripts/", "tests/"]
-select = ["F", "E", "W", "I001"]
+[project]
+name = "nrel.routee.powertrain"
+version = "1.0"
+description = "RouteE-Powertrain is a tool for predicting energy usage over a set of road links."
+readme = "README.md"
+authors = [{ name = "National Renewable Energy Laboratory" }]
+license = { text = "BSD 3-Clause License Copyright (c) 2022, Alliance for Sustainable Energy, LLC" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = ["pandas", "numpy", "onnx", "onnxruntime"]
+requires-python = ">=3.8"
+
+dev = [
+    "pytest",
+    "black",
+    "mypy",
+    "ruff",
+]
+
+[project.urls]
+Homepage = "https://github.nrel.gov/MBAP/routee-powertrain"
+
+[tool.setuptools.packages.find]
+where = ["."] # list of folders that contain the packages (["."] by default)
+include = [
+    "nrel*",
+] # package names should match these glob patterns (["*"] by default)
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
