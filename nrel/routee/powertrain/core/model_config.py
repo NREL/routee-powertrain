@@ -16,7 +16,7 @@ class ModelConfig:
 
     # model information
     feature_pack: FeaturePack
-    energy_rate_low_limit: float = 0.0
+    energy_rate_low_limit: float = -np.inf 
     energy_rate_high_limit: float = np.inf
     feature_dtype: str = "float32"
     onnx_input_name: str = "input"

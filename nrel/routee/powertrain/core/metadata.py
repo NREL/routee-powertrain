@@ -40,6 +40,7 @@ class Metadata:
 
     def to_dict(self) -> dict:
         d = self.__dict__
+        print(d)
         d["config"] = self.config.to_dict()
 
         return d
