@@ -3,11 +3,12 @@ from pathlib import Path
 
 from .core.features import Feature, FeaturePack, FeatureRange
 from .core.model import Model
+from .core.model_config import ModelConfig
+from .core.powertrain_type import PowertrainType
 from .io.api import read_model
 from .io.load import list_available_models, load_pretrained_model
 
-name = "powertrain"
-__version__ = "0.6.1"
+__version__ = "1.0.0"
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)

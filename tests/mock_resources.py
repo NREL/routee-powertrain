@@ -1,23 +1,9 @@
-from pathlib import Path
 import uuid
 
 import pandas as pd
 import numpy as np
 
-from powertrain import load_pretrained_model, FeaturePack, Feature
-
-from tests import test_dir
-
-
-def mock_route() -> pd.DataFrame:
-    route_path = (
-        test_dir()
-        / Path("routee-powertrain-test-data")
-        / Path("trip_11394_1_metropia_austin_v2.csv")
-    )
-    route_df = pd.read_csv(route_path)
-
-    return route_df
+from nrel.routee.powertrain import load_pretrained_model, FeaturePack, Feature
 
 
 def mock_model():

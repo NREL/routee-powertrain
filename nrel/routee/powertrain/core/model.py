@@ -10,12 +10,12 @@ import onnx
 import onnxruntime as rt
 import pandas as pd
 
-from powertrain.core.metadata import (
+from nrel.routee.powertrain.core.metadata import (
     METADATA_SERIALIZATION_KEY,
     Metadata,
     add_metadata_to_onnx_model,
 )
-from powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
+from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
 
 
 @dataclass

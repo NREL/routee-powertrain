@@ -5,8 +5,8 @@ import warnings
 from dataclasses import dataclass, replace
 from typing import Optional
 
-from powertrain.core.model_config import ModelConfig
-from powertrain.utils.fs import get_version
+from nrel.routee.powertrain.core.model_config import ModelConfig
+from nrel.routee.powertrain.utils.fs import get_version
 
 METADATA_SERIALIZATION_KEY = "routee_metadata"
 

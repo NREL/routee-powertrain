@@ -3,7 +3,10 @@ from unittest import TestCase
 from os import remove
 from pathlib import Path
 
-from powertrain.validation.feature_visualization import visualize_features, contour_plot
+from nrel.routee.powertrain.validation.feature_visualization import (
+    visualize_features,
+    contour_plot,
+)
 
 from tests.mock_resources import mock_model
 

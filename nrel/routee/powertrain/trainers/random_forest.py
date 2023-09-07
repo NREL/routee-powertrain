@@ -4,8 +4,8 @@ from skl2onnx import to_onnx
 from skl2onnx.common.data_types import FloatTensorType
 from sklearn.ensemble import RandomForestRegressor
 
-from powertrain.core.model_config import ModelConfig
-from powertrain.trainers.trainer import Trainer
+from nrel.routee.powertrain.core.model_config import ModelConfig
+from nrel.routee.powertrain.trainers.trainer import Trainer
 
 
 class RandomForestTrainer(Trainer):

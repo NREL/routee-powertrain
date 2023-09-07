@@ -1,9 +1,10 @@
 from pathlib import Path
+from typing import Union
 
-from powertrain.core.model import Model
+from nrel.routee.powertrain.core.model import Model
 
 
-def read_model(infile: str) -> Model:
+def read_model(infile: Union[str, Path]) -> Model:
     """Function to read model from file.
 
     Args:

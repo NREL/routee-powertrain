@@ -3,9 +3,9 @@ from typing import List
 
 import pandas as pd
 
-from powertrain.core.model import Model
-from powertrain.resources.default_models import default_model_dir
-from powertrain.resources.sample_routes import sample_route_dir
+from nrel.routee.powertrain.core.model import Model
+from nrel.routee.powertrain.resources.default_models import default_model_dir
+from nrel.routee.powertrain.resources.sample_routes import sample_route_dir
 
 local_models = {
     "ICE": default_model_dir() / "2016_TOYOTA_Camry_4cyl_2WD-speed&grade.json",

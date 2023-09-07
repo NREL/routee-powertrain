@@ -7,8 +7,8 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-from powertrain.core.features import FeaturePack
-from powertrain.trainers.estimator_interface import EstimatorInterface
+from nrel.routee.powertrain.core.features import FeaturePack
+from nrel.routee.powertrain.trainers.estimator_interface import EstimatorInterface
 
 BIN_DEFAULTS = {
     "grade_percent": (

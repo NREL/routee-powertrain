@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
 
-from powertrain.core.model import Model
+from nrel.routee.powertrain.core.model import Model
 
 log = logging.getLogger(__name__)
 

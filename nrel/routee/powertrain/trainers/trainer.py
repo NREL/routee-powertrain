@@ -4,11 +4,11 @@ from abc import ABC, abstractmethod
 import onnx
 import pandas as pd
 
-from powertrain.core.metadata import Metadata
-from powertrain.core.model import Model
-from powertrain.core.model_config import ModelConfig
-from powertrain.trainers.utils import test_train_split
-from powertrain.validation.errors import compute_errors
+from nrel.routee.powertrain.core.metadata import Metadata
+from nrel.routee.powertrain.core.model import Model
+from nrel.routee.powertrain.core.model_config import ModelConfig
+from nrel.routee.powertrain.trainers.utils import test_train_split
+from nrel.routee.powertrain.validation.errors import compute_errors
 
 ENERGY_RATE_NAME = "energy_rate"
 

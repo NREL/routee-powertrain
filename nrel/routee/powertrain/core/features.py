@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, NamedTuple, Optional, Tuple
+from typing import Any, Iterable, List, NamedTuple, Optional
 
 
 class FeatureRange(NamedTuple):
@@ -47,7 +47,7 @@ class Feature(NamedTuple):
 
 
 class FeaturePack(NamedTuple):
-    features: Tuple[Feature, ...]
+    features: Iterable[Feature]
     distance: Feature
     energy: Feature
 
@@ -68,7 +68,7 @@ class FeaturePack(NamedTuple):
 
     @classmethod
     def from_dict(cls, json: dict) -> FeaturePack:
-        features = tuple(Feature.from_dict(d) for d in json["features"])
+        features = [Feature.from_dict(d) for d in json["features"]]
         distance = Feature.from_dict(json["distance"])
         energy = Feature.from_dict(json["energy"])
         return FeaturePack(features, distance, energy)

@@ -4,8 +4,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from powertrain.core.features import FeaturePack
-from powertrain.core.powertrain_type import PowertrainType
+from nrel.routee.powertrain.core.features import FeaturePack
+from nrel.routee.powertrain.core.powertrain_type import PowertrainType
 
 
 @dataclass
