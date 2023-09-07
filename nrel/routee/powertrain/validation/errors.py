@@ -89,7 +89,9 @@ def compute_errors(test_df: pd.DataFrame, model: Model) -> Dict[str, float]:
 
     if trip_column in test_df.columns:
         test_df["energy_pred"] = target_pred
-        gb = test_df.groupby(trip_column).agg({energy_name: sum, "energy_pred": sum})
+        gb = test_df.groupby(trip_column).agg(
+            {energy_name: "sum", "energy_pred": "sum"}
+        )
         t_rpd = relative_percent_difference(gb[energy_name], gb["energy_pred"])
         t_wrpd = weighted_relative_percent_difference(
             gb[feature_pack.energy.name], gb["energy_pred"]
