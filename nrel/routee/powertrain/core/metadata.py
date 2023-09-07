@@ -31,7 +31,7 @@ class Metadata:
 
     config: ModelConfig
 
-    errors: Optional[dict] = None  
+    errors: Optional[dict] = None
 
     routee_version: str = get_version()
 
@@ -55,8 +55,8 @@ class Metadata:
         v = get_version()
         if d["routee_version"] != v:
             warnings.warn(
-                f"this model was trained using routee-powertrain version {d['routee_version']}"
-                f" but you're using version {v}"
+                "this model was trained using routee-powertrain version "
+                f"{d['routee_version']} but you're using version {v}"
             )
 
         d["config"] = ModelConfig.from_dict(d["config"])

@@ -21,9 +21,11 @@ from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTOR
 @dataclass
 class Model:
     """
-    A RouteE-Powertrain vehicle model represents a single vehicle (i.e. a 2016 Toyota Camry with a 1.5 L gasoline engine).
+    A RouteE-Powertrain vehicle model represents a single vehicle
+    (i.e. a 2016 Toyota Camry with a 1.5 L gasoline engine).
 
-    The model uses ONNX to load a pre-trained model and use it for making energy predictions.
+    The model uses ONNX to load a pre-trained model and use it
+    for making energy predictions.
     """
 
     onnx_model: onnx.ModelProto

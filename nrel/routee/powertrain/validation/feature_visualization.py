@@ -23,9 +23,13 @@ def visualize_features(
 
     :param model: the model to be tested
     :param feature_ranges: a dictionary with value ranges to generate test links
-    :param output_path: if not none, saves results to this location. Else the plots are displayed rather than saved
+    :param output_path: if not none, saves results to this location. Else the plots
+        are displayed rather than saved
+
     :return: a dictionary containing the predictions where the key is the feature tested
-    :raises Exception due to IOErrors, KeyError due to missing features ranges required by the model
+
+    :raises Exception due to IOErrors, KeyError due to missing features ranges required
+        by the model
     """
 
     # grab the necessary metadata from the model
@@ -51,11 +55,13 @@ def visualize_features(
     # dict for holding the prediction series
     predictions = {}
 
-    # for each feature test it individually using the values form the visualization feature ranges
+    # for each feature test it individually using the values form
+    # the visualization feature ranges
     for current_feature, current_units in feature_units_dict.items():
         # setup a set of test links
         # make <num_links> number of links
-        # using the feature range config, generate evenly spaced ascending values for the current feature
+        # using the feature range config, generate evenly spaced ascending
+        # values for the current feature
         sample_points = []
         for feature_name in feature_units_dict.keys():
             points = np.linspace(
@@ -71,7 +77,8 @@ def visualize_features(
 
         links_df = DataFrame(pred_input, columns=[f for f in feature_units_dict.keys()])
 
-        # set distance to be a constant and label it with the distance name found in the metadata
+        # set distance to be a constant and label it with the
+        # distance name found in the metadata
         links_df[distance_name] = [100] * len(links_df)
 
         # make a prediction using the test links
@@ -79,7 +86,8 @@ def visualize_features(
             links_df["energy_pred"] = model.predict(links_df)
         except Exception:
             log.error(
-                f"unable to predict {current_feature} with model {model_name} due to ERROR:"
+                f"unable to predict {current_feature} with model "
+                f"{model_name} due to ERROR:"
             )
             log.error(f" {traceback.format_exc()}")
             log.error(f"{current_feature} plot for model {model_name} skipped..")
@@ -105,8 +113,9 @@ def visualize_features(
                 )
             except Exception:
                 log.error(
-                    f"unable to save plot for {current_feature} with model {model_name} due to "
-                    f"ERROR:"
+                    f"unable to save plot for {current_feature} with "
+                    f"model {model_name} due to "
+                    "ERROR:"
                 )
                 log.error(f" {traceback.format_exc()}")
                 log.error(f"{current_feature} plot for model {model_name} skipped..")
@@ -127,15 +136,20 @@ def contour_plot(
     output_path: Optional[str] = None,
 ):
     """
-    takes a model and generates a contour plot of the two test features: x_Feature and y_feature.
+    takes a model and generates a contour plot of the two test features:
+    x_Feature and y_feature.
 
     :param model: the model to be tested
-    :param x_feature: one of the features used to generate the energy matrix and will be the x-axis feature
-    :param y_feature: one of the features used to generate the energy matrix and will be the y-axis feature
+    :param x_feature: one of the features used to generate the energy matrix
+        and will be the x-axis feature
+    :param y_feature: one of the features used to generate the energy matrix
+        and will be the y-axis feature
     :param feature_ranges: a dictionary with value ranges to generate test links
-    :param output_path: if not none, saves results to this location. Else the plot is displayed rather than saved
-    :raises Exception due to IOErrors, KeyError due to missing features ranges required by the model,
-    KeyError due to incompatible x/y features
+    :param output_path: if not none, saves results to this location.
+        Else the plot is displayed rather than saved
+
+    :raises Exception due to IOErrors, KeyError due to missing features ranges required
+    by the model, KeyError due to incompatible x/y features
     """
     # get the necessary information from the metadata
     feature_meta = model.metadata.config.feature_pack

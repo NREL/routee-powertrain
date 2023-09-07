@@ -44,8 +44,10 @@ def _clean_temp_files_single_directory(filepath: str):
 class TestVisualizeFeatures(TestCase):
     def test_visualize_features_successful_run(self):
         """
-        test to verify that the predictions returned are the correct length, contain the tests for each of the features
-        in the model, and plots are saved to the correct location with the correct naming scheme
+        test to verify that the predictions returned are the correct
+        length, contain the tests for each of the features
+        in the model, and plots are saved to the correct location with
+        the correct naming scheme
         """
         model = mock_model()
         model_name = model.metadata.model_description
@@ -106,7 +108,8 @@ class TestVisualizeFeatures(TestCase):
 
     def test_visualize_features_missing_feature(self):
         """
-        test to verify that a KeyError is thrown when the config is missing a required feature
+        test to verify that a KeyError is thrown when the config
+        is missing a required feature
         """
         model = mock_model()
         feature_ranges = {"speed": {"max": 80, "min": 0, "steps": 40}}
@@ -169,7 +172,8 @@ class TestVisualizeFeatures(TestCase):
 
     def test_contour_plot_incompatible_feature(self):
         """
-        test to verify a KeyError is thrown if the x/y test features are not supported by the model
+        test to verify a KeyError is thrown if the x/y test features
+        are not supported by the model
         """
         model = mock_model()
         feature_ranges = {
@@ -199,7 +203,8 @@ class TestVisualizeFeatures(TestCase):
 
     def test_contour_plot_missing_feature(self):
         """
-        test to verify that a KeyError is thrown if a required feature is missing from the feature ranges
+        test to verify that a KeyError is thrown if a required feature
+        is missing from the feature ranges
         """
         model = mock_model()
         feature_ranges = {"speed": {"max": 80, "min": 0, "steps": 40}}

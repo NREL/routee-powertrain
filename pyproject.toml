@@ -22,7 +22,14 @@ requires-python = ">=3.8"
 
 [project.optional-dependencies]
 trainers = ["scikit-learn"]
-dev = ["pytest", "black", "mypy", "ruff"]
+dev = [
+    "nrel.routee.powertrain[trainers]",
+    "pytest",
+    "black",
+    "mypy",
+    "ruff",
+    "boxsdk",
+]
 
 [project.urls]
 Homepage = "https://github.nrel.gov/MBAP/routee-powertrain"

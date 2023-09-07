@@ -7,12 +7,12 @@ import logging
 from datetime import datetime
 from pathlib import Path
 import traceback
-from typing import NamedTuple, Dict, Tuple
+from typing import NamedTuple, Dict, Union
 
 import yaml
 
-from powertrain.validation.feature_visualization import visualize_features
-from powertrain.core.model import Model
+from nrel.routee.powertrain.validation.feature_visualization import visualize_features
+from nrel.routee.powertrain import Model
 
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] - %(message)s")
 log = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ parser.add_argument("config_file", help="the configuration for this run")
 
 class VisualConfig(NamedTuple):
     """
-    this class holds all of the configuration values found in the new visualization config
+    this class holds all of the config values found in the new visualization config
 
     models_path: where to find models for visualization
     output_path: where to save the visualizations
@@ -56,7 +56,7 @@ class VisualConfig(NamedTuple):
         )
 
 
-def load_config(config_file: str) -> VisualConfig:
+def load_config(config_file: Union[str, Path]) -> VisualConfig:
     """
     Load the user config file and returns a VisualConfig object
     """
@@ -94,17 +94,17 @@ def run():
         return _err(f"no .json files or .pickle files found at {vconfig.models_path}")
 
     if json_model_paths:
-        log.info(f"processing .json files")
+        log.info("processing .json files")
         for model_path in json_model_paths:
             try:
                 model = Model.from_json(Path(model_path))
                 visualize_features(model, vconfig.feature_ranges, vconfig.output_path)
-            except Exception as error:
+            except Exception:
                 _err(f"unable to process model {model_path} due to ERROR:")
                 _err(f" {traceback.format_exc()}")
 
     if pickle_model_paths:
-        log.info(f"processing .pickle files")
+        log.info("processing .pickle files")
         for model_path in pickle_model_paths:
             try:
                 model = Model.from_pickle(Path(model_path))

@@ -55,7 +55,8 @@ def relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> 
 
 def compute_errors(test_df: pd.DataFrame, model: Model) -> Dict[str, float]:
     """
-    Computes the error metrics for a set of predictions relative to the ground truth data
+    Computes the error metrics for a set of predictions relative
+    to the ground truth data
 
     Args:
         test_df: the test dataframe

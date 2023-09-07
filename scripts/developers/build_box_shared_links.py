@@ -5,7 +5,7 @@ from pathlib import Path
 
 from boxsdk import Client, OAuth2
 
-from powertrain import package_root
+from nrel.routee.powertrain import package_root
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
