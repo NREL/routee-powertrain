@@ -19,7 +19,7 @@ from powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
 
 
 @dataclass
-class VehicleModel:
+class Model:
     """
     A RouteE-Powertrain vehicle model represents a single vehicle (i.e. a 2016 Toyota Camry with a 1.5 L gasoline engine).
 
@@ -31,7 +31,7 @@ class VehicleModel:
 
     @property
     def feature_pack(self):
-        return self.metadata.feature_pack
+        return self.metadata.config.feature_pack
 
     @classmethod
     def build(cls, onnx_model: onnx.ModelProto, metadata: Metadata):
@@ -69,12 +69,12 @@ class VehicleModel:
         return cls.from_onnx_model(onnx_model)
 
     @classmethod
-    def from_bytes(cls, in_bytes: bytes) -> VehicleModel:
+    def from_bytes(cls, in_bytes: bytes) -> Model:
         onnx_model = onnx.load_from_string(in_bytes)
         return cls.from_onnx_model(onnx_model)
 
     @classmethod
-    def from_url(cls, url: str) -> VehicleModel:
+    def from_url(cls, url: str) -> Model:
         """
         attempts to read a file from a url
         Args:
@@ -103,7 +103,9 @@ class VehicleModel:
         """
         Predict absolute energy consumption for each link
         """
-        distance_col = self.metadata.feature_pack.distance.name
+        config = self.metadata.config
+
+        distance_col = self.metadata.config.feature_pack.distance.name
 
         if distance_col not in links_df.columns:
             raise ValueError(
@@ -111,25 +113,27 @@ class VehicleModel:
                 "according to the model metadata"
             )
 
-        for feature in self.metadata.feature_pack.features:
+        for feature in config.feature_pack.features:
             if feature.name not in links_df.columns:
                 raise ValueError(
                     f"links_df must contain a feature column named: '{feature.name}'"
                     "according to the model metadata"
                 )
 
-        x = links_df[self.metadata.feature_pack.feature_list].values
+        x = links_df[config.feature_pack.feature_list].values
 
         onnx_session = rt.InferenceSession(self.onnx_model.SerializeToString())
 
         raw_energy_pred_rates = onnx_session.run(
-            None, {self.metadata.onnx_input_name: x.astype(self.metadata.feature_dtype)}
+            None, {config.onnx_input_name: x.astype(config.feature_dtype)}
         )[0]
 
-        energy_pred_rates = pd.Series(raw_energy_pred_rates.reshape(-1), index=links_df.index)
+        energy_pred_rates = pd.Series(
+            raw_energy_pred_rates.reshape(-1), index=links_df.index
+        )
 
         if apply_real_world_adjustment:
-            adjustment_factor = ADJUSTMENT_FACTORS[self.metadata.powertrain_type]
+            adjustment_factor = ADJUSTMENT_FACTORS[config.powertrain_type]
             energy_pred_rates = energy_pred_rates * adjustment_factor
 
         energy_pred = energy_pred_rates * links_df[distance_col]
@@ -181,6 +185,6 @@ class VehicleModel:
 
         return lookup
 
-    def set_errors(self, errors: dict) -> VehicleModel:
+    def set_errors(self, errors: dict) -> Model:
         new_meta = self.metadata.set_errors(errors)
-        return VehicleModel(onnx_model=self.onnx_model, metadata=new_meta)
+        return Model(onnx_model=self.onnx_model, metadata=new_meta)

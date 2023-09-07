@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from powertrain.core.model import VehicleModel
+from powertrain.core.model import Model
 
 
-def read_model(infile: str) -> VehicleModel:
+def read_model(infile: str) -> Model:
     """Function to read model from file.
 
     Args:
@@ -16,4 +16,4 @@ def read_model(infile: str) -> VehicleModel:
     if path.suffix != ".onnx":
         raise ValueError("File must be an .onnx file.")
 
-    return VehicleModel.from_file(path)
+    return Model.from_file(path)

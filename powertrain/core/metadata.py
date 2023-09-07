@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import json
 import warnings
-from typing import NamedTuple
+from dataclasses import dataclass, replace
+from typing import Optional
 
-import numpy as np
-
-from powertrain.core.features import FeaturePack
-from powertrain.core.powertrain_type import PowertrainType
+from powertrain.core.model_config import ModelConfig
 from powertrain.utils.fs import get_version
 
 METADATA_SERIALIZATION_KEY = "routee_metadata"
@@ -25,39 +23,24 @@ def add_metadata_to_onnx_model(onnx_model, metadata: Metadata):
     return onnx_model
 
 
-class Metadata(NamedTuple):
+@dataclass
+class Metadata:
     """
-    A named tuple carrying model metadata information
+    A named tuple carrying model metadata information that gets set post training
     """
 
-    model_description: str
-    powertrain_type: PowertrainType
+    config: ModelConfig
 
-    feature_pack: FeaturePack
-
-    energy_rate_low_limit: float = 0.0
-    energy_rate_high_limit: float = np.inf
-
-    test_size: float = 0.2
-
-    random_seed: int = 42
-
-    errors: dict = {}
-
-    feature_dtype: str = "float32"
-    onnx_input_name: str = "input"
-
-    trip_column: str = "trip_id"
+    errors: Optional[dict] = None  
 
     routee_version: str = get_version()
 
     def set_errors(self, errors: dict) -> Metadata:
-        return self._replace(errors=errors)
+        return replace(self, errors=errors)
 
     def to_dict(self) -> dict:
-        d = self._asdict()
-        d["powertrain_type"] = self.powertrain_type.name
-        d["feature_pack"] = self.feature_pack.to_dict()
+        d = self.__dict__
+        d["config"] = self.config.to_dict()
 
         return d
 
@@ -68,18 +51,17 @@ class Metadata(NamedTuple):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_dict(cls, j: dict) -> Metadata:
+    def from_dict(cls, d: dict) -> Metadata:
         v = get_version()
-        if j["routee_version"] != v:
+        if d["routee_version"] != v:
             warnings.warn(
-                f"this model was trained using routee-powertrain version {j['routee_version']}"
+                f"this model was trained using routee-powertrain version {d['routee_version']}"
                 f" but you're using version {v}"
             )
 
-        j["powertrain_type"] = PowertrainType.from_string(j.get("powertrain_type"))
-        j["feature_pack"] = FeaturePack.from_dict(j["feature_pack"])
+        d["config"] = ModelConfig.from_dict(d["config"])
 
-        return Metadata(**j)
+        return Metadata(**d)
 
     @classmethod
     def from_json(cls, j: str) -> Metadata:

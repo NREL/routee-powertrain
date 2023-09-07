@@ -1,10 +1,10 @@
+import onnx
 import pandas as pd
 from skl2onnx import to_onnx
 from skl2onnx.common.data_types import FloatTensorType
 from sklearn.ensemble import RandomForestRegressor
 
-from powertrain.core.metadata import Metadata
-from powertrain.core.model import VehicleModel
+from powertrain.core.model_config import ModelConfig
 from powertrain.trainers.trainer import Trainer
 
 
@@ -24,8 +24,8 @@ class RandomForestTrainer(Trainer):
         self.cores = cores
 
     def inner_train(
-        self, features: pd.DataFrame, target: pd.DataFrame, metadata: Metadata
-    ) -> VehicleModel:
+        self, features: pd.DataFrame, target: pd.DataFrame, config: ModelConfig
+    ) -> onnx.ModelProto:
         """
         Uses a random forest to predict the energy rate values
         """
@@ -41,9 +41,7 @@ class RandomForestTrainer(Trainer):
 
         # convert to ONNX
         n_features = len(features.columns)
-        initial_type = [(metadata.onnx_input_name, FloatTensorType([None, n_features]))]
+        initial_type = [(config.onnx_input_name, FloatTensorType([None, n_features]))]
         onnx_model = to_onnx(rf, initial_types=initial_type)
 
-        vehicle_model = VehicleModel.build(onnx_model, metadata)
-
-        return vehicle_model
+        return onnx_model

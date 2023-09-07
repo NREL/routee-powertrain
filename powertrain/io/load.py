@@ -3,7 +3,7 @@ from typing import List
 
 import pandas as pd
 
-from powertrain.core.model import VehicleModel
+from powertrain.core.model import Model
 from powertrain.resources.default_models import default_model_dir
 from powertrain.resources.sample_routes import sample_route_dir
 
@@ -37,7 +37,7 @@ def list_available_models(local: bool = True, external: bool = True) -> List[str
     return model_names
 
 
-def load_pretrained_model(name: str) -> VehicleModel:
+def load_pretrained_model(name: str) -> Model:
     """
     A helper function to load a pretrained model.
 
@@ -53,11 +53,11 @@ def load_pretrained_model(name: str) -> VehicleModel:
 
     if name in local_models:
         fp = local_models[name]
-        model = VehicleModel.from_file(fp)
+        model = Model.from_file(fp)
         return model
     elif name in external_models:
         url = external_models[name]
-        model = VehicleModel.from_url(url)
+        model = Model.from_url(url)
         return model
     else:
         all_models = list(local_models.keys()) + list(external_models.keys())

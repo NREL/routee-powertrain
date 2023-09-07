@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
 
-from powertrain.core.model import VehicleModel
+from powertrain.core.model import Model
 
 log = logging.getLogger(__name__)
 
 
 def visualize_features(
-    model: VehicleModel,
+    model: Model,
     feature_ranges: Dict[str, dict],
     output_path: Optional[str] = None,
 ) -> dict:
@@ -29,13 +29,13 @@ def visualize_features(
     """
 
     # grab the necessary metadata from the model
-    distance_name = model.metadata.feature_pack.distance.name
-    distance_units = model.metadata.feature_pack.distance.units
-    energy_units = model.metadata.feature_pack.energy.units
-    model_name = model.metadata.model_description
+    distance_name = model.metadata.config.feature_pack.distance.name
+    distance_units = model.metadata.config.feature_pack.distance.units
+    energy_units = model.metadata.config.feature_pack.energy.units
+    model_name = model.metadata.config.vehicle_description
 
     feature_units_dict: Dict[str, str] = {}
-    for feature in model.metadata.feature_pack.features:
+    for feature in model.metadata.config.feature_pack.features:
         feature_units_dict[feature.name] = feature.units
 
     # check that all features in the metadata are present in the config
@@ -53,7 +53,6 @@ def visualize_features(
 
     # for each feature test it individually using the values form the visualization feature ranges
     for current_feature, current_units in feature_units_dict.items():
-
         # setup a set of test links
         # make <num_links> number of links
         # using the feature range config, generate evenly spaced ascending values for the current feature
@@ -121,7 +120,7 @@ def visualize_features(
 
 
 def contour_plot(
-    model: VehicleModel,
+    model: Model,
     x_feature: str,
     y_feature: str,
     feature_ranges: Dict[str, Dict],
@@ -139,9 +138,9 @@ def contour_plot(
     KeyError due to incompatible x/y features
     """
     # get the necessary information from the metadata
-    feature_meta = model.metadata.feature_pack
+    feature_meta = model.metadata.config.feature_pack
     distance_name = feature_meta.distance.name
-    model_name = model.metadata.model_description
+    model_name = model.metadata.config.vehicle_description
 
     # get all of the feature units from the metadata
     feature_units_dict = {}
