@@ -67,6 +67,13 @@ class Model:
         """
         Load a vehicle model from a file.
         """
+        path = Path(file)
+        if path.suffix != ".onnx":
+            raise ValueError(
+                "Version 1.0 and greater expects the input file to be an .onnx file."
+                "If you're trying to load an old .json or .pickle model, "
+                "please use routee-powertrain version 0.6.1 or below"
+            )
         onnx_model = onnx.load_model(str(file))
         return cls.from_onnx_model(onnx_model)
 
@@ -111,14 +118,14 @@ class Model:
 
         if distance_col not in links_df.columns:
             raise ValueError(
-                f"links_df must contain a distance column named: '{distance_col}'"
+                f"links_df must contain a distance column named: '{distance_col}' "
                 "according to the model metadata"
             )
 
         for feature in config.feature_pack.features:
             if feature.name not in links_df.columns:
                 raise ValueError(
-                    f"links_df must contain a feature column named: '{feature.name}'"
+                    f"links_df must contain a feature column named: '{feature.name}' "
                     "according to the model metadata"
                 )
 
