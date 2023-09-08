@@ -39,7 +39,7 @@ class Metadata:
         return replace(self, errors=errors)
 
     def to_dict(self) -> dict:
-        d = self.__dict__
+        d = self.__dict__.copy()
         d["config"] = self.config.to_dict()
 
         return d

@@ -69,7 +69,14 @@ def compute_errors(test_df: pd.DataFrame, model: Model) -> Dict[str, float]:
     test_df = test_df.copy()
 
     feature_pack = model.feature_pack
-    energy_name = feature_pack.energy.name
+    energy_names = feature_pack.energy_name_list
+
+    if len(energy_names) > 1:
+        raise NotImplementedError(
+            "compute_errors currently only supports models with a single energy target"
+        )
+
+    energy_name = energy_names[0]
 
     target = np.array(test_df[energy_name])
     target_pred = np.array(model.predict(test_df))

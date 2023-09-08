@@ -31,11 +31,15 @@ def visualize_features(
     :raises Exception due to IOErrors, KeyError due to missing features ranges required
         by the model
     """
+    if len(model.metadata.config.feature_pack.energy) > 1:
+        raise NotImplementedError(
+            "visualize_features currently only supports models with a single energy target"
+        )
 
     # grab the necessary metadata from the model
     distance_name = model.metadata.config.feature_pack.distance.name
     distance_units = model.metadata.config.feature_pack.distance.units
-    energy_units = model.metadata.config.feature_pack.energy.units
+    energy_units = model.metadata.config.feature_pack.energy[0].units
     model_name = model.metadata.config.vehicle_description
 
     feature_units_dict: Dict[str, str] = {}

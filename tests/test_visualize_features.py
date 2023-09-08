@@ -8,7 +8,7 @@ from nrel.routee.powertrain.validation.feature_visualization import (
     contour_plot,
 )
 
-from tests.mock_resources import mock_model
+from mock_resources import mock_model
 
 
 def _clean_temp_files_multi_directory(filepath: str):

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Tuple, Union
 from urllib import request
 
 import numpy as np
@@ -108,7 +108,7 @@ class Model:
 
     def predict(
         self, links_df: pd.DataFrame, apply_real_world_adjustment: bool = False
-    ) -> pd.Series:
+    ) -> Tuple[pd.Series]:
         """
         Predict absolute energy consumption for each link
         """
@@ -129,7 +129,7 @@ class Model:
                     "according to the model metadata"
                 )
 
-        x = links_df[config.feature_pack.feature_list].values
+        x = links_df[config.feature_pack.feature_name_list].values
 
         onnx_session = rt.InferenceSession(self.onnx_model.SerializeToString())
 
@@ -164,7 +164,7 @@ class Model:
         """
         if any([f.feature_range is None for f in self.feature_pack.features]):
             raise ValueError("Feature ranges must be set to generate lookup table")
-        elif set(feature_bins.keys()) != set(self.feature_pack.feature_list):
+        elif set(feature_bins.keys()) != set(self.feature_pack.feature_name_list):
             raise ValueError("Feature names must match model feature pack")
 
         # build a grid mesh over the feature ranges
@@ -181,7 +181,7 @@ class Model:
 
         pred_matrix = np.stack(list(map(np.ravel, mesh)), axis=1)
 
-        pred_df = pd.DataFrame(pred_matrix, columns=self.feature_pack.feature_list)
+        pred_df = pd.DataFrame(pred_matrix, columns=self.feature_pack.feature_name_list)
         pred_df[self.feature_pack.distance.name] = 1
 
         predictions = self.predict(pred_df)

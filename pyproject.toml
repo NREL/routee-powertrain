@@ -22,8 +22,10 @@ requires-python = ">=3.8"
 
 [project.optional-dependencies]
 trainers = ["scikit-learn", "skl2onnx"]
+plot = ["matplotlib"]
 dev = [
     "nrel.routee.powertrain[trainers]",
+    "nrel.routee.powertrain[plot]",
     "pytest",
     "black",
     "mypy",

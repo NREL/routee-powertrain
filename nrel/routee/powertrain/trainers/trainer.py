@@ -20,30 +20,32 @@ class Trainer(ABC):
         """
         A wrapper for inner train that does some pre and post processing.
         """
-        energy_name = config.feature_pack.energy.name
         distance_name = config.feature_pack.distance.name
 
-        data[ENERGY_RATE_NAME] = data[energy_name] / data[distance_name]
+        for energy_target in config.feature_pack.energy:
+            energy_rate_name = f"{energy_target.name}_rate"
+            data[energy_rate_name] = data[energy_target.name] / data[distance_name]
 
-        filtered_data = data[
-            (data[ENERGY_RATE_NAME] > config.energy_rate_low_limit)
-            & (data[ENERGY_RATE_NAME] < config.energy_rate_high_limit)
-        ]
-        filtered_rows = len(data) - len(filtered_data)
-        log.info(
-            f"filtered out {filtered_rows} rows with energy rates outside "
-            f"of the limits of {config.energy_rate_low_limit} "
-            f"and {config.energy_rate_high_limit}"
-        )
+            filtered_data = data[
+                (data[energy_rate_name] > energy_target.feature_range.lower)
+                & (data[energy_rate_name] < energy_target.feature_range.upper)
+            ]
+            filtered_rows = len(data) - len(filtered_data)
+            log.info(
+                f"filtered out {filtered_rows} rows with energy rates outside "
+                f"of the limits of {energy_target.feature_range.lower} "
+                f"and {energy_target.feature_range.upper} "
+                f"for energy target {energy_target.name}"
+            )
 
         train, test = test_train_split(
             filtered_data, test_size=config.test_size, seed=config.random_seed
         )
-        features = train[config.feature_pack.feature_list]
+        features = train[config.feature_pack.feature_name_list]
         if features.isnull().values.any():
             raise ValueError("Features contain null values")
 
-        target = train[ENERGY_RATE_NAME]
+        target = train[config.feature_pack.energy_rate_name_list]
         if target.isnull().values.any():
             raise ValueError(
                 "Target contains null values. Try decreasing the energy rate high limit"

@@ -36,8 +36,10 @@ class RandomForestTrainer(Trainer):
             n_jobs=self.cores,
             random_state=self.random_state,
         )
+        X = features.values
+        y = target.values
 
-        rf.fit(features.values, target.values)
+        rf.fit(X, y)
 
         # convert to ONNX
         n_features = len(features.columns)
