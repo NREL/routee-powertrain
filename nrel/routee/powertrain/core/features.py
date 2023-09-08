@@ -38,12 +38,10 @@ class Feature:
             raise ValueError("must provide feature units when building from dictionary")
         elif "feature_range" not in d:
             raise ValueError("must provide feature range when building from dictionary")
-        
+
         feature_range = FeatureRange.from_dict(d["feature_range"])
 
-        return Feature(
-            name=d["name"], units=d["units"], feature_range=feature_range
-        )
+        return Feature(name=d["name"], units=d["units"], feature_range=feature_range)
 
     def to_dict(self) -> dict:
         out = self.__dict__.copy()

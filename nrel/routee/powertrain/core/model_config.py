@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import numpy as np
 
 from nrel.routee.powertrain.core.features import FeaturePack
 from nrel.routee.powertrain.core.powertrain_type import PowertrainType

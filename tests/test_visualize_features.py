@@ -50,8 +50,7 @@ class TestVisualizeFeatures(TestCase):
         the correct naming scheme
         """
         model = mock_model()
-        model_name = model.metadata.model_description
-        estimator_name = model.metadata.estimator_name
+        model_name = model.metadata.config.vehicle_description
         feature_ranges = {
             "speed": {"max": 80, "min": 0, "steps": 40},
             "grade": {"max": 0.5, "min": -0.5, "steps": 20},
@@ -86,7 +85,7 @@ class TestVisualizeFeatures(TestCase):
             self.assertTrue(
                 Path.exists(
                     Path(output_filepath).joinpath(
-                        f"{model_name}/{estimator_name}_[grade].png"
+                        f"{model_name}/grade.png"
                     )
                 ),
                 "should save grade plot as png",
@@ -94,7 +93,7 @@ class TestVisualizeFeatures(TestCase):
             self.assertTrue(
                 Path.exists(
                     Path(output_filepath).joinpath(
-                        f"{model_name}/{estimator_name}_[speed].png"
+                        f"{model_name}/speed.png"
                     )
                 ),
                 "should save speed plot as png",
@@ -138,7 +137,7 @@ class TestVisualizeFeatures(TestCase):
         test to verify a contour plot is successfully saved to the tmp directory
         """
         model = mock_model()
-        model_name = model.metadata.model_description
+        model_name = model.metadata.config.vehicle_description
         feature_ranges = {
             "speed": {"max": 80, "min": 0, "steps": 40},
             "grade": {"max": 0.5, "min": -0.5, "steps": 20},

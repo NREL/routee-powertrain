@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Tuple, Union
+from typing import Dict, Union
 from urllib import request
 
 import numpy as np

@@ -4,9 +4,10 @@ import pandas as pd
 import numpy as np
 
 from nrel.routee.powertrain import load_pretrained_model, FeaturePack, Feature
+from nrel.routee.powertrain.core.model import Model
 
 
-def mock_model():
+def mock_model() -> Model:
     return load_pretrained_model("ICE")
 
 
