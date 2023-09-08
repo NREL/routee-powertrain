@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Tuple, Union
+from typing import Dict, Iterable, List, Tuple, Union
 from urllib import request
 
 import numpy as np
@@ -108,7 +108,7 @@ class Model:
 
     def predict(
         self, links_df: pd.DataFrame, apply_real_world_adjustment: bool = False
-    ) -> Tuple[pd.Series]:
+    ) -> pd.DataFrame:
         """
         Predict absolute energy consumption for each link
         """
@@ -137,17 +137,21 @@ class Model:
             None, {config.onnx_input_name: x.astype(config.feature_dtype)}
         )[0]
 
-        energy_pred_rates = pd.Series(
-            raw_energy_pred_rates.reshape(-1), index=links_df.index
-        )
+        energy_df = pd.DataFrame(index=links_df.index)
 
-        if apply_real_world_adjustment:
-            adjustment_factor = ADJUSTMENT_FACTORS[config.powertrain_type]
-            energy_pred_rates = energy_pred_rates * adjustment_factor
+        for i, energy in enumerate(config.feature_pack.energy):
+            energy_pred_rates = pd.Series(
+                raw_energy_pred_rates[:, i], index=links_df.index
+            )
 
-        energy_pred = energy_pred_rates * links_df[distance_col]
+            if apply_real_world_adjustment:
+                adjustment_factor = ADJUSTMENT_FACTORS[config.powertrain_type]
+                energy_pred_rates = energy_pred_rates * adjustment_factor
 
-        return energy_pred
+            energy_pred = energy_pred_rates * links_df[distance_col]
+            energy_df[energy.name] = energy_pred
+
+        return energy_df
 
     def to_lookup_table(self, feature_bins: Dict[str, int]) -> pd.DataFrame:
         """

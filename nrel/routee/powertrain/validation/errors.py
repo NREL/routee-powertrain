@@ -53,7 +53,7 @@ def relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> 
     return mean_error
 
 
-def compute_errors(test_df: pd.DataFrame, model: Model) -> Dict[str, float]:
+def compute_errors(test_df: pd.DataFrame, model: Model) -> Dict[str, Dict[str, float]]:
     """
     Computes the error metrics for a set of predictions relative
     to the ground truth data
@@ -71,55 +71,54 @@ def compute_errors(test_df: pd.DataFrame, model: Model) -> Dict[str, float]:
     feature_pack = model.feature_pack
     energy_names = feature_pack.energy_name_list
 
-    if len(energy_names) > 1:
-        raise NotImplementedError(
-            "compute_errors currently only supports models with a single energy target"
+    predictions = model.predict(test_df)
+
+    all_errors = {}
+
+    for energy_name in energy_names:
+        errors = {}
+        target = np.array(test_df[energy_name])
+        target_pred = np.array(predictions[energy_name])
+
+        rmse = np.sqrt(mean_squared_error(target, target_pred))
+        errors["link_root_mean_squared_error"] = rmse
+        errors["link_norm_root_mean_squared_error"] = rmse / (
+            sum(test_df[energy_name]) / len(test_df)
         )
 
-    energy_name = energy_names[0]
+        ew_rpe = weighted_relative_percent_difference(target, target_pred)
+        errors["link_weighted_relative_percent_difference"] = ew_rpe
 
-    target = np.array(test_df[energy_name])
-    target_pred = np.array(model.predict(test_df))
+        trip_column = model.metadata.config.trip_column
 
-    errors = {}
+        if trip_column in test_df.columns:
+            test_df["energy_pred"] = target_pred
+            gb = test_df.groupby(trip_column).agg(
+                {energy_name: "sum", "energy_pred": "sum"}
+            )
+            t_rpd = relative_percent_difference(gb[energy_name], gb["energy_pred"])
+            t_wrpd = weighted_relative_percent_difference(
+                gb[energy_name], gb["energy_pred"]
+            )
+            t_rmse = np.sqrt(mean_squared_error(gb[energy_name], gb["energy_pred"]))
 
-    rmse = np.sqrt(mean_squared_error(target, target_pred))
-    errors["link_root_mean_squared_error"] = rmse
-    errors["link_norm_root_mean_squared_error"] = rmse / (
-        sum(test_df[energy_name]) / len(test_df)
-    )
+            errors["trip_relative_percent_difference"] = t_rpd
+            errors["trip_weighted_relative_percent_difference"] = t_wrpd
+            errors["trip_root_mean_squared_error"] = t_rmse
+            errors["trip_norm_root_mean_squared_error"] = t_rmse / (
+                sum(gb[energy_name]) / len(gb)
+            )
 
-    ew_rpe = weighted_relative_percent_difference(target, target_pred)
-    errors["link_weighted_relative_percent_difference"] = ew_rpe
+        errors["net_error"] = net_energy_error(target, target_pred)
 
-    trip_column = model.metadata.config.trip_column
+        total_dist = test_df[feature_pack.distance.name].sum()
 
-    if trip_column in test_df.columns:
-        test_df["energy_pred"] = target_pred
-        gb = test_df.groupby(trip_column).agg(
-            {energy_name: "sum", "energy_pred": "sum"}
-        )
-        t_rpd = relative_percent_difference(gb[energy_name], gb["energy_pred"])
-        t_wrpd = weighted_relative_percent_difference(
-            gb[feature_pack.energy.name], gb["energy_pred"]
-        )
-        t_rmse = np.sqrt(mean_squared_error(gb[energy_name], gb["energy_pred"]))
+        pred_energy = np.sum(target_pred)
+        actual_energy = np.sum(target)
 
-        errors["trip_relative_percent_difference"] = t_rpd
-        errors["trip_weighted_relative_percent_difference"] = t_wrpd
-        errors["trip_root_mean_squared_error"] = t_rmse
-        errors["trip_norm_root_mean_squared_error"] = t_rmse / (
-            sum(gb[energy_name]) / len(gb)
-        )
+        errors["actual_dist_per_energy"] = total_dist / actual_energy
+        errors["pred_dist_per_energy"] = total_dist / pred_energy
 
-    errors["net_error"] = net_energy_error(target, target_pred)
+        all_errors[energy_name] = errors
 
-    total_dist = test_df[feature_pack.distance.name].sum()
-
-    pred_energy = np.sum(target_pred)
-    actual_energy = np.sum(target)
-
-    errors["actual_dist_per_energy"] = total_dist / actual_energy
-    errors["pred_dist_per_energy"] = total_dist / pred_energy
-
-    return errors
+    return all_errors
