@@ -12,6 +12,7 @@ from nrel.routee.powertrain.validation.errors import compute_errors
 
 ENERGY_RATE_NAME = "energy_rate"
 
+
 log = logging.getLogger(__name__)
 
 

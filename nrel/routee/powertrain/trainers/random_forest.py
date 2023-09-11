@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 from nrel.routee.powertrain.core.model_config import ModelConfig
 from nrel.routee.powertrain.trainers.trainer import Trainer
+from nrel.routee.powertrain.trainers.utils import ONNX_OPSET_VERSION
 
 
 class RandomForestTrainer(Trainer):
@@ -43,7 +44,9 @@ class RandomForestTrainer(Trainer):
 
         # convert to ONNX
         n_features = len(features.columns)
-        initial_type = [(config.onnx_input_name, FloatTensorType([None, n_features]))]
-        onnx_model = to_onnx(rf, initial_types=initial_type)
+        initial_type = [(config.onnx_input_name, FloatTensorType([1, n_features]))]
+        onnx_model = to_onnx(
+            rf, initial_types=initial_type, target_opset=ONNX_OPSET_VERSION
+        )
 
         return onnx_model
