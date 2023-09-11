@@ -55,7 +55,7 @@ class TestTrainPipeline(TestCase):
         energy1 = round(r1.gallons_fastsim.sum(), 2)
 
         # test out writing and reading to file
-        outfile = out_path / "model.onnx"
+        outfile = out_path / "model.json"
         vehicle_model.to_file(outfile)
         new_vehicle_model = pt.read_model(outfile)
         outfile.unlink()

@@ -14,7 +14,7 @@ def read_model(infile: Union[str, Path]) -> Model:
     """
     path = Path(infile)
 
-    if path.suffix != ".onnx":
-        raise ValueError("File must be an .onnx file.")
+    if path.suffix != ".json":
+        raise ValueError("File must be an .json file.")
 
     return Model.from_file(path)

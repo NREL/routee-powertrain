@@ -1,12 +1,17 @@
-import onnx
+from enum import Enum
 import pandas as pd
 from skl2onnx import to_onnx
 from skl2onnx.common.data_types import FloatTensorType
 from sklearn.ensemble import RandomForestRegressor
 
 from nrel.routee.powertrain.core.model_config import ModelConfig
+from nrel.routee.powertrain.estimators.estimator import Estimator
+from nrel.routee.powertrain.estimators.onnx import ONNX_OPSET_VERSION, ONNXEstimator
 from nrel.routee.powertrain.trainers.trainer import Trainer
-from nrel.routee.powertrain.trainers.utils import ONNX_OPSET_VERSION
+
+
+class RandomForestTrainerOutput(Enum):
+    ONNX = 1
 
 
 class RandomForestTrainer(Trainer):
@@ -17,16 +22,18 @@ class RandomForestTrainer(Trainer):
         n_estimators: int = 20,
         random_state: int = 52,
         cores: int = 4,
+        output_type=RandomForestTrainerOutput.ONNX,
     ):
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.n_estimators = n_estimators
         self.random_state = random_state
         self.cores = cores
+        self.output_type = output_type
 
     def inner_train(
         self, features: pd.DataFrame, target: pd.DataFrame, config: ModelConfig
-    ) -> onnx.ModelProto:
+    ) -> Estimator:
         """
         Uses a random forest to predict the energy rate values
         """
@@ -40,13 +47,24 @@ class RandomForestTrainer(Trainer):
         X = features.values
         y = target.values
 
+        if y.shape[1] == 1:
+            y = y.ravel()
+
         rf.fit(X, y)
 
-        # convert to ONNX
-        n_features = len(features.columns)
-        initial_type = [(config.onnx_input_name, FloatTensorType([None, n_features]))]
-        onnx_model = to_onnx(
-            rf, initial_types=initial_type, target_opset=ONNX_OPSET_VERSION
-        )
+        if self.output_type == RandomForestTrainerOutput.ONNX:
+            # convert to ONNX
+            n_features = len(features.columns)
+            initial_type = [
+                (config.onnx_input_name, FloatTensorType([None, n_features]))
+            ]
+            onnx_model = to_onnx(
+                rf, initial_types=initial_type, target_opset=ONNX_OPSET_VERSION
+            )
 
-        return onnx_model
+            estimator = ONNXEstimator(onnx_model)
+        else:
+            # extension point here for adding other estimator output types
+            raise ValueError(f"Unknown output type: {self.output_type}")
+
+        return estimator

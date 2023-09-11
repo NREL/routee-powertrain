@@ -1,21 +1,27 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
+import base64
 from pathlib import Path
 from typing import Dict, Union
 from urllib import request
 
 import numpy as np
-import onnx
-import onnxruntime as rt
 import pandas as pd
 
-from nrel.routee.powertrain.core.metadata import (
-    METADATA_SERIALIZATION_KEY,
-    Metadata,
-    add_metadata_to_onnx_model,
-)
+from nrel.routee.powertrain.core.metadata import Metadata
 from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
+from nrel.routee.powertrain.estimators.estimator import Estimator
+from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
+
+REGISTERED_ESTIMATORS = {
+    "ONNXEstimator": ONNXEstimator,
+}
+
+METADATA_SERIALIZATION_KEY = "metadata"
+ESTIMATOR_SERIALIZATION_KEY = "estimator"
+CONSTRUCTOR_TYPE_SERIALIZATION_KEY = "estimator_constructor_type"
 
 
 @dataclass
@@ -23,12 +29,9 @@ class Model:
     """
     A RouteE-Powertrain vehicle model represents a single vehicle
     (i.e. a 2016 Toyota Camry with a 1.5 L gasoline engine).
-
-    The model uses ONNX to load a pre-trained model and use it
-    for making energy predictions.
     """
 
-    onnx_model: onnx.ModelProto
+    estimator: Estimator
     metadata: Metadata
 
     @property
@@ -36,31 +39,57 @@ class Model:
         return self.metadata.config.feature_pack
 
     @classmethod
-    def build(cls, onnx_model: onnx.ModelProto, metadata: Metadata):
+    def from_dict(cls, input_dict: dict) -> Model:
         """
-        Build a vehicle model from an ONNX model.
-        This assumes the metadata has not yet been set on the model
+        Load a vehicle model from a python dictionary
         """
-        onnx_model = add_metadata_to_onnx_model(onnx_model, metadata)
-        return cls.from_onnx_model(onnx_model)
-
-    @classmethod
-    def from_onnx_model(cls, onnx_model: onnx.ModelProto):
-        """
-        Create a vehicle model from an ONNX session
-        """
-        onnx_meta = {prop.key: prop.value for prop in onnx_model.metadata_props}
-
-        routee_meta = onnx_meta.get(METADATA_SERIALIZATION_KEY)
-
-        if routee_meta is None:
+        metadata_dict = input_dict.get(METADATA_SERIALIZATION_KEY)
+        if metadata_dict is None:
             raise ValueError(
-                f"ONNX model does not contain a {METADATA_SERIALIZATION_KEY} key"
+                "Model file must contain metadata at key: "
+                f"'{METADATA_SERIALIZATION_KEY}'"
+            )
+        metadata = Metadata.from_dict(metadata_dict)
+
+        estimator_base64 = input_dict.get(ESTIMATOR_SERIALIZATION_KEY)
+        if estimator_base64 is None:
+            raise ValueError(
+                "Model file must contain estimator data at key: "
+                f"'{ESTIMATOR_SERIALIZATION_KEY}'"
+            )
+        elif not isinstance(estimator_base64, str):
+            raise ValueError("Estimator data must be a binary string in base64")
+
+        estimator_bytes = base64.b64decode(estimator_base64)
+
+        estimator_constructor_type = input_dict.get("estimator_constructor_type")
+        if estimator_constructor_type is None:
+            raise ValueError(
+                "Model file must contain estimator constructor at key: "
+                f"'{CONSTRUCTOR_TYPE_SERIALIZATION_KEY}'"
             )
 
-        metadata = Metadata.from_json(routee_meta)
+        estimator_constructor = REGISTERED_ESTIMATORS.get(estimator_constructor_type)
+        if estimator_constructor is None:
+            raise ValueError(
+                f"Estimator constructor type '{estimator_constructor_type}' "
+                "is not registered"
+            )
 
-        return cls(onnx_model=onnx_model, metadata=metadata)
+        estimator = estimator_constructor.from_bytes(estimator_bytes)
+        return cls(estimator, metadata)
+
+    def to_dict(self) -> dict:
+        """
+        Convert model to a dictionary
+        """
+        return {
+            METADATA_SERIALIZATION_KEY: self.metadata.to_dict(),
+            ESTIMATOR_SERIALIZATION_KEY: base64.b64encode(
+                self.estimator.to_bytes()
+            ).decode("UTF-8"),
+            CONSTRUCTOR_TYPE_SERIALIZATION_KEY: self.estimator.__class__.__name__,
+        }
 
     @classmethod
     def from_file(cls, file: Union[str, Path]):
@@ -68,19 +97,11 @@ class Model:
         Load a vehicle model from a file.
         """
         path = Path(file)
-        if path.suffix != ".onnx":
-            raise ValueError(
-                "Version 1.0 and greater expects the input file to be an .onnx file."
-                "If you're trying to load an old .json or .pickle model, "
-                "please use routee-powertrain version 0.6.1 or below"
-            )
-        onnx_model = onnx.load_model(str(file))
-        return cls.from_onnx_model(onnx_model)
-
-    @classmethod
-    def from_bytes(cls, in_bytes: bytes) -> Model:
-        onnx_model = onnx.load_from_string(in_bytes)
-        return cls.from_onnx_model(onnx_model)
+        if path.suffix != ".json":
+            raise ValueError("Model file must be a .json file")
+        with path.open("r") as f:
+            input_dict = json.load(f)
+        return cls.from_dict(input_dict)
 
     @classmethod
     def from_url(cls, url: str) -> Model:
@@ -93,8 +114,9 @@ class Model:
         Returns: a powertrain vehicle
         """
         with request.urlopen(url) as u:
-            in_bytes = u.read()
-            vehicle = cls.from_bytes(in_bytes)
+            in_dict = json.load(u)
+            vehicle = cls.from_dict(in_dict)
+
         return vehicle
 
     def to_file(self, file: Union[str, Path]):
@@ -102,9 +124,12 @@ class Model:
         Save a vehicle model to a file.
         """
         path = Path(file)
-        onnx_model = add_metadata_to_onnx_model(self.onnx_model, self.metadata)
-        with path.open("wb") as f:
-            onnx.save_model(onnx_model, f)
+        if path.suffix != ".json":
+            raise ValueError("Model file must be a .json file")
+
+        output_dict = self.to_dict()
+        with path.open("w") as f:
+            json.dump(output_dict, f)
 
     def predict(
         self, links_df: pd.DataFrame, apply_real_world_adjustment: bool = False
@@ -129,29 +154,16 @@ class Model:
                     "according to the model metadata"
                 )
 
-        x = links_df[config.feature_pack.feature_name_list].values
-        
-        onnx_session = rt.InferenceSession(self.onnx_model.SerializeToString())
+        pred_energy_df = self.estimator.predict(links_df, self.metadata)
 
-        raw_energy_pred_rates = onnx_session.run(
-            None, {config.onnx_input_name: x.astype(config.feature_dtype)}
-        )[0]
-
-        energy_df = pd.DataFrame(index=links_df.index)
-
-        for i, energy in enumerate(config.feature_pack.energy):
-            energy_pred_rates = pd.Series(
-                raw_energy_pred_rates[:, i], index=links_df.index
-            )
-
+        for energy in config.feature_pack.energy:
             if apply_real_world_adjustment:
                 adjustment_factor = ADJUSTMENT_FACTORS[config.powertrain_type]
-                energy_pred_rates = energy_pred_rates * adjustment_factor
+                pred_energy_df[energy.name] = (
+                    pred_energy_df[energy.name] * adjustment_factor
+                )
 
-            energy_pred = energy_pred_rates * links_df[distance_col]
-            energy_df[energy.name] = energy_pred
-
-        return energy_df
+        return pred_energy_df
 
     def to_lookup_table(self, feature_bins: Dict[str, int]) -> pd.DataFrame:
         """
@@ -200,4 +212,4 @@ class Model:
 
     def set_errors(self, errors: dict) -> Model:
         new_meta = self.metadata.set_errors(errors)
-        return Model(onnx_model=self.onnx_model, metadata=new_meta)
+        return Model(estimator=self.estimator, metadata=new_meta)

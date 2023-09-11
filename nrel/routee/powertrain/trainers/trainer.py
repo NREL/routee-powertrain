@@ -7,11 +7,11 @@ import pandas as pd
 from nrel.routee.powertrain.core.metadata import Metadata
 from nrel.routee.powertrain.core.model import Model
 from nrel.routee.powertrain.core.model_config import ModelConfig
+from nrel.routee.powertrain.estimators.estimator import Estimator
 from nrel.routee.powertrain.trainers.utils import test_train_split
 from nrel.routee.powertrain.validation.errors import compute_errors
 
 ENERGY_RATE_NAME = "energy_rate"
-
 
 log = logging.getLogger(__name__)
 
@@ -52,11 +52,11 @@ class Trainer(ABC):
                 "Target contains null values. Try decreasing the energy rate high limit"
             )
 
-        onnx_model = self.inner_train(features=features, target=target, config=config)
+        estimator = self.inner_train(features=features, target=target, config=config)
 
         metadata = Metadata(config=config)
 
-        vehicle_model = Model.build(onnx_model, metadata)
+        vehicle_model = Model(estimator, metadata)
 
         model_errors = compute_errors(test, vehicle_model)
 
@@ -67,8 +67,8 @@ class Trainer(ABC):
     @abstractmethod
     def inner_train(
         self, features: pd.DataFrame, target: pd.DataFrame, config: ModelConfig
-    ) -> onnx.ModelProto:
+    ) -> Estimator:
         """
-        Builds an ONNX model from the given data and config
+        Builds an estimator from the given data.
         """
         pass

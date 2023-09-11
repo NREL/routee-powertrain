@@ -8,20 +8,6 @@ from typing import Optional
 from nrel.routee.powertrain.core.model_config import ModelConfig
 from nrel.routee.powertrain.utils.fs import get_version
 
-METADATA_SERIALIZATION_KEY = "routee_metadata"
-
-
-def add_metadata_to_onnx_model(onnx_model, metadata: Metadata):
-    """
-    Helper to add routee metadata to an onnx model
-    """
-    routee_meta = onnx_model.metadata_props.add()
-
-    routee_meta.key = METADATA_SERIALIZATION_KEY
-    routee_meta.value = metadata.to_json()
-
-    return onnx_model
-
 
 @dataclass
 class Metadata:
