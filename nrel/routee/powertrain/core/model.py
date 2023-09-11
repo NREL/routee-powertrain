@@ -130,7 +130,7 @@ class Model:
                 )
 
         x = links_df[config.feature_pack.feature_name_list].values
-
+        
         onnx_session = rt.InferenceSession(self.onnx_model.SerializeToString())
 
         raw_energy_pred_rates = onnx_session.run(

@@ -44,7 +44,7 @@ class RandomForestTrainer(Trainer):
 
         # convert to ONNX
         n_features = len(features.columns)
-        initial_type = [(config.onnx_input_name, FloatTensorType([1, n_features]))]
+        initial_type = [(config.onnx_input_name, FloatTensorType([None, n_features]))]
         onnx_model = to_onnx(
             rf, initial_types=initial_type, target_opset=ONNX_OPSET_VERSION
         )
