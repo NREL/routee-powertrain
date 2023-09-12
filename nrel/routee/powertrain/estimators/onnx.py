@@ -7,11 +7,6 @@ import pandas as pd
 from nrel.routee.powertrain.core.metadata import Metadata
 from nrel.routee.powertrain.estimators.estimator import Estimator
 
-# we're pinning the onnx opset to 13 since the rust onnxruntime crate
-# is built from onnx runtime version 1.8 which only supports opset 13
-# see here: https://github.com/onnx/onnx/blob/main/docs/Versioning.md#released-versions
-ONNX_OPSET_VERSION = 13
-
 
 class ONNXEstimator(Estimator):
     onnx_model: onnx.ModelProto

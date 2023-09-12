@@ -13,9 +13,11 @@ from nrel.routee.powertrain.core.metadata import Metadata
 from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
 from nrel.routee.powertrain.estimators.estimator import Estimator
 from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
+from nrel.routee.powertrain.estimators.smart_core import SmartCoreEstimator
 
 REGISTERED_ESTIMATORS = {
     "ONNXEstimator": ONNXEstimator,
+    "SmartCoreEstimator": SmartCoreEstimator,
 }
 
 METADATA_SERIALIZATION_KEY = "metadata"

@@ -14,9 +14,8 @@ def read(path: Path):
 
 
 def get_version(path: Path = root() / "__init__.py"):
-    for line in path.open("r").readlines():
-        if line.startswith("__version__"):
-            delim = '"' if '"' in line else "'"
-            return line.split(delim)[1]
-    else:
-        raise RuntimeError("Unable to find version string.")
+    with path.open("r") as fp:
+        for line in fp.readlines():
+            if line.startswith("__version__"):
+                delim = '"' if '"' in line else "'"
+                return line.split(delim)[1]
