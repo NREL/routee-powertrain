@@ -1,4 +1,5 @@
 from __future__ import annotations
+import base64
 
 import onnx
 import onnxruntime as rt
@@ -11,6 +12,7 @@ from nrel.routee.powertrain.estimators.estimator import Estimator
 # see here: https://github.com/onnx/onnx/blob/main/docs/Versioning.md#released-versions
 ONNX_OPSET_VERSION = 13
 
+
 class ONNXEstimator(Estimator):
     onnx_model: onnx.ModelProto
 
@@ -18,12 +20,21 @@ class ONNXEstimator(Estimator):
         self.onnx_model = onnx_model
 
     @classmethod
-    def from_bytes(cls, in_bytes: bytes) -> ONNXEstimator:
+    def from_dict(cls, in_dict: dict) -> ONNXEstimator:
+        onnx_model_raw = in_dict.get("onnx_model")
+        if onnx_model_raw is None:
+            raise ValueError("Model file must contain onnx model at key: 'onnx_model'")
+        in_bytes = base64.b64decode(onnx_model_raw)
         onnx_model = onnx.load_from_string(in_bytes)
         return cls(onnx_model)
 
-    def to_bytes(self) -> bytes:
-        return self.onnx_model.SerializeToString()
+    def to_dict(self) -> dict:
+        out_dict = {
+            "onnx_model": base64.b64encode(self.onnx_model.SerializeToString()).decode(
+                "utf-8"
+            )
+        }
+        return out_dict 
 
     def predict(self, links_df: pd.DataFrame, metadata: Metadata) -> pd.DataFrame:
         config = metadata.config

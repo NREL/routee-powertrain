@@ -10,15 +10,15 @@ from nrel.routee.powertrain.core.metadata import Metadata
 class Estimator(ABC):
     @classmethod
     @abstractmethod
-    def from_bytes(cls, in_bytes: bytes) -> Estimator:
+    def from_dict(cls, in_dict: dict) -> Estimator:
         """
         Load an estimator from a bytes object in memory
         """
 
     @abstractmethod
-    def to_bytes(self) -> bytes:
+    def to_dict(self) -> dict:
         """
-        Serialize an estimator to a bytes object in memory
+        Serialize an estimator to a python dictionary
         """
 
     @abstractmethod

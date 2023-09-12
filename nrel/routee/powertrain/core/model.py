@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
-import base64
 from pathlib import Path
 from typing import Dict, Union
 from urllib import request
@@ -51,16 +50,12 @@ class Model:
             )
         metadata = Metadata.from_dict(metadata_dict)
 
-        estimator_base64 = input_dict.get(ESTIMATOR_SERIALIZATION_KEY)
-        if estimator_base64 is None:
+        estimator_dict = input_dict.get(ESTIMATOR_SERIALIZATION_KEY)
+        if estimator_dict is None:
             raise ValueError(
                 "Model file must contain estimator data at key: "
                 f"'{ESTIMATOR_SERIALIZATION_KEY}'"
             )
-        elif not isinstance(estimator_base64, str):
-            raise ValueError("Estimator data must be a binary string in base64")
-
-        estimator_bytes = base64.b64decode(estimator_base64)
 
         estimator_constructor_type = input_dict.get("estimator_constructor_type")
         if estimator_constructor_type is None:
@@ -76,7 +71,7 @@ class Model:
                 "is not registered"
             )
 
-        estimator = estimator_constructor.from_bytes(estimator_bytes)
+        estimator = estimator_constructor.from_dict(estimator_dict)
         return cls(estimator, metadata)
 
     def to_dict(self) -> dict:
@@ -85,9 +80,7 @@ class Model:
         """
         return {
             METADATA_SERIALIZATION_KEY: self.metadata.to_dict(),
-            ESTIMATOR_SERIALIZATION_KEY: base64.b64encode(
-                self.estimator.to_bytes()
-            ).decode("UTF-8"),
+            ESTIMATOR_SERIALIZATION_KEY: self.estimator.to_dict(),
             CONSTRUCTOR_TYPE_SERIALIZATION_KEY: self.estimator.__class__.__name__,
         }
 
