@@ -1,7 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
 
-import onnx
 import pandas as pd
 
 from nrel.routee.powertrain.core.metadata import Metadata
