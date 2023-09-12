@@ -17,7 +17,9 @@ class FeatureRange:
 
     @classmethod
     def from_dict(cls, d: Dict[str, float]) -> FeatureRange:
-        return FeatureRange(**d)
+        lower = float(d.get("lower", -np.inf))
+        upper = float(d.get("upper", np.inf))
+        return FeatureRange(lower=lower, upper=upper)
 
     def to_dict(self) -> dict:
         return self.__dict__.copy()
