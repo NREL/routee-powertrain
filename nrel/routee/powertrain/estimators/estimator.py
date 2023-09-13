@@ -11,7 +11,7 @@ from nrel.routee.powertrain.core.metadata import Metadata
 class Estimator(ABC):
     @classmethod
     @abstractmethod
-    def from_file(cls, in_dict: dict) -> Estimator:
+    def from_file(cls, filepath: str | Path) -> Estimator:
         """
         Load an estimator from a file
         """
