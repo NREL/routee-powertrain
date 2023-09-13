@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 import pandas as pd
 
 from nrel.routee.powertrain.core.metadata import Metadata
@@ -39,6 +40,37 @@ class SmartCoreEstimator(Estimator):
             "smartcore_model": json.loads(self.model.to_json()),
         }
         return out_dict
+
+    def to_file(self, filepath: str | Path):
+        filepath = Path(filepath)
+        if filepath.suffix == ".json":
+            with filepath.open("w") as f:
+                f.write(self.model.to_json())
+        elif filepath.suffix == ".bin":
+            with filepath.open("wb") as f:
+                f.write(bytes(self.model.to_bincode()))
+        else:
+            raise ValueError("Smartcore model must be saved as a .json or .bin file")
+
+    @classmethod
+    def from_file(cls, filepath: str | Path) -> SmartCoreEstimator:
+        try:
+            from powertrain_rust import RustRandomForest
+        except ImportError:
+            raise ImportError(
+                "Please install powertrain_rust to use "
+                "the SmartCoreRandomForest estimator."
+            )
+        filepath = Path(filepath)
+        if filepath.suffix == ".json":
+            with filepath.open("r") as f:
+                smartcore_model = RustRandomForest.from_json(f.read())
+        elif filepath.suffix == ".bin":
+            with filepath.open("rb") as f:
+                smartcore_model = RustRandomForest.from_bincode(f.read())
+        else:
+            raise ValueError("Smartcore model must be loaded from a .json or .bin file")
+        return cls(smartcore_model)
 
     def predict(self, links_df: pd.DataFrame, metadata: Metadata) -> pd.DataFrame:
         config = metadata.config

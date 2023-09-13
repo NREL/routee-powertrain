@@ -6,11 +6,15 @@ from unittest import TestCase
 import pandas as pd
 
 import nrel.routee.powertrain as pt
+from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
+from nrel.routee.powertrain.estimators.smart_core import SmartCoreEstimator
 
 from nrel.routee.powertrain.trainers.sklearn_random_forest import (
     SklearnRandomForestTrainer,
 )
-from nrel.routee.powertrain.trainers.smartcore_random_forest import SmartcoreRandomForestTrainer
+from nrel.routee.powertrain.trainers.smartcore_random_forest import (
+    SmartcoreRandomForestTrainer,
+)
 
 this_dir = Path(__file__).parent
 
@@ -65,11 +69,17 @@ class TestTrainEstimatePipeline(TestCase):
         new_vehicle_model = pt.read_model(outfile)
         outfile.unlink()
 
+        # test writing inner estimator to file
+        outfile = self.out_path / "estimator.onnx"
+        vehicle_model.estimator.to_file(outfile)
+        new_estimator = ONNXEstimator.from_file(outfile)
+        outfile.unlink()
+
         r2 = new_vehicle_model.predict(self.df)
         energy2 = round(r2.gallons_fastsim.sum(), 2)
 
         self.assertTrue(math.isclose(energy1, energy2))
-    
+
     def test_smartcore_random_forest(self):
         trainer = SmartcoreRandomForestTrainer()
 
@@ -82,6 +92,17 @@ class TestTrainEstimatePipeline(TestCase):
         outfile = self.out_path / "model.json"
         vehicle_model.to_file(outfile)
         new_vehicle_model = pt.read_model(outfile)
+        outfile.unlink()
+
+        # test writing inner estimator to file
+        outfile = self.out_path / "estimator.json"
+        vehicle_model.estimator.to_file(outfile)
+        new_estimator = SmartCoreEstimator.from_file(outfile)
+        outfile.unlink()
+
+        outfile = self.out_path / "estimator.bin"
+        vehicle_model.estimator.to_file(outfile)
+        new_estimator = SmartCoreEstimator.from_file(outfile)
         outfile.unlink()
 
         r2 = new_vehicle_model.predict(self.df)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 import base64
+from pathlib import Path
 
 import onnx
 import onnxruntime as rt
@@ -29,7 +30,23 @@ class ONNXEstimator(Estimator):
                 "utf-8"
             )
         }
-        return out_dict 
+        return out_dict
+
+    @classmethod
+    def from_file(cls, filepath: str | Path) -> ONNXEstimator:
+        filepath = Path(filepath)
+        if filepath.suffix != ".onnx":
+            raise ValueError("ONNX model must be saved as a .onnx file")
+        with filepath.open("rb") as f:
+            onnx_model = onnx.load_from_string(f.read())
+        return cls(onnx_model)
+
+    def to_file(self, filepath: str | Path):
+        filepath = Path(filepath)
+        if filepath.suffix != ".onnx":
+            raise ValueError("ONNX model must be saved as a .onnx file")
+        with filepath.open("wb") as f:
+            f.write(self.onnx_model.SerializeToString())
 
     def predict(self, links_df: pd.DataFrame, metadata: Metadata) -> pd.DataFrame:
         config = metadata.config
