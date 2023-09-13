@@ -21,7 +21,7 @@ dependencies = ["pandas", "numpy", "onnx", "onnxruntime"]
 requires-python = ">=3.8"
 
 [project.optional-dependencies]
-trainers = ["scikit-learn", "skl2onnx"]
+scikit = ["scikit-learn", "skl2onnx"]
 plot = ["matplotlib"]
 dev = [
     "nrel.routee.powertrain[trainers]",
