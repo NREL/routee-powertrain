@@ -24,7 +24,7 @@ requires-python = ">=3.8"
 scikit = ["scikit-learn", "skl2onnx"]
 plot = ["matplotlib"]
 dev = [
-    "nrel.routee.powertrain[trainers]",
+    "nrel.routee.powertrain[scikit]",
     "nrel.routee.powertrain[plot]",
     "pytest",
     "black",
