@@ -9,6 +9,9 @@ from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
 from nrel.routee.powertrain.trainers.trainer import Trainer
 
+# pinned here to suport onnx runtime verson 1.8 that
+# routee-compass depends on
+TARGET_ONNX_OPESET_VERSION = 13
 
 class RandomForestTrainerOutput(Enum):
     ONNX = 1
@@ -59,7 +62,9 @@ class SklearnRandomForestTrainer(Trainer):
                 (config.onnx_input_name, FloatTensorType([None, n_features]))
             ]
             onnx_model = to_onnx(
-                rf, initial_types=initial_type
+                rf, 
+                initial_types=initial_type,
+                target_opset=TARGET_ONNX_OPESET_VERSION,
             )
 
             estimator = ONNXEstimator(onnx_model)
