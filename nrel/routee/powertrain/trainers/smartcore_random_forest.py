@@ -1,7 +1,7 @@
 import pandas as pd
 
 from nrel.routee.powertrain.core.model_config import ModelConfig
-from nrel.routee.powertrain.estimators.estimator import Estimator
+from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 from nrel.routee.powertrain.estimators.smart_core import SmartCoreEstimator
 from nrel.routee.powertrain.trainers.trainer import Trainer
 

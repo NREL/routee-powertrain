@@ -6,7 +6,7 @@ import onnx
 import onnxruntime as rt
 import pandas as pd
 from nrel.routee.powertrain.core.metadata import Metadata
-from nrel.routee.powertrain.estimators.estimator import Estimator
+from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 
 
 class ONNXEstimator(Estimator):

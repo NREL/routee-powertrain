@@ -6,7 +6,7 @@ import pandas as pd
 from nrel.routee.powertrain.core.metadata import Metadata
 from nrel.routee.powertrain.core.model import Model
 from nrel.routee.powertrain.core.model_config import ModelConfig
-from nrel.routee.powertrain.estimators.estimator import Estimator
+from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 from nrel.routee.powertrain.trainers.utils import test_train_split
 from nrel.routee.powertrain.validation.errors import compute_errors
 
