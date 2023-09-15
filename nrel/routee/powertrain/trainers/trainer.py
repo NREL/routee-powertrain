@@ -8,7 +8,7 @@ from nrel.routee.powertrain.core.model import Model
 from nrel.routee.powertrain.core.model_config import ModelConfig
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 from nrel.routee.powertrain.trainers.utils import test_train_split
-from nrel.routee.powertrain.validation.errors import compute_errors
+from nrel.routee.powertrain.validation.errors import compute_errors 
 
 ENERGY_RATE_NAME = "energy_rate"
 
@@ -20,42 +20,49 @@ class Trainer(ABC):
         """
         A wrapper for inner train that does some pre and post processing.
         """
-        distance_name = config.feature_pack.distance.name
+        distance_name = config.distance.name
 
-        for energy_target in config.feature_pack.energy:
+        for energy_target in config.target_set.targets:
             energy_rate_name = f"{energy_target.name}_rate"
             data[energy_rate_name] = data[energy_target.name] / data[distance_name]
 
             filtered_data = data[
-                (data[energy_rate_name] > energy_target.feature_range.lower)
-                & (data[energy_rate_name] < energy_target.feature_range.upper)
+                (data[energy_rate_name] > energy_target.constraints.lower)
+                & (data[energy_rate_name] < energy_target.constraints.upper)
             ]
             filtered_rows = len(data) - len(filtered_data)
             log.info(
                 f"filtered out {filtered_rows} rows with energy rates outside "
-                f"of the limits of {energy_target.feature_range.lower} "
-                f"and {energy_target.feature_range.upper} "
+                f"of the limits of {energy_target.constraints.lower} "
+                f"and {energy_target.constraints.upper} "
                 f"for energy target {energy_target.name}"
             )
 
         train, test = test_train_split(
             filtered_data, test_size=config.test_size, seed=config.random_seed
         )
-        features = train[config.feature_pack.feature_name_list]
-        if features.isnull().values.any():
+        all_features = train[config.all_feature_names]
+        if all_features.isnull().values.any():
             raise ValueError("Features contain null values")
 
-        target = train[config.feature_pack.energy_rate_name_list]
+        target = train[config.target_set.target_rate_name_list]
         if target.isnull().values.any():
             raise ValueError(
                 "Target contains null values. Try decreasing the energy rate high limit"
             )
 
-        estimator = self.inner_train(features=features, target=target, config=config)
+        # train an estimator for each feature set
+        estimators = {}
+        for feature_set in config.feature_sets:
+            sub_features = all_features[feature_set.feature_name_list]
+            estimator = self.inner_train(
+                features=sub_features, target=target, config=config
+            )
+            estimators[feature_set.features_id] = estimator
 
         metadata = Metadata(config=config)
 
-        vehicle_model = Model(estimator, metadata)
+        vehicle_model = Model(estimators, metadata)
 
         model_errors = compute_errors(test, vehicle_model)
 
@@ -65,7 +72,10 @@ class Trainer(ABC):
 
     @abstractmethod
     def inner_train(
-        self, features: pd.DataFrame, target: pd.DataFrame, config: ModelConfig
+        self,
+        features: pd.DataFrame,
+        target: pd.DataFrame,
+        config: ModelConfig,
     ) -> Estimator:
         """
         Builds an estimator from the given data.

@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import pandas as pd
+from nrel.routee.powertrain.core.features import DataColumn, FeatureSet, TargetSet
 
-from nrel.routee.powertrain.core.metadata import Metadata
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 
 
@@ -18,7 +18,8 @@ class SmartCoreEstimator(Estimator):
             from powertrain_rust import RustRandomForest
         except ImportError:
             raise ImportError(
-                "Please install powertrain_rust to use the SmartCoreRandomForest estimator."
+                "Please install powertrain_rust to use the SmartCoreRandomForest "
+                "estimator."
             )
         smartcore_model_raw = in_dict.get("smartcore_model")
         if smartcore_model_raw is None:
@@ -72,19 +73,23 @@ class SmartCoreEstimator(Estimator):
             raise ValueError("Smartcore model must be loaded from a .json or .bin file")
         return cls(smartcore_model)
 
-    def predict(self, links_df: pd.DataFrame, metadata: Metadata) -> pd.DataFrame:
-        config = metadata.config
-
-        if len(config.feature_pack.energy) != 1:
+    def predict(
+        self,
+        links_df: pd.DataFrame,
+        feature_set: FeatureSet,
+        distance: DataColumn,
+        target_set: TargetSet,
+    ) -> pd.DataFrame:
+        if len(target_set.targets) != 1:
             raise ValueError(
                 "SmartCore only supports a single energy rate. "
                 "Please use a different estimator."
             )
-        energy = config.feature_pack.energy[0]
+        energy = target_set.targets[0]
 
-        distance_col = config.feature_pack.distance.name
+        distance_col = distance.name
 
-        x = links_df[config.feature_pack.feature_name_list].values
+        x = links_df[feature_set.feature_name_list].values
 
         energy_pred_rates = self.model.predict(x.tolist())
 

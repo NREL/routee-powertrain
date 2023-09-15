@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from pathlib import Path
 
 import pandas as pd
-from nrel.routee.powertrain.core.metadata import Metadata
+from nrel.routee.powertrain.core.features import DataColumn, FeatureSet, TargetSet
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 
 from .port_to_c import (
@@ -93,18 +93,22 @@ class SKLearnEstimator(Estimator):
         with source_file.open("w") as sf:
             sf.write(source_str)
 
-    def predict(self, links_df: pd.DataFrame, metadata: Metadata) -> pd.DataFrame:
-        config = metadata.config
+    def predict(
+        self,
+        links_df: pd.DataFrame,
+        feature_set: FeatureSet,
+        distance: DataColumn,
+        target_set: TargetSet,
+    ) -> pd.DataFrame:
+        distance_col = distance.name
 
-        distance_col = config.feature_pack.distance.name
-
-        x = links_df[config.feature_pack.feature_name_list].values
+        x = links_df[feature_set.feature_name_list].values
 
         raw_energy_pred_rates = self.sklearn_model.predict(x)
 
         energy_df = pd.DataFrame(index=links_df.index)
 
-        for i, energy in enumerate(config.feature_pack.energy):
+        for i, energy in enumerate(target_set.targets):
             energy_pred_rates = pd.Series(
                 raw_energy_pred_rates[:, i], index=links_df.index
             )

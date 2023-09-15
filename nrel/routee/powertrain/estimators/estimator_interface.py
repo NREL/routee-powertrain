@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 import pandas as pd
+from nrel.routee.powertrain.core.features import DataColumn, FeatureSet, TargetSet
 
-from nrel.routee.powertrain.core.metadata import Metadata
 
 
 class Estimator(ABC):
@@ -36,7 +36,13 @@ class Estimator(ABC):
         """
 
     @abstractmethod
-    def predict(self, links_df: pd.DataFrame, metadata: Metadata) -> pd.DataFrame:
+    def predict(
+        self,
+        links_df: pd.DataFrame,
+        feature_set: FeatureSet,
+        distance: DataColumn,
+        target_set: TargetSet,
+    ) -> pd.DataFrame:
         """
         Predict absolute energy consumption for each link
         """

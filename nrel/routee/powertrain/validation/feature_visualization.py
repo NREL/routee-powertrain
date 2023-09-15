@@ -6,6 +6,7 @@ from typing import Dict, Optional
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
+from nrel.routee.powertrain.core.features import feature_names_to_id
 
 from nrel.routee.powertrain.core.model import Model
 
@@ -31,19 +32,27 @@ def visualize_features(
     :raises Exception due to IOErrors, KeyError due to missing features ranges required
         by the model
     """
-    if len(model.metadata.config.feature_pack.energy) > 1:
+    if len(model.metadata.config.target_set.targets) > 1:
         raise NotImplementedError(
-            "visualize_features currently only supports models with a single energy target"
+            "visualize_features currently only supports "
+            "models with a single energy target"
         )
 
     # grab the necessary metadata from the model
-    distance_name = model.metadata.config.feature_pack.distance.name
-    distance_units = model.metadata.config.feature_pack.distance.units
-    energy_units = model.metadata.config.feature_pack.energy[0].units
+    distance_name = model.metadata.config.distance.name
+    distance_units = model.metadata.config.distance.units
+    energy_name = model.metadata.config.target_set.targets[0].name
+    energy_units = model.metadata.config.target_set.targets[0].units
     model_name = model.metadata.config.vehicle_description
 
+    feature_set = model.metadata.config.get_feature_set(list(feature_ranges.keys()))
+    if feature_set is None:
+        raise KeyError(
+            f"Model does not have a feature set with the features: {feature_ranges.keys()}"
+        )
+
     feature_units_dict: Dict[str, str] = {}
-    for feature in model.metadata.config.feature_pack.features:
+    for feature in feature_set.features:
         feature_units_dict[feature.name] = feature.units
 
     # check that all features in the metadata are present in the config
@@ -87,7 +96,9 @@ def visualize_features(
 
         # make a prediction using the test links
         try:
-            links_df["energy_pred"] = model.predict(links_df)
+            energy_pred_df = model.predict(links_df)
+            energy_pred = energy_pred_df[energy_name]
+            links_df["energy_pred"] = energy_pred
         except Exception:
             log.error(
                 f"unable to predict {current_feature} with model "
@@ -155,14 +166,26 @@ def contour_plot(
     :raises Exception due to IOErrors, KeyError due to missing features ranges required
     by the model, KeyError due to incompatible x/y features
     """
+    if len(model.metadata.config.target_set.targets) > 1:
+        raise NotImplementedError(
+            "visualize_features currently only supports "
+            "models with a single energy target"
+        )
+
+    feature_set = model.metadata.config.get_feature_set(list(feature_ranges.keys()))
+    if feature_set is None:
+        raise KeyError(
+            f"Model does not have a feature set with the features: {feature_ranges.keys()}"
+        )
+
     # get the necessary information from the metadata
-    feature_meta = model.metadata.config.feature_pack
-    distance_name = feature_meta.distance.name
+    distance_name = model.metadata.config.distance.name
     model_name = model.metadata.config.vehicle_description
+    energy_name = model.metadata.config.target_set.targets[0].name
 
     # get all of the feature units from the metadata
     feature_units_dict = {}
-    for feature in feature_meta.features:
+    for feature in feature_set.features:
         feature_units_dict[feature.name] = feature.units
 
     # check to make sure feature range has all the features required by the model
@@ -200,7 +223,9 @@ def contour_plot(
 
     df[distance_name] = 1
 
-    df["energy"] = model.predict(df)
+    result = model.predict(df)
+    energy = result[energy_name]
+    df["energy"] = energy
 
     energy_matrix = df.groupby([y_feature, x_feature]).energy.mean().unstack().values
 

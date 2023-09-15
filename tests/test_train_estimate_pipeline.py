@@ -31,24 +31,28 @@ class TestTrainEstimatePipeline(TestCase):
         self.df = pd.read_csv(data_path)
         self.out_path = Path("tmp")
         self.out_path.mkdir(exist_ok=True)
-        self.feature_pack = pt.FeaturePack(
+        feature_set = pt.FeatureSet(
             features=[
-                pt.Feature(name="speed", units="mph"),
-                pt.Feature(name="grade", units="decimal"),
+                pt.DataColumn(name="speed", units="mph"),
+                pt.DataColumn(name="grade", units="decimal"),
             ],
-            distance=pt.Feature(name="miles", units="miles"),
-            energy=[
-                pt.Feature(
+        )
+        distance = pt.DataColumn(name="miles", units="miles")
+        targets = pt.TargetSet(
+            targets=[
+                pt.DataColumn(
                     name="gallons_fastsim",
                     units="gallons_gasoline",
-                    feature_range=pt.FeatureRange(lower=0.0, upper=100.0),
+                    constraints=pt.Constraints(lower=0.0, upper=100.0),
                 )
             ],
         )
         self.config = pt.ModelConfig(
             vehicle_description="Test Model",
             powertrain_type=pt.PowertrainType.ICE,
-            feature_pack=self.feature_pack,
+            feature_sets=[feature_set],
+            distance=distance,
+            target_set=targets,
         )
 
     def tearDown(self) -> None:
@@ -71,7 +75,8 @@ class TestTrainEstimatePipeline(TestCase):
 
         # test writing inner estimator to file
         outfile = self.out_path / "estimator.onnx"
-        vehicle_model.estimator.to_file(outfile)
+        estimator = list(vehicle_model.estimators.values())[0]
+        estimator.to_file(outfile)
         new_estimator = ONNXEstimator.from_file(outfile)
         outfile.unlink()
 
@@ -96,12 +101,14 @@ class TestTrainEstimatePipeline(TestCase):
 
         # test writing inner estimator to file
         outfile = self.out_path / "estimator.json"
-        vehicle_model.estimator.to_file(outfile)
+        estimator = list(vehicle_model.estimators.values())[0]
+        estimator.to_file(outfile)
         new_estimator = SmartCoreEstimator.from_file(outfile)
         outfile.unlink()
 
         outfile = self.out_path / "estimator.bin"
-        vehicle_model.estimator.to_file(outfile)
+        estimator = list(vehicle_model.estimators.values())[0]
+        estimator.to_file(outfile)
         new_estimator = SmartCoreEstimator.from_file(outfile)
         outfile.unlink()
 

@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 from nrel.routee.powertrain.core.model_config import ModelConfig
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
-from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
+from nrel.routee.powertrain.estimators.onnx import ONNX_INPUT_NAME, ONNXEstimator
 from nrel.routee.powertrain.trainers.trainer import Trainer
 
 # pinned here to suport onnx runtime verson 1.8 that
@@ -59,7 +59,7 @@ class SklearnRandomForestTrainer(Trainer):
             # convert to ONNX
             n_features = len(features.columns)
             initial_type = [
-                (config.onnx_input_name, FloatTensorType([None, n_features]))
+                (ONNX_INPUT_NAME, FloatTensorType([None, n_features]))
             ]
             onnx_model = to_onnx(
                 rf, 

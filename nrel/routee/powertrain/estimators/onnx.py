@@ -5,8 +5,11 @@ from pathlib import Path
 import onnx
 import onnxruntime as rt
 import pandas as pd
-from nrel.routee.powertrain.core.metadata import Metadata
+from nrel.routee.powertrain.core.features import DataColumn, FeatureSet, TargetSet
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
+
+ONNX_INPUT_NAME = "input"
+ONNX_DTYPE = "float32"
 
 
 class ONNXEstimator(Estimator):
@@ -48,27 +51,29 @@ class ONNXEstimator(Estimator):
         with filepath.open("wb") as f:
             f.write(self.onnx_model.SerializeToString())
 
-    def predict(self, links_df: pd.DataFrame, metadata: Metadata) -> pd.DataFrame:
-        config = metadata.config
-
-        distance_col = config.feature_pack.distance.name
-
-        x = links_df[config.feature_pack.feature_name_list].values
+    def predict(
+        self,
+        links_df: pd.DataFrame,
+        feature_set: FeatureSet,
+        distance: DataColumn,
+        target_set: TargetSet,
+    ) -> pd.DataFrame:
+        x = links_df[feature_set.feature_name_list].values
 
         onnx_session = rt.InferenceSession(self.onnx_model.SerializeToString())
 
         raw_energy_pred_rates = onnx_session.run(
-            None, {config.onnx_input_name: x.astype(config.feature_dtype)}
+            None, {ONNX_INPUT_NAME: x.astype(ONNX_DTYPE)}
         )[0]
 
         energy_df = pd.DataFrame(index=links_df.index)
 
-        for i, energy in enumerate(config.feature_pack.energy):
+        for i, energy in enumerate(target_set.targets):
             energy_pred_rates = pd.Series(
                 raw_energy_pred_rates[:, i], index=links_df.index
             )
 
-            energy_pred = energy_pred_rates * links_df[distance_col]
+            energy_pred = energy_pred_rates * links_df[distance.name]
             energy_df[energy.name] = energy_pred
 
         return energy_df

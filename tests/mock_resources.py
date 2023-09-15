@@ -3,7 +3,7 @@ import uuid
 import pandas as pd
 import numpy as np
 
-from nrel.routee.powertrain import load_pretrained_model, FeaturePack, Feature
+from nrel.routee.powertrain import load_pretrained_model, FeatureSet, DataColumn
 from nrel.routee.powertrain.core.model import Model
 
 
@@ -50,9 +50,9 @@ def mock_data_single_feature():
         {"miles": 1, "speed": 12, "energy": 1},
     ]
 
-    feature_pack = FeaturePack(
-        features=(Feature(name="speed", units=""),),
-        distance=Feature(name="miles", units=""),
-        energy=Feature(name="energy", units=""),
+    feature_pack = FeatureSet(
+        features=(DataColumn(name="speed", units=""),),
+        distance=DataColumn(name="miles", units=""),
+        energy=DataColumn(name="energy", units=""),
     )
     return pd.DataFrame(data), feature_pack
