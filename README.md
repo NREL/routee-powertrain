@@ -24,28 +24,24 @@ Clone (or download) the RouteE Powertrain repository and create a compatible pyt
 
 `git clone https://github.nrel.gov/MBAP/routee-powertrain.git`
 
-routee-powertrain depends on python 3.8. One way to satisfy this is to use [conda](https://conda.io/docs/):
+routee-powertrain depends on python 3.8 and up. One way to satisfy this is to use [conda](https://conda.io/docs/):
 
-```
-conda create -n routee-powertrain python=3.8
+```console
+conda create -n routee-powertrain python=3.10
 conda activate routee-powertrain
 ```
 
-This will create a new conda environment that uses python 3.8. Navigate to the the routee-powertrain root directory. Then:
+This will create a new conda environment that uses python 3.10. Navigate to the the routee-powertrain root directory. Then:
 
-```
+```console
 pip install .
 ```
 
 You will now be able to import routee-powertrain in your code with:
 
+```console
+import nrel.routee.powertrain as pt
 ```
-import powertrain
-```
-
-## Workflow
-
-Refer to the [routee-powertrain wiki](https://github.nrel.gov/MBAP/routee-powertrain/wiki) for guides on the tool.
 
 ## Pre-Trained Models
 

@@ -39,9 +39,18 @@ class ModelConfig:
         if isinstance(self.feature_sets, dict):
             self.feature_sets = [FeatureSet.from_dict(self.feature_sets)]
         elif isinstance(self.feature_sets, list):
+            feature_sets = []
             for i, f in enumerate(self.feature_sets):
-                if isinstance(f, dict):
-                    self.feature_sets[i] = FeatureSet.from_dict(f)
+                if isinstance(f, FeatureSet):
+                    feature_sets[i] = f
+                elif isinstance(f, list):
+                    feature_sets[i] = FeatureSet(features=f)
+                elif isinstance(f, dict):
+                    feature_sets[i] = FeatureSet.from_dict(f)
+                else:
+                    raise ValueError(
+                        "Feature sets must be a list of FeatureSets, lists, or dicts"
+                    )
         elif isinstance(self.feature_sets, FeatureSet):
             self.feature_sets = [self.feature_sets]
 
