@@ -158,7 +158,8 @@ class Model:
     def predict(
         self,
         links_df: pd.DataFrame,
-        features: Optional[List[str]] = None,
+        feature_columns: Optional[List[str]] = None,
+        distance_column: Optional[str] = None,
         apply_real_world_adjustment: bool = False,
     ) -> pd.DataFrame:
         """
@@ -166,13 +167,15 @@ class Model:
         """
         config = self.metadata.config
 
-        distance_col = self.metadata.config.distance.name
+        if distance_column is None:
+            distance_column = config.distance.name
+            if distance_column not in links_df.columns:
+                raise ValueError(
+                    f"links_df must contain a distance column named: '{distance_column}'"
+                )
+        else:
+            links_df = links_df.rename(columns={distance_column: config.distance.name})
 
-        if distance_col not in links_df.columns:
-            raise ValueError(
-                f"links_df must contain a distance column named: '{distance_col}' "
-                "according to the model metadata"
-            )
 
         # if we only have one estimator, just use that
         if len(self.estimators) == 1:
@@ -183,9 +186,9 @@ class Model:
 
         # if no explicit feature names are supplied we assume that the
         # dataframe contains all the features needed for prediction;
-        # if there are more features than we expect, we throw an error
-        elif features is None:
-            feature_columns = [c for c in links_df.columns if c != distance_col]
+        # if that isn't the case, we throw an error
+        elif feature_columns is None:
+            feature_columns = [c for c in links_df.columns if c != distance_column]
             feature_set_id = feature_names_to_id(feature_columns)
             estimator = self.estimators.get(feature_set_id)
             if estimator is None:
@@ -202,13 +205,13 @@ class Model:
                     f"{self.feature_set_lists}"
                 )
         else:
-            feature_set_id = feature_names_to_id(features)
+            feature_set_id = feature_names_to_id(feature_columns)
             estimator = self.estimators.get(feature_set_id)
             if estimator is None:
                 raise ValueError(
                     "Could not find an estimator that matches the provided "
-                    f"features {features}. Here are the feature sets that can be used: "
-                    f"{self.feature_set_lists}"
+                    f"feature columns {feature_columns}. Here are the feature "
+                    f"sets that can be used: {self.feature_set_lists}"
                 )
 
         feature_set = self.metadata.config.feature_set_map.get(feature_set_id)
