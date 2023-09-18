@@ -32,7 +32,7 @@ def visualize_features(
     :raises Exception due to IOErrors, KeyError due to missing features ranges required
         by the model
     """
-    if len(model.metadata.config.target_set.targets) > 1:
+    if len(model.metadata.config.target.targets) > 1:
         raise NotImplementedError(
             "visualize_features currently only supports "
             "models with a single energy target"
@@ -41,8 +41,8 @@ def visualize_features(
     # grab the necessary metadata from the model
     distance_name = model.metadata.config.distance.name
     distance_units = model.metadata.config.distance.units
-    energy_name = model.metadata.config.target_set.targets[0].name
-    energy_units = model.metadata.config.target_set.targets[0].units
+    energy_name = model.metadata.config.target.targets[0].name
+    energy_units = model.metadata.config.target.targets[0].units
     model_name = model.metadata.config.vehicle_description
 
     feature_set = model.metadata.config.get_feature_set(list(feature_ranges.keys()))
@@ -166,7 +166,7 @@ def contour_plot(
     :raises Exception due to IOErrors, KeyError due to missing features ranges required
     by the model, KeyError due to incompatible x/y features
     """
-    if len(model.metadata.config.target_set.targets) > 1:
+    if len(model.metadata.config.target.targets) > 1:
         raise NotImplementedError(
             "visualize_features currently only supports "
             "models with a single energy target"
@@ -181,7 +181,7 @@ def contour_plot(
     # get the necessary information from the metadata
     distance_name = model.metadata.config.distance.name
     model_name = model.metadata.config.vehicle_description
-    energy_name = model.metadata.config.target_set.targets[0].name
+    energy_name = model.metadata.config.target.targets[0].name
 
     # get all of the feature units from the metadata
     feature_units_dict = {}

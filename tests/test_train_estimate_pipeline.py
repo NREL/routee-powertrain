@@ -52,7 +52,7 @@ class TestTrainEstimatePipeline(TestCase):
             powertrain_type=pt.PowertrainType.ICE,
             feature_sets=[feature_set],
             distance=distance,
-            target_set=targets,
+            target=targets,
         )
 
     def tearDown(self) -> None:

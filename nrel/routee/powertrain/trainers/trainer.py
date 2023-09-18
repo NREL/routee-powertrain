@@ -22,7 +22,7 @@ class Trainer(ABC):
         """
         distance_name = config.distance.name
 
-        for energy_target in config.target_set.targets:
+        for energy_target in config.target.targets:
             energy_rate_name = f"{energy_target.name}_rate"
             data[energy_rate_name] = data[energy_target.name] / data[distance_name]
 
@@ -45,7 +45,7 @@ class Trainer(ABC):
         if all_features.isnull().values.any():
             raise ValueError("Features contain null values")
 
-        target = train[config.target_set.target_rate_name_list]
+        target = train[config.target.target_rate_name_list]
         if target.isnull().values.any():
             raise ValueError(
                 "Target contains null values. Try decreasing the energy rate high limit"

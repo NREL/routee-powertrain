@@ -221,10 +221,10 @@ class Model:
             links_df,
             feature_set,
             self.metadata.config.distance,
-            self.metadata.config.target_set,
+            self.metadata.config.target,
         )
 
-        for energy in config.target_set.targets:
+        for energy in config.target.targets:
             if apply_real_world_adjustment:
                 adjustment_factor = ADJUSTMENT_FACTORS.get(config.powertrain_type)
                 if adjustment_factor is None:

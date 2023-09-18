@@ -126,6 +126,8 @@ class TargetSet:
     def __post_init__(self):
         if isinstance(self.targets, DataColumn):
             self.targets = [self.targets]
+        elif isinstance(self.targets, dict):
+            self.targets = TargetSet.from_dict(self.targets)
 
     @property
     def target_map(self) -> Dict[str, DataColumn]:

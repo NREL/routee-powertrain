@@ -72,7 +72,7 @@ def compute_errors(test_df: pd.DataFrame, model: Model) -> dict:
 
     for feature_set_id, estimator in model.estimators.items():
         feature_set = model.metadata.config.feature_set_map[feature_set_id]
-        target_set = model.metadata.config.target_set
+        target_set = model.metadata.config.target
         distance = model.metadata.config.distance
 
         predictions = estimator.predict(

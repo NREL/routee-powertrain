@@ -27,7 +27,7 @@ class ModelConfig:
     # for [speed, grade, acceleration] which uses a different estimator.
     feature_sets: List[FeatureSet]
     distance: DataColumn
-    target_set: TargetSet
+    target: TargetSet
 
     test_size: float = 0.2
     random_seed: int = 42
@@ -40,27 +40,30 @@ class ModelConfig:
             self.feature_sets = [FeatureSet.from_dict(self.feature_sets)]
         elif isinstance(self.feature_sets, list):
             feature_sets = []
-            for i, f in enumerate(self.feature_sets):
+            for f in self.feature_sets:
                 if isinstance(f, FeatureSet):
-                    feature_sets[i] = f
+                    feature_sets.append(f)
                 elif isinstance(f, list):
-                    feature_sets[i] = FeatureSet(features=f)
+                    feature_sets.append(FeatureSet(features=f))
                 elif isinstance(f, dict):
-                    feature_sets[i] = FeatureSet.from_dict(f)
+                    feature_sets.append(FeatureSet.from_dict(f))
                 else:
                     raise ValueError(
                         "Feature sets must be a list of FeatureSets, lists, or dicts"
                     )
+            self.feature_sets = feature_sets
         elif isinstance(self.feature_sets, FeatureSet):
             self.feature_sets = [self.feature_sets]
 
         if isinstance(self.distance, dict):
             self.distance = DataColumn.from_dict(self.distance)
 
-        if isinstance(self.target_set, dict):
-            self.target_set = TargetSet.from_dict(self.target_set)
-        elif isinstance(self.target_set, DataColumn):
-            self.target_set = TargetSet([self.target_set])
+        if isinstance(self.target, dict):
+            self.target = TargetSet.from_dict(self.target)
+        elif isinstance(self.target, DataColumn):
+            self.target = TargetSet([self.target])
+        elif isinstance(self.target, list):
+            self.target = TargetSet(self.target)
 
         if isinstance(self.powertrain_type, str):
             self.powertrain_type = PowertrainType.from_string(self.powertrain_type)
@@ -72,11 +75,11 @@ class ModelConfig:
                 "Feature sets must have unique ids. "
                 "Found duplicate ids: {}".format(feature_set_ids)
             )
-        
+
         # now check all the types
         if not isinstance(self.distance, DataColumn):
             raise ValueError("Distance must be a DataColumn")
-        if not isinstance(self.target_set, TargetSet):
+        if not isinstance(self.target, TargetSet):
             raise ValueError("Target set must be a TargetSet")
         if not isinstance(self.feature_sets, list):
             raise ValueError("Feature sets must be a list")
@@ -95,7 +98,7 @@ class ModelConfig:
         d["powertrain_type"] = self.powertrain_type.name
         d["feature_sets"] = [f.to_dict() for f in self.feature_sets]
         d["distance"] = self.distance.to_dict()
-        d["target_set"] = self.target_set.to_dict()
+        d["target"] = self.target.to_dict()
 
         return d
 
