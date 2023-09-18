@@ -43,38 +43,32 @@ You will now be able to import routee-powertrain in your code with:
 import nrel.routee.powertrain as pt
 ```
 
-## Pre-Trained Models
+## Quickstart
 
-RouteE-Powertrain comes prepackaged with a few standard models and can access a large library of pretrained models.
+RouteE Powertrain is available on PyPI and can be installed with `pip`:
 
-To see which models are available you can use the function `list_available_models` and then you can load any model
-with the function `load_pretrained_model`.
-
-Here's a sample workflow:
-
-```python
-import powertrain as pt
-
-# determine which models are available
-model_names = pt.list_available_models()
-for name in model_names:
-  print(name)
-
-leaf = pt.load_pretrained_model("2016_Nissan_Leaf_30_kWh_ExplicitBin")
+```bash
+pip install nrel.routee.powertrain
 ```
 
-## Test Data
+Then, you can import the package and use a pre-trained model from the RouteE model catalog:
 
-If you are developing on the routee-powertrain projects and plan to run any of the tests, you will need to also download the test data from [Box](https://app.box.com/s/dm5w4mo56ej9jfmyo404kz98roz7jat7).
+```python
+import pandas as pd
+import nrel.routee.powertrain as pt
 
-It is recommended that you move the downloaded and unzipped "routee-powertrain-test-data" directory into `powertrain/tests/`.
+# Load a pre-trained model
+model = pt.load_pretrained_model("2016_TOYOTA_Camry_4cyl_2WD")
 
-## More Information
+# Predict energy consumption for a set of road links
+links_df = pd.DataFrame(
+    {
+        "distance": [0.1, 0.2, 0.3], # miles
+        "speed": [30, 40, 50], # mph
+        "grade": [-0.05, 0, 0.05], # decimal 
+    }
+)
 
-Check out the [routee-traffic-control](https://github.nrel.gov/MBAP/routee-notebooks) repo for demo notebooks with examples of RouteE usage.
+energy_result = model.predict(links_df)
+```
 
-## License
-
-RouteE Copyright ©2019 Alliance for Sustainable Energy, LLC All Rights Reserved
-
-This computer software was produced by Alliance for Sustainable Energy, LLC under Contract No. DE-AC36-08GO28308 with the U.S. Department of Energy. For 5 years from the date permission to assert copyright was obtained, the Government is granted for itself and others acting on its behalf a non-exclusive, paid-up, irrevocable worldwide license in this software to reproduce, prepare derivative works, and perform publicly and display publicly, by or on behalf of the Government. There is provision for the possible extension of the term of this license. Subsequent to that period or any extension granted, the Government is granted for itself and others acting on its behalf a non-exclusive, paid-up, irrevocable worldwide license in this software to reproduce, prepare derivative works, distribute copies to the public, perform publicly and display publicly, and to permit others to do so. The specific term of the license can be identified by inquiry made to Alliance for Sustainable Energy, LLC or DOE. NEITHER ALLIANCE FOR SUSTAINABLE ENERGY, LLC, THE UNITED STATES NOR THE UNITED STATES DEPARTMENT OF ENERGY, NOR ANY OF THEIR EMPLOYEES, MAKES ANY WARRANTY, EXPRESS OR IMPLIED, OR ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR THE ACCURACY, COMPLETENESS, OR USEFULNESS OF ANY DATA, APPARATUS, PRODUCT, OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT INFRINGE PRIVATELY OWNED RIGHTS.
