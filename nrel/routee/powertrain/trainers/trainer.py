@@ -8,7 +8,7 @@ from nrel.routee.powertrain.core.model import Model
 from nrel.routee.powertrain.core.model_config import ModelConfig
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 from nrel.routee.powertrain.trainers.utils import test_train_split
-from nrel.routee.powertrain.validation.errors import compute_errors 
+from nrel.routee.powertrain.validation.errors import compute_errors
 
 ENERGY_RATE_NAME = "energy_rate"
 
@@ -62,13 +62,11 @@ class Trainer(ABC):
 
         metadata = Metadata(config=config)
 
-        vehicle_model = Model(estimators, metadata)
+        model_errors = compute_errors(test, estimators, config)
 
-        model_errors = compute_errors(test, vehicle_model)
+        vehicle_model = Model(estimators, metadata, model_errors)
 
-        model_with_errors = vehicle_model.set_errors(model_errors)
-
-        return model_with_errors
+        return vehicle_model
 
     @abstractmethod
     def inner_train(

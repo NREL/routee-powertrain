@@ -1,13 +1,30 @@
 from __future__ import annotations
+from dataclasses import dataclass
 
-from typing import TYPE_CHECKING, Dict
+from typing import Dict, Optional
 
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error
 
-if TYPE_CHECKING:
-    from nrel.routee.powertrain.core.model import Model
+from nrel.routee.powertrain.core.features import FeatureSetId
+from nrel.routee.powertrain.core.model_config import ModelConfig
+from nrel.routee.powertrain.estimators.estimator_interface import Estimator
+
+REPR_ROWS = {
+    "feature_set_id": "Feature Set ID",
+    "target": "Target",
+    "link_root_mean_squared_error": "Link RMSE",
+    "link_norm_root_mean_squared_error": "Link Norm RMSE",
+    "link_weighted_relative_percent_difference": "Link Weighted RPD",
+    "net_error": "Net Error",
+    "actual_dist_per_energy": "Actual Dist/Energy",
+    "pred_dist_per_energy": "Predicted Dist/Energy",
+    "trip_relative_percent_difference": "Trip RPD",
+    "trip_weighted_relative_percent_difference": "Trip Weighted RPD",
+    "trip_root_mean_squared_error": "Trip RMSE",
+    "trip_norm_root_mean_squared_error": "Trip Norm RMSE",
+}
 
 
 def net_energy_error(target: np.ndarray, target_pred: np.ndarray) -> float:
@@ -53,27 +70,162 @@ def relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> 
     return mean_error
 
 
-def compute_errors(test_df: pd.DataFrame, model: Model) -> dict:
+@dataclass
+class Errors:
+    link_root_mean_squared_error: float
+    link_norm_root_mean_squared_error: float
+    link_weighted_relative_percent_difference: float
+
+    net_error: float
+    actual_dist_per_energy: float
+    pred_dist_per_energy: float
+
+    trip_relative_percent_difference: Optional[float] = None
+    trip_weighted_relative_percent_difference: Optional[float] = None
+    trip_root_mean_squared_error: Optional[float] = None
+    trip_norm_root_mean_squared_error: Optional[float] = None
+
+    @classmethod
+    def from_dict(self, d: dict) -> Errors:
+        return Errors(**d)
+
+    def to_dict(self) -> dict:
+        return self.__dict__.copy()
+
+    def _repr_html_(self) -> str:
+        html_lines = ["<table border='1' style='border-collapse: collapse;'>"]
+
+        for error_name, error_value in self.to_dict().items():
+            if error_value is None:
+                # possible if there are not trip errors
+                continue
+            row_name = REPR_ROWS[error_name]
+            html_lines.append(f"<tr><td>{row_name}</td><td>{error_value:.5f}</td></tr>")
+
+        # End the HTML table
+        html_lines.append("</table>")
+
+        return "".join(html_lines)
+
+
+@dataclass
+class EstimatorErrors:
+    feature_set_id: FeatureSetId
+    error_by_target: Dict[str, Errors]
+
+    @classmethod
+    def from_dict(cls, d: dict) -> EstimatorErrors:
+        d["error_by_target"] = {
+            k: Errors.from_dict(v) for k, v in d["error_by_target"].items()
+        }
+        return EstimatorErrors(**d)
+
+    def to_dict(self) -> dict:
+        out_dict = self.__dict__.copy()
+        out_dict["error_by_target"] = {
+            k: v.to_dict() for k, v in self.error_by_target.items()
+        }
+        return out_dict
+
+    def _repr_html_(self) -> str:
+        html_lines = ['<table border="1" style="border-collapse: collapse;">']
+        html_lines.append(
+            "<tr><td colspan='2' style='border-bottom: 2px solid black; text-align: center;'><b>Estimator Errors</b></td></tr>"
+        )
+        html_lines.append(
+            f"<tr><td>Feature Set ID</td><td>{self.feature_set_id}</td></tr>"
+        )
+        for target, errors in self.error_by_target.items():
+            html_lines.append(f"<tr><td>Target</td><td>{target}</td></tr>")
+            for error_name, error_value in errors.to_dict().items():
+                if error_value is None:
+                    # possible if there are not trip errors
+                    continue
+                row_name = REPR_ROWS[error_name]
+                html_lines.append(
+                    f"<tr><td>{row_name}</td><td>{error_value:.5f}</td></tr>"
+                )
+        return "".join(html_lines)
+
+
+@dataclass
+class ModelErrors:
+    estimator_errors: Dict[FeatureSetId, EstimatorErrors]
+
+    @classmethod
+    def from_dict(cls, d: dict) -> ModelErrors:
+        d["estimator_errors"] = {
+            k: EstimatorErrors.from_dict(v) for k, v in d["estimator_errors"].items()
+        }
+        return ModelErrors(**d)
+
+    def to_dict(self) -> dict:
+        out_dict = self.__dict__.copy()
+        out_dict["estimator_errors"] = {
+            k: v.to_dict() for k, v in self.estimator_errors.items()
+        }
+        return out_dict
+
+    def _repr_html_(self) -> str:
+        html_lines = []
+        for feature_set_id, estimator_error in self.estimator_errors.items():
+            html_lines.append(estimator_error._repr_html_())
+
+        return "".join(html_lines)
+
+    def __repr__(self) -> str:
+        """
+        Returns a pretty printed summary of the model errors
+        """
+        summary_lines = []
+
+        max_key_length = max([len(row_name) for row_name in REPR_ROWS.values()])
+
+        summary_lines.append("=" * (max_key_length + 20))
+        for feature_set_id, estimator_error in self.estimator_errors.items():
+            for target, errors in estimator_error.error_by_target.items():
+                summary_lines.append(
+                    f"{'Feature Set ID:':<{max_key_length}} {feature_set_id}"
+                )
+                summary_lines.append(f"{'Target:':<{max_key_length}} {target}")
+                for error_name, error_value in errors.to_dict().items():
+                    if error_value is None:
+                        # possible if there are not trip errors
+                        continue
+                    row_name = REPR_ROWS[error_name]
+                    summary_lines.append(
+                        f"{row_name:<{max_key_length}} {error_value:.3f}"
+                    )
+                summary_lines.append("=" * (max_key_length + 20))
+
+        return "\n".join(summary_lines)
+
+
+def compute_errors(
+    test_df: pd.DataFrame,
+    estimators: Dict[FeatureSetId, Estimator],
+    config: ModelConfig,
+) -> ModelErrors:
     """
     Computes the error metrics for a set of predictions relative
     to the ground truth data
 
     Args:
         test_df: the test dataframe
-        model: the routee-powertrain model
-        trip_column: an optional trip column for computing trip level metrics
+        estimators: a set of estimators
+        config: The model configuration
 
     Returns: a dictionary with all of the error values
 
     """
     test_df = test_df.copy()
 
-    all_errors = {}
+    model_errors = {}
 
-    for feature_set_id, estimator in model.estimators.items():
-        feature_set = model.metadata.config.feature_set_map[feature_set_id]
-        target_set = model.metadata.config.target
-        distance = model.metadata.config.distance
+    for feature_set_id, estimator in estimators.items():
+        feature_set = config.feature_set_map[feature_set_id]
+        target_set = config.target
+        distance = config.distance
 
         predictions = estimator.predict(
             test_df, feature_set=feature_set, distance=distance, target_set=target_set
@@ -95,7 +247,7 @@ def compute_errors(test_df: pd.DataFrame, model: Model) -> dict:
             ew_rpe = weighted_relative_percent_difference(target, target_pred)
             errors["link_weighted_relative_percent_difference"] = ew_rpe
 
-            trip_column = model.metadata.config.trip_column
+            trip_column = config.trip_column
 
             if trip_column in test_df.columns:
                 test_df["energy_pred"] = target_pred
@@ -125,8 +277,14 @@ def compute_errors(test_df: pd.DataFrame, model: Model) -> dict:
             errors["actual_dist_per_energy"] = total_dist / actual_energy
             errors["pred_dist_per_energy"] = total_dist / pred_energy
 
-            estimator_errors[energy_name] = errors
-        
-        all_errors[feature_set_id] = estimator_errors
+            errors_obj = Errors(**errors)
 
-    return all_errors 
+            estimator_errors[energy_name] = errors_obj
+
+        estimator_errors_obj = EstimatorErrors(feature_set_id, estimator_errors)
+
+        model_errors[feature_set_id] = estimator_errors_obj
+
+    model_errors_obj = ModelErrors(model_errors)
+
+    return model_errors_obj

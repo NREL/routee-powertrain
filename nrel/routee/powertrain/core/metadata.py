@@ -17,12 +17,7 @@ class Metadata:
 
     config: ModelConfig
 
-    errors: Optional[dict] = None
-
     routee_version: str = get_version()
-
-    def set_errors(self, errors: dict) -> Metadata:
-        return replace(self, errors=errors)
 
     def to_dict(self) -> dict:
         d = self.__dict__.copy()

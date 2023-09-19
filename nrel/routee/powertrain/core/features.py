@@ -85,6 +85,12 @@ class FeatureSet:
         if isinstance(self.features, DataColumn):
             self.features = [self.features]
 
+    def __repr__(self) -> str:
+        summary_lines = []
+        for feature in self.features:
+            summary_lines.append(f"{feature.name} ({feature.units})")
+        return "\n".join(summary_lines)
+
     @property
     def features_id(self) -> FeatureSetId:
         """

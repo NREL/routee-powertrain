@@ -18,6 +18,7 @@ from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTOR
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
 from nrel.routee.powertrain.estimators.smart_core import SmartCoreEstimator
+from nrel.routee.powertrain.validation.errors import ModelErrors
 
 REGISTERED_ESTIMATORS = {
     "ONNXEstimator": ONNXEstimator,
@@ -25,6 +26,7 @@ REGISTERED_ESTIMATORS = {
 }
 
 METADATA_SERIALIZATION_KEY = "metadata"
+MODEL_ERRORS_SERIALIZATION_KEY = "errors"
 ALL_ESTIMATOR_SERIALIZATION_KEY = "all_estimators"
 ESTIMATOR_SERIALIZATION_KEY = "estimator"
 CONSTRUCTOR_TYPE_SERIALIZATION_KEY = "estimator_constructor_type"
@@ -39,6 +41,7 @@ class Model:
 
     estimators: Dict[FeatureSetId, Estimator]
     metadata: Metadata
+    errors: ModelErrors
 
     @property
     def feature_sets(self):
@@ -60,6 +63,14 @@ class Model:
                 f"'{METADATA_SERIALIZATION_KEY}'"
             )
         metadata = Metadata.from_dict(metadata_dict)
+
+        model_errors_dict = input_dict.get(MODEL_ERRORS_SERIALIZATION_KEY)
+        if model_errors_dict is None:
+            raise ValueError(
+                "Model file must contain model errors at key: "
+                f"'{MODEL_ERRORS_SERIALIZATION_KEY}'"
+            )
+        model_errors = ModelErrors.from_dict(model_errors_dict)
 
         all_estimators_dict = input_dict.get(ALL_ESTIMATOR_SERIALIZATION_KEY)
         if all_estimators_dict is None:
@@ -96,7 +107,7 @@ class Model:
             estimator = estimator_constructor.from_dict(estimator_input_dict)
             estimators[feature_set_id] = estimator
 
-        return cls(estimators, metadata)
+        return cls(estimators, metadata, model_errors)
 
     def to_dict(self) -> dict:
         """
@@ -111,6 +122,7 @@ class Model:
 
         return {
             METADATA_SERIALIZATION_KEY: self.metadata.to_dict(),
+            MODEL_ERRORS_SERIALIZATION_KEY: self.errors.to_dict(),
             ALL_ESTIMATOR_SERIALIZATION_KEY: estimator_dict,
             CONSTRUCTOR_TYPE_SERIALIZATION_KEY: self.estimators.__class__.__name__,
         }
@@ -176,7 +188,6 @@ class Model:
         else:
             links_df = links_df.rename(columns={distance_column: config.distance.name})
 
-
         # if we only have one estimator, just use that
         if len(self.estimators) == 1:
             feature_set_id = list(self.estimators.keys())[0]
@@ -241,6 +252,119 @@ class Model:
 
         return pred_energy_df
 
-    def set_errors(self, errors: dict) -> Model:
-        new_meta = self.metadata.set_errors(errors)
-        return Model(estimators=self.estimators, metadata=new_meta)
+    def __repr__(self) -> str:
+        """
+        Shows a nice pretty printed summary of the model including:
+         - Model average fuel consumption
+         - Select set of errors
+         - Expected features and their units
+         - Powertrain specifications
+        """
+        config = self.metadata.config
+        summary_lines = []
+        summary_lines.append("=" * 40)
+        summary_lines.append("Model Summary")
+        summary_lines.append("-" * 20)
+        summary_lines.append(f"Vehicle description: {config.vehicle_description}")
+        summary_lines.append(f"Powertrain type: {config.powertrain_type.name}")
+        summary_lines.append(f"Number of estimators: {len(self.estimators)}")
+        summary_lines.append("=" * 40)
+        for feature_set_id in self.estimators.keys():
+            estimator_errors = self.errors.estimator_errors.get(feature_set_id)
+            if estimator_errors is None:
+                raise ValueError(
+                    f"Could not find errors for estimator {feature_set_id}"
+                )
+            summary_lines.append("Estimator Summary")
+            summary_lines.append("-" * 20)
+            feature_set = config.feature_set_map.get(feature_set_id)
+            if feature_set is None:
+                raise ValueError(
+                    f"Could not find a feature set {feature_set_id} in model config"
+                )
+            for feature in feature_set.features:
+                summary_lines.append(f"Feature: {feature.name} ({feature.units})")
+            summary_lines.append(
+                f"Distance: {config.distance.name} " f"({config.distance.units})"
+            )
+            for target in config.target.targets:
+                summary_lines.append(f"Target: {target.name} ({target.units})")
+                target_errors = estimator_errors.error_by_target.get(target.name)
+                if target_errors is None:
+                    raise ValueError(f"Could not find errors for target {target.name}")
+
+                summary_lines.append(
+                    f"Predicted Consumption: {target_errors.pred_dist_per_energy:.3f} "
+                    f"({config.distance.units}/{target.units})"
+                )
+            summary_lines.append("=" * 40)
+        return "\n".join(summary_lines)
+
+    def _repr_html_(self) -> str:
+        """
+        Returns an html table of the model summary for display in a notebook
+        """
+        config = self.metadata.config
+
+        # Start the HTML table
+        html_lines = ['<table border="1" style="border-collapse: collapse;">']
+
+        # Title: Model Summary
+        html_lines.append('<tr><th colspan="2" style="border-bottom: 2px solid black; text-align: center;">Model Summary</th></tr>')
+        html_lines.append(
+            f"<tr><td>Vehicle description</td><td>{config.vehicle_description}</td></tr>"
+        )
+        html_lines.append(
+            f"<tr><td>Powertrain type</td><td>{config.powertrain_type.name}</td></tr>"
+        )
+        html_lines.append(
+            f"<tr><td>Number of estimators</td><td>{len(self.estimators)}</td></tr>"
+        )
+
+        for feature_set_id in self.estimators.keys():
+            estimator_errors = self.errors.estimator_errors.get(feature_set_id)
+            if estimator_errors is None:
+                raise ValueError(
+                    f"Could not find errors for estimator {feature_set_id}"
+                )
+
+            # Title: Estimator Summary
+            html_lines.append(
+                '<tr><th colspan="2" style="border-bottom: 2px solid black; text-align: center;">Estimator Summary</th></tr>'
+            )
+
+            feature_set = config.feature_set_map.get(feature_set_id)
+            if feature_set is None:
+                raise ValueError(
+                    f"Could not find a feature set {feature_set_id} in model config"
+                )
+
+            for feature in feature_set.features:
+                html_lines.append(
+                    f"<tr><td>Feature</td><td>{feature.name} ({feature.units})</td></tr>"
+                )
+
+            html_lines.append(
+                "<tr><td>Distance</td>"
+                f"<td>{config.distance.name} ({config.distance.units})</td></tr>"
+            )
+
+            for target in config.target.targets:
+                html_lines.append(
+                    f"<tr><td>Target</td><td>{target.name} ({target.units})</td></tr>"
+                )
+
+                target_errors = estimator_errors.error_by_target.get(target.name)
+                if target_errors is None:
+                    raise ValueError(f"Could not find errors for target {target.name}")
+
+                html_lines.append(
+                    "<tr><td>Predicted Consumption</td>"
+                    f"<td>{target_errors.pred_dist_per_energy:.3f} "
+                    f"({config.distance.units}/{target.units})</td></tr>"
+                )
+
+        # End the HTML table
+        html_lines.append("</table>")
+
+        return "".join(html_lines)
