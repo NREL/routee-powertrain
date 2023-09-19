@@ -9,6 +9,7 @@ from nrel.routee.powertrain.core.features import (
     FeatureSet,
     FeatureSetId,
     TargetSet,
+    feature_names_to_id,
 )
 from nrel.routee.powertrain.core.powertrain_type import PowertrainType
 
@@ -111,7 +112,7 @@ class ModelConfig:
         Get a feature set by a list of a feature names, returning None if it doesn't
         exist in the feature sets
         """
-        feature_set_id = "_".join(sorted(feature_name_list))
+        feature_set_id = feature_names_to_id(feature_name_list)
         return self.feature_set_map.get(feature_set_id)
 
     @property

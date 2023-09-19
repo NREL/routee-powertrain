@@ -8,7 +8,7 @@ from nrel.routee.powertrain.core.model import Model
 
 
 def mock_model() -> Model:
-    return load_pretrained_model("ICE")
+    return load_pretrained_model("2016_TOYOTA_Camry_4cyl_2WD")
 
 
 def mock_ev_data(n_links: int = 100):
