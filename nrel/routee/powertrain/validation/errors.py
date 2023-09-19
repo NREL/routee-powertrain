@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -70,6 +70,17 @@ def relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> 
     return mean_error
 
 
+def errors_to_html_lines(errors: Errors) -> List[str]:
+    html_lines = []
+    for error_name, error_value in errors.to_dict().items():
+        if error_value is None:
+            # possible if there are not trip errors
+            continue
+        row_name = REPR_ROWS[error_name]
+        html_lines.append(f"<tr><td>{row_name}</td><td>{error_value:.5f}</td></tr>")
+    return html_lines
+
+
 @dataclass
 class Errors:
     link_root_mean_squared_error: float
@@ -95,17 +106,28 @@ class Errors:
     def _repr_html_(self) -> str:
         html_lines = ["<table border='1' style='border-collapse: collapse;'>"]
 
-        for error_name, error_value in self.to_dict().items():
-            if error_value is None:
-                # possible if there are not trip errors
-                continue
-            row_name = REPR_ROWS[error_name]
-            html_lines.append(f"<tr><td>{row_name}</td><td>{error_value:.5f}</td></tr>")
+        html_lines.extend(errors_to_html_lines(self))
 
-        # End the HTML table
         html_lines.append("</table>")
 
         return "".join(html_lines)
+
+
+def estimator_errors_to_html_lines(estimator_errors: EstimatorErrors) -> List[str]:
+    html_lines = []
+
+    html_lines.append(
+        "<tr><td colspan='2' style='border-bottom: 2px solid black;"
+        "text-align: center;'><b>Estimator Errors</b></td></tr>"
+    )
+    html_lines.append(
+        f"<tr><td>Feature Set ID</td><td>{estimator_errors.feature_set_id}</td></tr>"
+    )
+    for target, errors in estimator_errors.error_by_target.items():
+        html_lines.append(f"<tr><td>Target</td><td>{target}</td></tr>")
+        html_lines.extend(errors_to_html_lines(errors))
+
+    return html_lines
 
 
 @dataclass
@@ -129,22 +151,8 @@ class EstimatorErrors:
 
     def _repr_html_(self) -> str:
         html_lines = ['<table border="1" style="border-collapse: collapse;">']
-        html_lines.append(
-            "<tr><td colspan='2' style='border-bottom: 2px solid black; text-align: center;'><b>Estimator Errors</b></td></tr>"
-        )
-        html_lines.append(
-            f"<tr><td>Feature Set ID</td><td>{self.feature_set_id}</td></tr>"
-        )
-        for target, errors in self.error_by_target.items():
-            html_lines.append(f"<tr><td>Target</td><td>{target}</td></tr>")
-            for error_name, error_value in errors.to_dict().items():
-                if error_value is None:
-                    # possible if there are not trip errors
-                    continue
-                row_name = REPR_ROWS[error_name]
-                html_lines.append(
-                    f"<tr><td>{row_name}</td><td>{error_value:.5f}</td></tr>"
-                )
+        html_lines.extend(estimator_errors_to_html_lines(self))
+        html_lines.append("</table>")
         return "".join(html_lines)
 
 
@@ -167,9 +175,10 @@ class ModelErrors:
         return out_dict
 
     def _repr_html_(self) -> str:
-        html_lines = []
-        for feature_set_id, estimator_error in self.estimator_errors.items():
-            html_lines.append(estimator_error._repr_html_())
+        html_lines = ['<table border="1" style="border-collapse: collapse;">']
+        for _, estimator_error in self.estimator_errors.items():
+            html_lines.extend(estimator_errors_to_html_lines(estimator_error))
+        html_lines.append("</table>")
 
         return "".join(html_lines)
 
