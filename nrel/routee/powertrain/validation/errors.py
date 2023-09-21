@@ -29,7 +29,7 @@ REPR_ROWS = {
 def mean_squared_error(
     A: np.ndarray, B: np.ndarray, axis: Optional[int] = None
 ) -> float:
-    return np.square(A - B).mean(asix=axis)
+    return np.square(A - B).mean(axis=axis)
 
 
 def net_energy_error(target: np.ndarray, target_pred: np.ndarray) -> float:
