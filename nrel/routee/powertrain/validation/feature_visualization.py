@@ -3,10 +3,8 @@ import traceback
 from pathlib import Path
 from typing import Dict, Optional
 
-import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
-from nrel.routee.powertrain.core.features import feature_names_to_id
 
 from nrel.routee.powertrain.core.model import Model
 
@@ -32,6 +30,13 @@ def visualize_features(
     :raises Exception due to IOErrors, KeyError due to missing features ranges required
         by the model
     """
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        raise ImportError(
+            "matplotlib is required to use the visualize_features function"
+        )
+
     if len(model.metadata.config.target.targets) > 1:
         raise NotImplementedError(
             "visualize_features currently only supports "
@@ -166,6 +171,12 @@ def contour_plot(
     :raises Exception due to IOErrors, KeyError due to missing features ranges required
     by the model, KeyError due to incompatible x/y features
     """
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        raise ImportError(
+            "matplotlib is required to use the visualize_features function"
+        )
     if len(model.metadata.config.target.targets) > 1:
         raise NotImplementedError(
             "visualize_features currently only supports "

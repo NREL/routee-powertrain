@@ -7,6 +7,7 @@ from .core.model_config import ModelConfig
 from .core.powertrain_type import PowertrainType
 from .io.api import read_model
 from .io.load import list_available_models, load_pretrained_model
+from .validation.feature_visualization import visualize_features, contour_plot
 
 __version__ = "1.0.0"
 

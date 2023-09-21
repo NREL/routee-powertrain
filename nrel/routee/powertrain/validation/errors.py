@@ -5,7 +5,6 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_squared_error
 
 from nrel.routee.powertrain.core.features import FeatureSetId
 from nrel.routee.powertrain.core.model_config import ModelConfig
@@ -25,6 +24,12 @@ REPR_ROWS = {
     "trip_root_mean_squared_error": "Trip RMSE",
     "trip_norm_root_mean_squared_error": "Trip Norm RMSE",
 }
+
+
+def mean_squared_error(
+    A: np.ndarray, B: np.ndarray, axis: Optional[int] = None
+) -> float:
+    return np.square(A - B).mean(asix=axis)
 
 
 def net_energy_error(target: np.ndarray, target_pred: np.ndarray) -> float:

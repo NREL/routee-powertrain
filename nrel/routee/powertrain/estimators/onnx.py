@@ -14,9 +14,14 @@ ONNX_DTYPE = "float32"
 
 class ONNXEstimator(Estimator):
     onnx_model: onnx.ModelProto
+    session: rt.InferenceSession
 
     def __init__(self, onnx_model: onnx.ModelProto) -> None:
         self.onnx_model = onnx_model
+        session = rt.InferenceSession(
+            onnx_model.SerializeToString(), providers=["CPUExecutionProvider"]
+        )
+        self.session = session
 
     @classmethod
     def from_dict(cls, in_dict: dict) -> ONNXEstimator:
@@ -60,9 +65,7 @@ class ONNXEstimator(Estimator):
     ) -> pd.DataFrame:
         x = links_df[feature_set.feature_name_list].values
 
-        onnx_session = rt.InferenceSession(self.onnx_model.SerializeToString())
-
-        raw_energy_pred_rates = onnx_session.run(
+        raw_energy_pred_rates = self.session.run(
             None, {ONNX_INPUT_NAME: x.astype(ONNX_DTYPE)}
         )[0]
 
