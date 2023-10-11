@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from typing import Dict, List
 
@@ -32,7 +32,7 @@ class DataColumn:
 
     dtype: str = "float32"
 
-    constraints: Constraints = Constraints()
+    constraints: Constraints = field(default_factory=Constraints)
 
     def __post_init__(self):
         if "&" in self.name:

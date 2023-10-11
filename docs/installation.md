@@ -1,17 +1,11 @@
 # Installation
 
+## From PyPI 
+
 To install the base package for model prediction, we recommend you use `pip`:
 
 ```bash
 pip install nrel.routee.powertrain
-```
-
-To install the package for model training, you can still use pip and just specify which training dependencies you want to install. We currently have the following train pipelines available:
-
-- `scikit`: scikit-learn based pipeline
-
-```bash
-pip install nrel.routee.powertrain[scikit]
 ```
 
 ## From Source
@@ -23,3 +17,43 @@ git clone https://github.nrel.gov/MBAP/routee-powertrain.git
 cd routee-powertrain
 pip install .
 ```
+
+## Model Training
+
+Model training requires a couple of extra dependencies that are not required for model prediction.
+Each training pipeline has its own set of dependencies.
+
+### Scikit-learn
+
+To install the depenecies the scikit learn training pipeline, use the following command:
+
+```bash
+pip install nrel.routee.powertrain[scikit]
+```
+
+This should support usage of the following trainers:
+
+- `SklearnRandomForestTrainer`
+
+### Rust Smartcore
+
+The rust smartcore training pipeline requires a rust compiler to be installed on your system.
+One way to do this is to use Anaconda:
+
+```bash
+conda install rust
+```
+
+Then, you'll have to build the python rust extension for powertrain:
+
+```bash
+pip install maturin
+
+git clone https://github.nrel.gov/MBAP/routee-powertrain.git
+cd routee-powertrain/rust
+maturin develop --release
+```
+
+This will install the `powertrain_rust` extension and should support usage of the following trainers:
+
+- `SmartcoreRandomForestTrainer`
