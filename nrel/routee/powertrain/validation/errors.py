@@ -106,7 +106,11 @@ class Errors:
         return Errors(**d)
 
     def to_dict(self) -> dict:
-        return self.__dict__.copy()
+        out_d = {}
+        for k, v in self.__dict__.items():
+            if v is not None:
+                out_d[k] = float(v)
+        return out_d
 
     def _repr_html_(self) -> str:
         html_lines = ["<table border='1' style='border-collapse: collapse;'>"]
