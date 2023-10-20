@@ -1,11 +1,16 @@
 import pandas as pd
+import numpy as np
 import glob
+import re
+import multiprocessing
+import random
 
 from pathlib import Path
 
-import random
-
 from tqdm import tqdm
+from joblib import Parallel, delayed
+
+import shapely
 
 import nrel.routee.powertrain as pt
 
@@ -20,6 +25,8 @@ OUTPUT_BASE_PATH = Path("/projects/mbap/data/routee-results/model-catalog/")
 if not OUTPUT_BASE_PATH.exists():
     OUTPUT_BASE_PATH.mkdir()
 
+TRAIN_CACHE_DIR = OUTPUT_BASE_PATH / "train_data"
+
 
 LOW_MILES_THRESHOLD = 50 / 5280  # 50 feet
 HIGH_MILES_THRESHOLD = 0.5
@@ -30,7 +37,7 @@ KWH_TO_GGE = 0.029931063
 HIGH_GRADE_THRESHOLD = 0.4
 LOW_GRADE_THRESHOLD = -0.4
 
-FILE_LIMIT = 10
+FILE_LIMIT = 2
 N_CORES = 80
 
 models = [
@@ -76,24 +83,136 @@ models = [
     "2022_Renault_Zoe_ZE50_R135",
     "2022_Tesla_Model_3_RWD",
     "2022_Tesla_Model_Y_RWD",
-    "2022_Toyota_Avanza_E",
     "2022_Toyota_Yaris_Hybrid_Mid",
     "2022_Volvo_XC40_Recharge_twin",
     "2023_Mitsubishi_Pajero_Sport",
-    "Maruti_Swift_4cyl_2WD",
-    "Nissan_Navara",
-    "Renault_Clio_IV_diesel",
-    "Renault_Megane_1.5_dCi_Authentique",
-    "Toyota_Hilux_Double_Cab_4WD",
-    "Toyota_Mirai",
+    # "Maruti_Swift_4cyl_2WD",
+    # "Nissan_Navara",
+    # "Renault_Clio_IV_diesel",
+    # "Renault_Megane_1.5_dCi_Authentique",
+    # "Toyota_Hilux_Double_Cab_4WD",
+    # "Toyota_Mirai",
 ]
+
+
+def load_geom_df():
+    geom_df = pd.read_table(
+        "/projects/mbap/data/routee-compass-tomtom/data/tomtom_multinet_r_2021/edges-geometries-enumerated.txt.gz",
+        header=None,
+    ).rename(columns={0: "geometry"})
+    id_df = pd.read_csv(
+        "/projects/mbap/data/routee-compass-tomtom/data/tomtom_multinet_r_2021/edges-uuid-enumerated.txt.gz",
+        header=None,
+    ).rename(columns={0: "link_id"})
+    geom_df.index = id_df.link_id
+
+    # a link id can be represent twice if it's bi-directional but we don't have any directionality information in the training data so let's just drop the duplicates
+    geom_df = geom_df[~geom_df.index.duplicated()]
+    return geom_df
+
+
+GEOM_DF = load_geom_df()
+
+
+def apply_parallel(df_grouped, func):
+    result = Parallel(n_jobs=multiprocessing.cpu_count())(
+        delayed(func)(group) for name, group in df_grouped
+    )
+    return pd.concat(result)
+
+
+def get_link_id(road_id_str):
+    if "RoadId" in road_id_str:
+        pattern = r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+        matches = re.findall(pattern, road_id_str)
+
+        return matches[2]
+    else:
+        return road_id_str
+
+
+def match_link_geoms(link1, link2):
+    """
+    compares link start and end points to determine the directionality between the two links
+    """
+    if not link1 or not link2:
+        return None, None
+    elif link1 == -1:
+        return None, None
+    elif link2 == -1:
+        return None, None
+    coords1 = list(link1.coords)
+    coords2 = list(link2.coords)
+
+    if coords1[-1] == coords2[0]:
+        # link1: TF, link2: TF
+        return (coords1[-2], coords1[-1]), (coords2[0], coords2[1])
+    elif coords1[0] == coords2[0]:
+        # link1: FT, link2: TF
+        return (coords1[1], coords1[0]), (coords2[0], coords2[1])
+    elif coords1[0] == coords2[-1]:
+        # link1: FT, link2: FT
+        return (coords1[1], coords1[0]), (coords2[-1], coords2[-2])
+    elif coords1[-1] == coords2[-1]:
+        # link1: FT, link2: FT
+        return (coords1[-2], coords2[-1]), (coords2[-1], coords2[-2])
+    else:
+        # none of the coords match; might be a result of a map match error;
+        # we'll return None
+        return None, None
+
+
+def compute_angle(line1, line2) -> float:
+    """
+    helper function to compute the angle between two lines.
+    """
+    if not line1:
+        return 0.0
+    if not line2:
+        return 0.0
+
+    def _azimuth(point1, point2):
+        x1, y1 = point1
+        x2, y2 = point2
+        angle = np.arctan2(x2 - x1, y2 - y1)
+        return np.degrees(angle)
+
+    a1 = _azimuth(line1[0], line1[1])
+    a2 = _azimuth(line2[1], line2[0])
+
+    return 180 - abs((a2 - a1))
+
+
+def add_entry_link_angles(group):
+    l = [0]  # can't determine first link entry angle so we set to 0
+    for i in range(1, len(group)):
+        link1 = group.iloc[i - 1]
+        link2 = group.iloc[i]
+        line1, line2 = match_link_geoms(link1, link2)
+        angle = compute_angle(line1, line2)
+        l.append(angle)
+    s = pd.Series(l, index=group.index)
+    return s
+
+
+def add_features(t):
+    t = t.sort_values(by="start_time")
+    t["entry_angle"] = add_entry_link_angles(
+        t.geometry.apply(lambda g: shapely.from_wkt(g))
+    )
+    t["previous_grade_dec"] = t.grade_dec.shift(1)
+    t["previous_speed_mph"] = t.speed_mph.shift(1)
+
+    return t
 
 
 def load_df(file, trip_start_id):
     df = pd.read_parquet(
         file,
         columns=[
+            "start_time",
             "journey_id",
+            "road_id",
             "speed_mph",
             "grade_dec",
             "fs_kwh_out_ach",
@@ -118,6 +237,12 @@ def load_df(file, trip_start_id):
         & (df.kwh_per_mile < HIGH_KWH_PER_MILE_THRESHOLD)
     ]
 
+    df["road_id"] = df.road_id.apply(get_link_id)
+    df = df.set_index("road_id").join(GEOM_DF, how="left")
+
+    df = apply_parallel(df.groupby("journey_id"), add_features)
+    df = df.dropna()
+
     df["trip_id"] = pd.factorize(df.journey_id)[0]
     df["trip_id"] = df.trip_id + (trip_start_id + 1)
 
@@ -128,15 +253,21 @@ def load_df(file, trip_start_id):
             "ess_kwh_out_ach",
             "journey_id",
             "kwh_per_mile",
+            "geometry",
+            "start_time",
         ]
     )
 
     df = df.astype(
         {
             "speed_mph": "float32",
+            "previous_speed_mph": "float32",
             "grade_dec": "float32",
+            "previous_grade_dec": "float32",
             "miles": "float32",
             "gge": "float32",
+            "kwh": "float32",
+            "entry_angle": "float32",
         }
     )
 
@@ -161,10 +292,14 @@ feature_set_2 = [
     pt.DataColumn(name="speed_mph", units="mph"),
     pt.DataColumn(name="grade_dec", units="decimal"),
 ]
-features = [
-    feature_set_1,
-    feature_set_2,
+feature_set_3 = [
+    pt.DataColumn(name="previous_speed_mph", units="mph"),
+    pt.DataColumn(name="speed_mph", units="mph"),
+    pt.DataColumn(name="previous_grade_dec", units="decimal"),
+    pt.DataColumn(name="grade_dec", units="decimal"),
+    pt.DataColumn(name="entry_angle", units="degrees"),
 ]
+features = [feature_set_1, feature_set_2, feature_set_3]
 
 distance = pt.DataColumn(name="miles", units="miles")
 
@@ -172,7 +307,12 @@ distance = pt.DataColumn(name="miles", units="miles")
 def train_model(model_name):
     model_files = list(filter(lambda f: model_name in f, ALL_FILES))
 
-    df = load_all_files(model_files)
+    train_file = TRAIN_CACHE_DIR / Path(f"{model_name}.csv")
+    if train_file.exists():
+        df = pd.read_csv(train_file)
+    else:
+        df = load_all_files(model_files)
+        df.to_csv(train_file)
 
     print(f"loaded {len(df)} samples")
 
@@ -208,7 +348,12 @@ def train_model(model_name):
 
 
 if __name__ == "__main__":
-    for m_name in tqdm(models):
+    for m_name in models:
+        print(f"working on {m_name}")
+        outfile = Path(f"models/{m_name}.json")
+        if outfile.exists():
+            print("file already exists, skipping")
+            continue
         try:
             vehicle = train_model(m_name)
         except ValueError as e:
@@ -216,6 +361,4 @@ if __name__ == "__main__":
             print(e)
             continue
 
-        outfile = OUTPUT_BASE_PATH / f"{m_name}.json"
-
-        vehicle.to_file(outfile)
+        vehicle.to_file(f"models/{m_name}.json")
