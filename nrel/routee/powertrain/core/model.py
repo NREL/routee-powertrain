@@ -294,7 +294,11 @@ class Model:
                     raise ValueError(f"Could not find errors for target {target.name}")
 
                 summary_lines.append(
-                    f"Predicted Consumption: {target_errors.pred_dist_per_energy:.3f} "
+                    f"Raw Predicted Consumption: {target_errors.pred_dist_per_energy:.3f} "
+                    f"({config.distance.units}/{target.units})"
+                )
+                summary_lines.append(
+                    f"Real World Predicted Consumption: {target_errors.real_world_pred_dist_per_energy:.3f} "
                     f"({config.distance.units}/{target.units})"
                 )
             summary_lines.append("=" * 40)
@@ -310,7 +314,9 @@ class Model:
         html_lines = ['<table border="1" style="border-collapse: collapse;">']
 
         # Title: Model Summary
-        html_lines.append('<tr><th colspan="2" style="border-bottom: 2px solid black; text-align: center;">Model Summary</th></tr>')
+        html_lines.append(
+            '<tr><th colspan="2" style="border-bottom: 2px solid black; text-align: center;">Model Summary</th></tr>'
+        )
         html_lines.append(
             f"<tr><td>Vehicle description</td><td>{config.vehicle_description}</td></tr>"
         )

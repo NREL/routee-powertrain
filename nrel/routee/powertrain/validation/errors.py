@@ -9,6 +9,7 @@ import pandas as pd
 from nrel.routee.powertrain.core.features import FeatureSetId
 from nrel.routee.powertrain.core.model_config import ModelConfig
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
+from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
 
 REPR_ROWS = {
     "feature_set_id": "Feature Set ID",
@@ -95,6 +96,7 @@ class Errors:
     net_error: float
     actual_dist_per_energy: float
     pred_dist_per_energy: float
+    real_world_pred_dist_per_energy: float
 
     trip_relative_percent_difference: Optional[float] = None
     trip_weighted_relative_percent_difference: Optional[float] = None
@@ -289,11 +291,17 @@ def compute_errors(
 
             total_dist = test_df[distance.name].sum()
 
+            real_word_pred = target_pred * ADJUSTMENT_FACTORS[config.powertrain_type]
+
             pred_energy = np.sum(target_pred)
+            real_word_pred_energy = np.sum(real_word_pred)
             actual_energy = np.sum(target)
 
             errors["actual_dist_per_energy"] = total_dist / actual_energy
             errors["pred_dist_per_energy"] = total_dist / pred_energy
+            errors["real_world_pred_dist_per_energy"] = (
+                total_dist / real_word_pred_energy
+            )
 
             errors_obj = Errors(**errors)
 

@@ -10,7 +10,7 @@ from nrel.routee.powertrain.resources.sample_routes import sample_route_dir
 local_models = {
     "2016_TOYOTA_Camry_4cyl_2WD": default_model_dir()
     / "2016_TOYOTA_Camry_4cyl_2WD.json",
-    "2016_TESLA_Model_S60_2WD": default_model_dir() / "2016_TESLA_Model_S60_2WD.json",
+    "2017_CHEVROLET_Bolt": default_model_dir() / "2017_CHEVROLET_Bolt.json",
 }
 
 
