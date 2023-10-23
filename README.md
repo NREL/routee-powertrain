@@ -2,14 +2,6 @@
 
 ## Overview
 
-Welcome to the routee-powertrain repo!
-
-RouteE Powertrain has two core functions: vehicle energy consumption model training and energy prediction.
-
-<p align="center">
-  <img src="docs/wiki_imgs/routee_workflow.jpg" width="50%" height="50%">
-</p>
-
 The typical user will utilize RouteE's catalog of pre-trained models. Currently, the
 catalog consists of light-duty vehicle models, including conventional gasoline, diesel, plug-in hybrid electric (PHEV),
 hybrid electric (HEV), and battery electric (BEV). These models can be applied to link-level driving data (in the form
