@@ -1,7 +1,7 @@
 import logging as log
 import math
 from pathlib import Path
-from unittest import TestCase
+from unittest import TestCase, skip
 
 import pandas as pd
 
@@ -85,6 +85,7 @@ class TestTrainEstimatePipeline(TestCase):
 
         self.assertTrue(math.isclose(energy1, energy2))
 
+    @skip("This requires rust to be installed")
     def test_smartcore_random_forest(self):
         trainer = SmartcoreRandomForestTrainer()
 
