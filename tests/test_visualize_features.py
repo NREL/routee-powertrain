@@ -3,9 +3,12 @@ from unittest import TestCase
 from os import remove
 from pathlib import Path
 
-from powertrain.validation.feature_visualization import visualize_features, contour_plot
+from nrel.routee.powertrain.validation.feature_visualization import (
+    visualize_features,
+    contour_plot,
+)
 
-from tests.mock_resources import mock_model
+from mock_resources import mock_model
 
 
 def _clean_temp_files_multi_directory(filepath: str):
@@ -41,12 +44,13 @@ def _clean_temp_files_single_directory(filepath: str):
 class TestVisualizeFeatures(TestCase):
     def test_visualize_features_successful_run(self):
         """
-        test to verify that the predictions returned are the correct length, contain the tests for each of the features
-        in the model, and plots are saved to the correct location with the correct naming scheme
+        test to verify that the predictions returned are the correct
+        length, contain the tests for each of the features
+        in the model, and plots are saved to the correct location with
+        the correct naming scheme
         """
         model = mock_model()
-        model_name = model.metadata.model_description
-        estimator_name = model.metadata.estimator_name
+        model_name = model.metadata.config.vehicle_description
         feature_ranges = {
             "speed": {"max": 80, "min": 0, "steps": 40},
             "grade": {"max": 0.5, "min": -0.5, "steps": 20},
@@ -81,7 +85,7 @@ class TestVisualizeFeatures(TestCase):
             self.assertTrue(
                 Path.exists(
                     Path(output_filepath).joinpath(
-                        f"{model_name}/{estimator_name}_[grade].png"
+                        f"{model_name}/grade.png"
                     )
                 ),
                 "should save grade plot as png",
@@ -89,7 +93,7 @@ class TestVisualizeFeatures(TestCase):
             self.assertTrue(
                 Path.exists(
                     Path(output_filepath).joinpath(
-                        f"{model_name}/{estimator_name}_[speed].png"
+                        f"{model_name}/speed.png"
                     )
                 ),
                 "should save speed plot as png",
@@ -103,7 +107,8 @@ class TestVisualizeFeatures(TestCase):
 
     def test_visualize_features_missing_feature(self):
         """
-        test to verify that a KeyError is thrown when the config is missing a required feature
+        test to verify that a KeyError is thrown when the config
+        is missing a required feature
         """
         model = mock_model()
         feature_ranges = {"speed": {"max": 80, "min": 0, "steps": 40}}
@@ -132,7 +137,7 @@ class TestVisualizeFeatures(TestCase):
         test to verify a contour plot is successfully saved to the tmp directory
         """
         model = mock_model()
-        model_name = model.metadata.model_description
+        model_name = model.metadata.config.vehicle_description
         feature_ranges = {
             "speed": {"max": 80, "min": 0, "steps": 40},
             "grade": {"max": 0.5, "min": -0.5, "steps": 20},
@@ -166,7 +171,8 @@ class TestVisualizeFeatures(TestCase):
 
     def test_contour_plot_incompatible_feature(self):
         """
-        test to verify a KeyError is thrown if the x/y test features are not supported by the model
+        test to verify a KeyError is thrown if the x/y test features
+        are not supported by the model
         """
         model = mock_model()
         feature_ranges = {
@@ -196,7 +202,8 @@ class TestVisualizeFeatures(TestCase):
 
     def test_contour_plot_missing_feature(self):
         """
-        test to verify that a KeyError is thrown if a required feature is missing from the feature ranges
+        test to verify that a KeyError is thrown if a required feature
+        is missing from the feature ranges
         """
         model = mock_model()
         feature_ranges = {"speed": {"max": 80, "min": 0, "steps": 40}}
