@@ -1,4 +1,4 @@
-# RouteE Powertrain
+# <img src="docs/images/routeelogo.png" alt="Routee Powertrain" width="100"/>
 
 ## Overview
 
