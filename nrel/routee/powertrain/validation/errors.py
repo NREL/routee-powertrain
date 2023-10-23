@@ -20,6 +20,7 @@ REPR_ROWS = {
     "net_error": "Net Error",
     "actual_dist_per_energy": "Actual Dist/Energy",
     "pred_dist_per_energy": "Predicted Dist/Energy",
+    "real_world_pred_dist_per_energy": "Real World Predicted Dist/Energy",
     "trip_relative_percent_difference": "Trip RPD",
     "trip_weighted_relative_percent_difference": "Trip Weighted RPD",
     "trip_root_mean_squared_error": "Trip RMSE",
