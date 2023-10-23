@@ -370,6 +370,12 @@ class Model:
                     f"({config.distance.units}/{target.units})</td></tr>"
                 )
 
+                html_lines.append(
+                    "<tr><td>Real World Predicted Consumption</td>"
+                    f"<td>{target_errors.real_world_pred_dist_per_energy:.3f} "
+                    f"({config.distance.units}/{target.units})</td></tr>"
+                )
+
         # End the HTML table
         html_lines.append("</table>")
 
