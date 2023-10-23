@@ -1,0 +1,692 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="python" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Model Training &#8212; My sample book</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'model_training';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Python API Docs" href="api_docs.html" />
+    <link rel="prev" title="Model Prediction" href="model_prediction.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="python"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/routeelogo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/routeelogo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    RouteE Powertrain
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="what_is_routee.html">What is RouteE?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="model_prediction.html">Model Prediction</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Model Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_docs.html">Python API Docs</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="build_the_docs.html">Build The Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NREL/routee-powertrain" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/routee-powertrain/issues/new?title=Issue%20on%20page%20%2Fmodel_training.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/model_training.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Model Training</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="model-training">
+<h1>Model Training<a class="headerlink" href="#model-training" title="Permalink to this heading">#</a></h1>
+<p>If you have your own ground truth energy data, you can train a custom RouteE powertrain model.</p>
+<p>You'll want to make sure you've installed the proper dependencies that are not installed by default when you do a pip install.</p>
+<p>In this example, we'll use the scikit-learn based estimators which you can install by doing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>nrel.routee.powertrain<span class="o">[</span>scikit<span class="o">]</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nrel.routee.powertrain</span> <span class="k">as</span> <span class="nn">pt</span>
+
+<span class="kn">from</span> <span class="nn">nrel.routee.powertrain.trainers.sklearn_random_forest</span> <span class="kn">import</span> <span class="n">SklearnRandomForestTrainer</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For demonstration purposes, we'll use a very small set of training data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../tests/routee-powertrain-test-data/sample_train_data.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>speed_mph</th>
+      <th>grade_dec</th>
+      <th>miles</th>
+      <th>gallons_fastsim</th>
+      <th>trip_id</th>
+      <th>road_class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7.632068</td>
+      <td>-0.008963</td>
+      <td>0.015469</td>
+      <td>0.000813</td>
+      <td>1</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>6.329613</td>
+      <td>-0.047001</td>
+      <td>0.003516</td>
+      <td>0.000149</td>
+      <td>1</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>12.248512</td>
+      <td>0.000000</td>
+      <td>0.003402</td>
+      <td>0.000074</td>
+      <td>1</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>23.752604</td>
+      <td>-0.000463</td>
+      <td>0.019768</td>
+      <td>0.002194</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>46.024926</td>
+      <td>-0.004641</td>
+      <td>0.038378</td>
+      <td>0.000970</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>This dataframe represents a set of road network links (i.e. roads) in which we've already computed the energy consumption over. In this case, we've use the Fastsim software to simulate a vehicle driving over a high resolution drive cycle and then have aggregated everything up to the link level. We also have link level attributes like average driving speed in mile per hour (<code class="docutils literal notranslate"><span class="pre">speed</span></code>), road gradient as a decimal (<code class="docutils literal notranslate"><span class="pre">grade</span></code>), road distance in miles (<code class="docutils literal notranslate"><span class="pre">miles</span></code>) and road classification as a integer category (<code class="docutils literal notranslate"><span class="pre">road_class</span></code>). Lastly, we have a trip identifier column (<code class="docutils literal notranslate"><span class="pre">trip_id</span></code>) which is only 1 in this case, represeting a single trip taken by this vehicle.</p>
+<p>Ok, onto setting up the training pipeline.</p>
+<p>First, we need to tell the trainer what feature sets we want to use for the internal estimators (Random Forests in this case). We can provide one or many feature sets, depending on the different features we might expect to see when apply this model. In this case, we'll just use three different features sets. One with just <code class="docutils literal notranslate"><span class="pre">speed</span></code>, one with <code class="docutils literal notranslate"><span class="pre">speed</span></code> and <code class="docutils literal notranslate"><span class="pre">grade</span></code> and then another with <code class="docutils literal notranslate"><span class="pre">speed</span></code>, <code class="docutils literal notranslate"><span class="pre">grade</span></code>, and <code class="docutils literal notranslate"><span class="pre">road_class</span></code>. This will make it such that our model is flexible to cases where we might only have speed information for a link or we might have more feature resolution.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">feature_set_1</span> <span class="o">=</span> <span class="p">[</span><span class="n">pt</span><span class="o">.</span><span class="n">DataColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;speed_mph&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;mph&quot;</span><span class="p">)]</span>
+<span class="n">feature_set_2</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pt</span><span class="o">.</span><span class="n">DataColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;speed_mph&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;mph&quot;</span><span class="p">),</span>
+    <span class="n">pt</span><span class="o">.</span><span class="n">DataColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;grade_dec&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;decimal&quot;</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="n">feature_set_3</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pt</span><span class="o">.</span><span class="n">DataColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;speed_mph&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;mph&quot;</span><span class="p">),</span>
+    <span class="n">pt</span><span class="o">.</span><span class="n">DataColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;grade_dec&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;decimal&quot;</span><span class="p">),</span>
+    <span class="n">pt</span><span class="o">.</span><span class="n">DataColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;road_class&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="n">features</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">feature_set_1</span><span class="p">,</span>
+    <span class="n">feature_set_2</span><span class="p">,</span>
+    <span class="n">feature_set_3</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that we didn't incude the distance column in any of our feature sets. That is because, RouteE Powertrain always requires distance information and so we have a special designation for distance in the training configuation whereas features can be any arbitrary link attribute. So, let's define our distance columns</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">distance</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">DataColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;miles&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;miles&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, we need to define our energy target which is gallons of gasoline simualted by Fastsim:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">energy_target</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">DataColumn</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gallons_fastsim&quot;</span><span class="p">,</span> 
+    <span class="n">units</span><span class="o">=</span><span class="s2">&quot;gallons_gasoline&quot;</span><span class="p">,</span> 
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, we can build a model configuration that we can pass to the trainer. This will also include things like the vehicle powertrain type and a model name</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">ModelConfig</span><span class="p">(</span>
+    <span class="n">vehicle_description</span><span class="o">=</span><span class="s2">&quot;Test Vehicle&quot;</span><span class="p">,</span>
+    <span class="n">powertrain_type</span><span class="o">=</span><span class="n">pt</span><span class="o">.</span><span class="n">PowertrainType</span><span class="o">.</span><span class="n">ICE</span><span class="p">,</span>
+    <span class="n">feature_sets</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
+    <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">,</span>
+    <span class="n">target</span><span class="o">=</span><span class="n">energy_target</span><span class="p">,</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we build the random forest trainer and give it the desired parameters</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">SklearnRandomForestTrainer</span><span class="p">(</span>
+    <span class="n">max_depth</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">min_samples_split</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">cores</span><span class="o">=</span><span class="mi">4</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>All trainers have a <code class="docutils literal notranslate"><span class="pre">train</span></code> method on them which will return a trained vehicle model</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_vehicle</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-23 22:35:21,687 [INFO] - filtered out 0 rows with energy rates outside of the limits of -inf and inf for energy target gallons_fastsim
+</pre></div>
+</div>
+</div>
+</div>
+<p>With the model trained, we can inspect the errors for each estimator type and energy target (note, it's possible that we could have given multiple energy targets to the trainer, like gasoline and electricity for a plug-in hybrid vehicle)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_vehicle</span><span class="o">.</span><span class="n">errors</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table border="1" style="border-collapse: collapse;"><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>speed_mph</td></tr><tr><td>Target</td><td>gallons_fastsim</td></tr><tr><td>Link RMSE</td><td>0.00162</td></tr><tr><td>Link Norm RMSE</td><td>1.02617</td></tr><tr><td>Link Weighted RPD</td><td>0.84957</td></tr><tr><td>Net Error</td><td>-0.34643</td></tr><tr><td>Actual Dist/Energy</td><td>18.87243</td></tr><tr><td>Predicted Dist/Energy</td><td>28.87586</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>24.76489</td></tr><tr><td>Trip RPD</td><td>0.41901</td></tr><tr><td>Trip Weighted RPD</td><td>0.41901</td></tr><tr><td>Trip RMSE</td><td>0.01425</td></tr><tr><td>Trip Norm RMSE</td><td>0.34643</td></tr><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>grade_dec&speed_mph</td></tr><tr><td>Target</td><td>gallons_fastsim</td></tr><tr><td>Link RMSE</td><td>0.00138</td></tr><tr><td>Link Norm RMSE</td><td>0.87020</td></tr><tr><td>Link Weighted RPD</td><td>0.61434</td></tr><tr><td>Net Error</td><td>-0.16459</td></tr><tr><td>Actual Dist/Energy</td><td>18.87243</td></tr><tr><td>Predicted Dist/Energy</td><td>22.59067</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>19.37450</td></tr><tr><td>Trip RPD</td><td>0.17935</td></tr><tr><td>Trip Weighted RPD</td><td>0.17935</td></tr><tr><td>Trip RMSE</td><td>0.00677</td></tr><tr><td>Trip Norm RMSE</td><td>0.16459</td></tr><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>grade_dec&road_class&speed_mph</td></tr><tr><td>Target</td><td>gallons_fastsim</td></tr><tr><td>Link RMSE</td><td>0.00138</td></tr><tr><td>Link Norm RMSE</td><td>0.87389</td></tr><tr><td>Link Weighted RPD</td><td>0.60147</td></tr><tr><td>Net Error</td><td>-0.14991</td></tr><tr><td>Actual Dist/Energy</td><td>18.87243</td></tr><tr><td>Predicted Dist/Energy</td><td>22.20060</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>19.03996</td></tr><tr><td>Trip RPD</td><td>0.16206</td></tr><tr><td>Trip Weighted RPD</td><td>0.16206</td></tr><tr><td>Trip RMSE</td><td>0.00617</td></tr><tr><td>Trip Norm RMSE</td><td>0.14991</td></tr></table></div></div>
+</div>
+<p>While this training dataset is far too small to draw real conclusions, these metrics can give you an idea of how well the model performed on a holdout test set (20% of the training data as we specificed by the <code class="docutils literal notranslate"><span class="pre">test_size</span></code> parameter in the configuration.</p>
+<p>Now, we can write the model to a json file that can be loaded later:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_vehicle</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="s2">&quot;Test_Vehicle.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="model_prediction.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Model Prediction</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="api_docs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Python API Docs</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book Community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,2 +1,0 @@
-recursive-include nrel/routee/powertrain/resources/default_models *
-recursive-include nrel/routee/powertrain/resources/sample_routes *
