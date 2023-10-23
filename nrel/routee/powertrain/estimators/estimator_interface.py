@@ -7,7 +7,6 @@ import pandas as pd
 from nrel.routee.powertrain.core.features import DataColumn, FeatureSet, TargetSet
 
 
-
 class Estimator(ABC):
     @classmethod
     @abstractmethod

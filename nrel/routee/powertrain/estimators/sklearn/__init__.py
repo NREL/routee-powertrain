@@ -1,1 +1,1 @@
-from .estimator import SKLearnEstimator 
+from .estimator import SKLearnEstimator

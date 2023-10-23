@@ -9,6 +9,7 @@ from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 from nrel.routee.powertrain.estimators.onnx import ONNX_INPUT_NAME, ONNXEstimator
 from nrel.routee.powertrain.trainers.trainer import Trainer
 
+
 class RandomForestTrainerOutput(Enum):
     ONNX = 1
 
@@ -54,11 +55,9 @@ class SklearnRandomForestTrainer(Trainer):
         if self.output_type == RandomForestTrainerOutput.ONNX:
             # convert to ONNX
             n_features = len(features.columns)
-            initial_type = [
-                (ONNX_INPUT_NAME, FloatTensorType([None, n_features]))
-            ]
+            initial_type = [(ONNX_INPUT_NAME, FloatTensorType([None, n_features]))]
             onnx_model = to_onnx(
-                rf, 
+                rf,
                 initial_types=initial_type,
             )
 

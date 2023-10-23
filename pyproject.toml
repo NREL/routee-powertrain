@@ -34,6 +34,11 @@ dev = [
     "boxsdk",
     "jupyter-book",
     "sphinx-book-theme",
+    "types-PyYAML",
+    "types-protobuf",
+    "types-python-dateutil",
+    "types-redis",
+    "types-requests"
 ]
 
 [project.urls]
