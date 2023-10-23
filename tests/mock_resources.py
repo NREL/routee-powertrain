@@ -3,12 +3,12 @@ import uuid
 import pandas as pd
 import numpy as np
 
-from nrel.routee.powertrain import load_pretrained_model, FeatureSet, DataColumn
+from nrel.routee.powertrain import load_model, FeatureSet, DataColumn
 from nrel.routee.powertrain.core.model import Model
 
 
 def mock_model() -> Model:
-    return load_pretrained_model("2016_TOYOTA_Camry_4cyl_2WD")
+    return load_model("2016_TOYOTA_Camry_4cyl_2WD")
 
 
 def mock_ev_data(n_links: int = 100):

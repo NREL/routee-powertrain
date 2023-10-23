@@ -131,6 +131,11 @@ class Model:
     def from_file(cls, file: Union[str, Path]):
         """
         Load a vehicle model from a file.
+
+        Args:
+            file: the path to the file to load
+
+        Returns: a powertrain vehicle
         """
         path = Path(file)
         if path.suffix != ".json":
@@ -142,10 +147,10 @@ class Model:
     @classmethod
     def from_url(cls, url: str) -> Model:
         """
-        attempts to read a file from a url
+        Attempts to read a file from a url.
+
         Args:
             url: the url to download the file from
-            filetype: the type of file to expect
 
         Returns: a powertrain vehicle
         """
@@ -158,6 +163,9 @@ class Model:
     def to_file(self, file: Union[str, Path]):
         """
         Save a vehicle model to a file.
+
+        Args:
+            file: the path to the file to save to
         """
         path = Path(file)
         if path.suffix != ".json":
@@ -176,6 +184,15 @@ class Model:
     ) -> pd.DataFrame:
         """
         Predict absolute energy consumption for each link
+
+        Args:
+            links_df: a dataframe containing the links to predict on
+            feature_columns: the features to use for prediction
+            distance_column: the column to use for distance
+            apply_real_world_adjustment: whether to apply a real world adjustment
+                to the predicted energy consumption
+
+        Returns: a dataframe containing the predicted energy consumption for each link
         """
         config = self.metadata.config
 

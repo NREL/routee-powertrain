@@ -13,6 +13,7 @@ parts:
     chapters:
     - file: model_prediction 
     - file: model_training 
+    - file: api_docs
 
   - caption: Developers 
     chapters:

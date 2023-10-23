@@ -33,8 +33,8 @@ class TestTrainEstimatePipeline(TestCase):
         self.out_path.mkdir(exist_ok=True)
         feature_set = pt.FeatureSet(
             features=[
-                pt.DataColumn(name="speed", units="mph"),
-                pt.DataColumn(name="grade", units="decimal"),
+                pt.DataColumn(name="speed_mph", units="mph"),
+                pt.DataColumn(name="grade_dec", units="decimal"),
             ],
         )
         distance = pt.DataColumn(name="miles", units="miles")
@@ -70,7 +70,7 @@ class TestTrainEstimatePipeline(TestCase):
         # test out writing and reading to file
         outfile = self.out_path / "model.json"
         vehicle_model.to_file(outfile)
-        new_vehicle_model = pt.read_model(outfile)
+        new_vehicle_model = pt.load_model(outfile)
         outfile.unlink()
 
         # test writing inner estimator to file
@@ -96,7 +96,7 @@ class TestTrainEstimatePipeline(TestCase):
         # test out writing and reading to file
         outfile = self.out_path / "model.json"
         vehicle_model.to_file(outfile)
-        new_vehicle_model = pt.read_model(outfile)
+        new_vehicle_model = pt.load_model(outfile)
         outfile.unlink()
 
         # test writing inner estimator to file

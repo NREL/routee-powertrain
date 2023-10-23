@@ -29,9 +29,11 @@ dev = [
     "pytest",
     "black",
     "mypy",
+    "maturin",
     "ruff",
     "boxsdk",
-    "jupyter-book"
+    "jupyter-book",
+    "sphinx-book-theme",
 ]
 
 [project.urls]

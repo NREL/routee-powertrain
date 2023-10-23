@@ -1,5 +1,6 @@
 import json
-from typing import List
+from pathlib import Path
+from typing import List, Optional, Union
 
 import pandas as pd
 
@@ -38,16 +39,35 @@ def list_available_models(local: bool = True, external: bool = True) -> List[str
     return model_names
 
 
-def load_pretrained_model(name: str) -> Model:
+def load_model(name: Union[str, Path]) -> Model:
     """
     A helper function to load a pretrained model.
+    If the model is a file, it will be loaded from disk.
+    If the model is a name, it will be loaded from the default model catalog
+    (local or external).
 
     Args:
-        name: the name of the file to load
+        name: the name of the file or default model to load
 
-    Returns: a pre-trained routee-powertrain model
+    Returns: a routee-powertrain model
+
+    Examples:
+
+    >>> import nrel.routee.powertrain as pt
+    >>>
+    >>> # load a default model
+    >>> model = pt.load_model("2016_HYUNDAI_Elantra_4cyl_2WD")
+    >>>
+    >>> # load a model from file
+    >>> model = pt.load_model("MyModel.json")
 
     """
+    path = Path(name)
+    if path.exists():
+        return Model.from_file(path)
+
+    # otherwise, assume the name is a model name to be loaded from the default catalog
+    name = str(name)
 
     with open(default_model_dir() / "external_model_links.json", "r") as jf:
         external_models = json.load(jf)
@@ -61,16 +81,19 @@ def load_pretrained_model(name: str) -> Model:
         model = Model.from_url(url)
         return model
     else:
-        all_models = list(local_models.keys()) + list(external_models.keys())
-        raise KeyError(f"cannot find model with name: {name}; try one of {all_models}")
+        raise ValueError(
+            f"Could not load model: {name}."
+            " try listing available models with pt.list_available_models()"
+            " or providing a path to a local model file."
+        )
 
 
-def load_route(name: str) -> pd.DataFrame:
+def load_sample_route(name: Optional[str] = None) -> pd.DataFrame:
     """
     A helper function to load sample routes
 
     Args:
-        name: the name of the route
+        name: The name of the route. Defaults to "sample_route".
 
     Returns: a pandas DataFrame representing the route
 
@@ -78,6 +101,9 @@ def load_route(name: str) -> pd.DataFrame:
     routes = {
         "sample_route": sample_route_dir() / "sample_route.csv",
     }
+
+    if name is None:
+        name = "sample_route"
 
     if name not in routes:
         raise KeyError(
