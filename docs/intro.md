@@ -26,7 +26,7 @@ links_df = pd.DataFrame(
     {
         "distance": [0.1, 0.2, 0.3], # miles
         "speed": [30, 40, 50], # mph
-        "grade": [-0.05, 0, 0.05], # decimal 
+        "grade": [-0.05, 0, 0.05], # decimal
     }
 )
 

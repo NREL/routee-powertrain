@@ -1,6 +1,6 @@
 # Installation
 
-## From PyPI 
+## From PyPI
 
 To install the base package for model prediction, we recommend you use `pip`:
 
