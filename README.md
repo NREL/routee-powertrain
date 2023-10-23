@@ -3,7 +3,7 @@
 ## Overview
 
 The typical user will utilize RouteE's catalog of pre-trained models. Currently, the
-catalog consists of light-duty vehicle models, including conventional gasoline, diesel, plug-in hybrid electric (PHEV),
+catalog consists of light-duty vehicle models, including conventional gasoline, diesel,
 hybrid electric (HEV), and battery electric (BEV). These models can be applied to link-level driving data (in the form
 of [pandas](https://pandas.pydata.org/) dataframes) to output energy consumption predictions.
 
@@ -57,10 +57,9 @@ links_df = pd.DataFrame(
     {
         "distance": [0.1, 0.2, 0.3], # miles
         "speed": [30, 40, 50], # mph
-        "grade": [-0.05, 0, 0.05], # decimal 
+        "grade": [-0.05, 0, 0.05], # decimal
     }
 )
 
 energy_result = model.predict(links_df)
 ```
-
