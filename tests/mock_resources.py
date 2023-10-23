@@ -1,27 +1,14 @@
-from pathlib import Path
 import uuid
 
 import pandas as pd
 import numpy as np
 
-from powertrain import load_pretrained_model, FeaturePack, Feature
-
-from tests import test_dir
-
-
-def mock_route() -> pd.DataFrame:
-    route_path = (
-        test_dir()
-        / Path("routee-powertrain-test-data")
-        / Path("trip_11394_1_metropia_austin_v2.csv")
-    )
-    route_df = pd.read_csv(route_path)
-
-    return route_df
+from nrel.routee.powertrain import load_pretrained_model, FeatureSet, DataColumn
+from nrel.routee.powertrain.core.model import Model
 
 
-def mock_model():
-    return load_pretrained_model("ICE")
+def mock_model() -> Model:
+    return load_pretrained_model("2016_TOYOTA_Camry_4cyl_2WD")
 
 
 def mock_ev_data(n_links: int = 100):
@@ -63,9 +50,9 @@ def mock_data_single_feature():
         {"miles": 1, "speed": 12, "energy": 1},
     ]
 
-    feature_pack = FeaturePack(
-        features=(Feature(name="speed", units=""),),
-        distance=Feature(name="miles", units=""),
-        energy=Feature(name="energy", units=""),
+    feature_pack = FeatureSet(
+        features=(DataColumn(name="speed", units=""),),
+        distance=DataColumn(name="miles", units=""),
+        energy=DataColumn(name="energy", units=""),
     )
     return pd.DataFrame(data), feature_pack
