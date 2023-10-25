@@ -7,7 +7,6 @@ import random
 
 from pathlib import Path
 
-from tqdm import tqdm
 from joblib import Parallel, delayed
 
 import shapely
@@ -195,11 +194,24 @@ def add_entry_link_angles(group):
     return s
 
 
+def add_exit_link_angles(group):
+    l = []
+    for i in range(0, len(group) - 1):
+        link1 = group.iloc[i]
+        link2 = group.iloc[i + 1]
+        line1, line2 = match_link_geoms(link1, link2)
+        angle = compute_angle(line1, line2)
+        l.append(angle)
+    l.append(0)  # can't determine last link exit angle so we set to 0
+    s = pd.Series(l, index=group.index)
+    return s
+
+
 def add_features(t):
     t = t.sort_values(by="start_time")
-    t["entry_angle"] = add_entry_link_angles(
-        t.geometry.apply(lambda g: shapely.from_wkt(g))
-    )
+    geom = t.geometry.apply(lambda g: shapely.from_wkt(g))
+    t["entry_angle"] = add_entry_link_angles(geom)
+    t["exit_angle"] = add_exit_link_angles(geom)
     t["previous_grade_dec"] = t.grade_dec.shift(1)
     t["previous_speed_mph"] = t.speed_mph.shift(1)
 
@@ -268,6 +280,7 @@ def load_df(file, trip_start_id):
             "gge": "float32",
             "kwh": "float32",
             "entry_angle": "float32",
+            "exit_angle": "float32",
         }
     )
 
@@ -299,7 +312,27 @@ feature_set_3 = [
     pt.DataColumn(name="grade_dec", units="decimal"),
     pt.DataColumn(name="entry_angle", units="degrees"),
 ]
-features = [feature_set_1, feature_set_2, feature_set_3]
+features = [ 
+    [pt.DataColumn(name="speed_mph", units="mph")],
+    [
+        pt.DataColumn(name="speed_mph", units="mph"),
+        pt.DataColumn(name="grade_dec", units="decimal")
+    ],
+    [
+        pt.DataColumn(name="speed_mph", units="mph"),
+        pt.DataColumn(name="previous_speed_mph", units="mph"),
+        pt.DataColumn(name="grade_dec", units="decimal"),
+        pt.DataColumn(name="previous_grade_dec", units="decimal")
+    ],
+    [
+        pt.DataColumn(name="previous_speed_mph", units="mph"),
+        pt.DataColumn(name="speed_mph", units="mph"),
+        pt.DataColumn(name="previous_grade_dec", units="decimal"),
+        pt.DataColumn(name="grade_dec", units="decimal"),
+        pt.DataColumn(name="entry_angle", units="degrees"),
+        pt.DataColumn(name="exit_angle", units="degrees")
+    ],
+]
 
 distance = pt.DataColumn(name="miles", units="miles")
 
@@ -317,7 +350,10 @@ def train_model(model_name):
     print(f"loaded {len(df)} samples")
 
     if df.gge.sum() > 0 and df.kwh.sum() < 0.001:
-        powertrain_type = pt.PowertrainType.ICE
+        if "HEV" in model_name or "Hybrid" in model_name:
+            powertrain_type = pt.PowertrainType.HEV
+        else:
+            powertrain_type = pt.PowertrainType.ICE
         energy_target = pt.DataColumn(
             name="gge",
             units="gallons_gasoline",
