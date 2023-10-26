@@ -398,8 +398,46 @@ document.write(`
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">nrel.routee.powertrain</span> <span class="k">as</span> <span class="nn">pt</span>
 
+<span class="c1"># Print the available pre-trained models</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">list_available_models</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">external</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="c1"># [</span>
+<span class="c1">#   &#39;2016_TOYOTA_Camry_4cyl_2WD&#39;,</span>
+<span class="c1">#   &#39;2017_CHEVROLET_Bolt&#39;,</span>
+<span class="c1">#   &#39;2012_Ford_Focus&#39;,</span>
+<span class="c1">#   ...</span>
+<span class="c1"># ]</span>
+
 <span class="c1"># Load a pre-trained model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_pretrained_model</span><span class="p">(</span><span class="s2">&quot;2016_TOYOTA_Camry_4cyl_2WD&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2016_TOYOTA_Camry_4cyl_2WD&quot;</span><span class="p">)</span>
+
+<span class="c1"># Inspect the model to see what it expects for input</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+<span class="c1"># ========================================</span>
+<span class="c1"># Model Summary</span>
+<span class="c1"># --------------------</span>
+<span class="c1"># Vehicle description: 2016_TOYOTA_Camry_4cyl_2WD</span>
+<span class="c1"># Powertrain type: ICE</span>
+<span class="c1"># Number of estimators: 2</span>
+<span class="c1"># ========================================</span>
+<span class="c1"># Estimator Summary</span>
+<span class="c1"># --------------------</span>
+<span class="c1"># Feature: speed_mph (mph)</span>
+<span class="c1"># Distance: miles (miles)</span>
+<span class="c1"># Target: gge (gallons_gasoline)</span>
+<span class="c1"># Raw Predicted Consumption: 29.856 (miles/gallons_gasoline)</span>
+<span class="c1"># Real World Predicted Consumption: 25.606 (miles/gallons_gasoline)</span>
+<span class="c1"># ========================================</span>
+<span class="c1"># Estimator Summary</span>
+<span class="c1"># --------------------</span>
+<span class="c1"># Feature: speed_mph (mph)</span>
+<span class="c1"># Feature: grade_dec (decimal)</span>
+<span class="c1"># Distance: miles (miles)</span>
+<span class="c1"># Target: gge (gallons_gasoline)</span>
+<span class="c1"># Raw Predicted Consumption: 29.845 (miles/gallons_gasoline)</span>
+<span class="c1"># Real World Predicted Consumption: 25.596 (miles/gallons_gasoline)</span>
+<span class="c1"># ========================================</span>
 
 <span class="c1"># Predict energy consumption for a set of road links</span>
 <span class="n">links_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
