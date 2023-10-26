@@ -2,6 +2,8 @@
 
 ## Overview
 
+RouteE-Powertrain is a Python package that allows users to work with a set of pre-trained mesoscopic vehicle energy prediction models for a varity of vehicle types. Additionally, users can train their own models if "ground truth" energy consumption and driving data are available. RouteE-Powertrain models predict vehicle energy consumption over links in a road network, so the features considered for prediction often include traffic speeds, road grade, turns, etc.
+
 The typical user will utilize RouteE's catalog of pre-trained models. Currently, the
 catalog consists of light-duty vehicle models, including conventional gasoline, diesel,
 hybrid electric (HEV), and battery electric (BEV). These models can be applied to link-level driving data (in the form
@@ -10,31 +12,6 @@ of [pandas](https://pandas.pydata.org/) dataframes) to output energy consumption
 Users that wish to train new RouteE models can do so. The model training function of RouteE enables users to use their
 own drive-cycle data, powertrain modeling system, and road network data to train custom models.
 
-## Setup
-
-Clone (or download) the RouteE Powertrain repository and create a compatible python environment to ensure package compatibility.
-
-`git clone https://github.nrel.gov/MBAP/routee-powertrain.git`
-
-routee-powertrain depends on python 3.8 and up. One way to satisfy this is to use [conda](https://conda.io/docs/):
-
-```console
-conda create -n routee-powertrain python=3.10
-conda activate routee-powertrain
-```
-
-This will create a new conda environment that uses python 3.10. Navigate to the the routee-powertrain root directory. Then:
-
-```console
-pip install .
-```
-
-You will now be able to import routee-powertrain in your code with:
-
-```console
-import nrel.routee.powertrain as pt
-```
-
 ## Quickstart
 
 RouteE Powertrain is available on PyPI and can be installed with `pip`:
@@ -42,6 +19,8 @@ RouteE Powertrain is available on PyPI and can be installed with `pip`:
 ```bash
 pip install nrel.routee.powertrain
 ```
+
+(For more detailed instructions, see [here](https://nrel.github.io/routee-powertrain/installation.html))
 
 Then, you can import the package and use a pre-trained model from the RouteE model catalog:
 
