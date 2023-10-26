@@ -49,6 +49,16 @@ Then, you can import the package and use a pre-trained model from the RouteE mod
 import pandas as pd
 import nrel.routee.powertrain as pt
 
+# Print the available pre-trained models
+print(pt.list_available_models(local=True, external=True))
+
+# [
+#   '2016_TOYOTA_Camry_4cyl_2WD',
+#   '2017_CHEVROLET_Bolt',
+#   '2012_Ford_Focus',
+#   ...
+# ]
+
 # Load a pre-trained model
 model = pt.load_model("2016_TOYOTA_Camry_4cyl_2WD")
 
