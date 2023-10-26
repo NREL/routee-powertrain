@@ -22,7 +22,6 @@ def list_available_models(local: bool = True, external: bool = True) -> List[str
     Args:
         local: include local models?
         external: include external models?
-        print: should we print the results too?
 
     Returns: a list of model keys
     """

@@ -1,8 +1,6 @@
 # RouteE Powertrain
 
-> TODO: Add a better description of the project here.
-
-RouteE Powertrain is a Python package that allows users to work with a set of pre-trained energy prediction models for a varity of vehicle types. Additionally, users can train their own models if "ground truth" energy consumption and driving data are available.
+RouteE-Powertrain is a Python package that allows users to work with a set of pre-trained mesoscopic vehicle energy prediction models for a varity of vehicle types. Additionally, users can train their own models if "ground truth" energy consumption and driving data are available. RouteE-Powertrain models predict vehicle energy consumption over links in a road network, so the features considered for prediction often include traffic speeds, road grade, turns, etc.
 
 ## Quickstart
 

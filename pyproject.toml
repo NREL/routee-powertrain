@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "RouteE-Powertrain is a tool for predicting energy usage over a set of road links."
 readme = "README.md"
 authors = [{ name = "National Renewable Energy Laboratory" }]
-license = { text = "BSD 3-Clause License Copyright (c) 2022, Alliance for Sustainable Energy, LLC" }
+license = { text = "BSD 3-Clause License Copyright (c) 2023, Alliance for Sustainable Energy, LLC" }
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
@@ -42,7 +42,7 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.nrel.gov/MBAP/routee-powertrain"
+Homepage = "https://github.com/NREL/routee-powertrain"
 
 [tool.setuptools.packages.find]
 where = ["."] # list of folders that contain the packages (["."] by default)
