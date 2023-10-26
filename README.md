@@ -50,7 +50,7 @@ import pandas as pd
 import nrel.routee.powertrain as pt
 
 # Load a pre-trained model
-model = pt.load_pretrained_model("2016_TOYOTA_Camry_4cyl_2WD")
+model = pt.load_model("2016_TOYOTA_Camry_4cyl_2WD")
 
 # Predict energy consumption for a set of road links
 links_df = pd.DataFrame(
