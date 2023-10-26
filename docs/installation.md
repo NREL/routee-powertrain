@@ -13,7 +13,7 @@ pip install nrel.routee.powertrain
 To install the package from source, you can clone the repository and install the package using `pip`:
 
 ```bash
-git clone https://github.nrel.gov/MBAP/routee-powertrain.git
+git clone https://github.com/NREL/routee-powertrain.git
 cd routee-powertrain
 pip install .
 ```
@@ -49,7 +49,7 @@ Then, you'll have to build the python rust extension for powertrain:
 ```bash
 pip install maturin
 
-git clone https://github.nrel.gov/MBAP/routee-powertrain.git
+git clone https://github.com/NREL/routee-powertrain.git
 cd routee-powertrain/rust
 maturin develop --release
 ```
