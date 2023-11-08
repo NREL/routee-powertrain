@@ -60,9 +60,9 @@ print(model)
 # Predict energy consumption for a set of road links
 links_df = pd.DataFrame(
     {
-        "distance": [0.1, 0.2, 0.3], # miles
-        "speed": [30, 40, 50], # mph
-        "grade": [-0.05, 0, 0.05], # decimal
+        "miles": [0.1, 0.2, 0.3], # miles
+        "speed_mph": [30, 40, 50], # mph
+        "grade_dec": [-0.05, 0, 0.05], # decimal
     }
 )
 

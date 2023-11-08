@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=c5ced968eda925caa686" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=c5ced968eda925caa686" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=c5ced968eda925caa686" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686" />
-  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=c5ced968eda925caa686"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -451,6 +451,10 @@ document.write(`
 </div>
 </div>
 </div>
+<p>After loading a model, we can inspect it to see what features (and units) the model expects.
+RouteE Powertrain models can have multiple estimators under the hood which have been trained on different feature sets.
+For example, there might be an estimator that takes just <code class="docutils literal notranslate"><span class="pre">speed</span></code> as a link feature and another that takes in <code class="docutils literal notranslate"><span class="pre">speed</span></code> and <code class="docutils literal notranslate"><span class="pre">grade</span></code>.
+This can be useful if you have sparse data for one feature (like grade) but still want to predict energy consumption.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span>
@@ -460,74 +464,117 @@ document.write(`
 <div class="cell_output docutils container">
 <div class="output text_html"><table border="1" style="border-collapse: collapse;"><tr><th colspan="2" style="border-bottom: 2px solid black; text-align: center;">Model Summary</th></tr><tr><td>Vehicle description</td><td>2016_TOYOTA_Camry_4cyl_2WD</td></tr><tr><td>Powertrain type</td><td>ICE</td></tr><tr><td>Number of estimators</td><td>4</td></tr><tr><th colspan="2" style="border-bottom: 2px solid black; text-align: center;">Estimator Summary</th></tr><tr><td>Feature</td><td>speed_mph (mph)</td></tr><tr><td>Distance</td><td>miles (miles)</td></tr><tr><td>Target</td><td>gge (gallons_gasoline)</td></tr><tr><td>Predicted Consumption</td><td>29.856 (miles/gallons_gasoline)</td></tr><tr><td>Real World Predicted Consumption</td><td>25.606 (miles/gallons_gasoline)</td></tr><tr><th colspan="2" style="border-bottom: 2px solid black; text-align: center;">Estimator Summary</th></tr><tr><td>Feature</td><td>speed_mph (mph)</td></tr><tr><td>Feature</td><td>grade_dec (decimal)</td></tr><tr><td>Distance</td><td>miles (miles)</td></tr><tr><td>Target</td><td>gge (gallons_gasoline)</td></tr><tr><td>Predicted Consumption</td><td>29.845 (miles/gallons_gasoline)</td></tr><tr><td>Real World Predicted Consumption</td><td>25.596 (miles/gallons_gasoline)</td></tr><tr><th colspan="2" style="border-bottom: 2px solid black; text-align: center;">Estimator Summary</th></tr><tr><td>Feature</td><td>speed_mph (mph)</td></tr><tr><td>Feature</td><td>previous_speed_mph (mph)</td></tr><tr><td>Feature</td><td>grade_dec (decimal)</td></tr><tr><td>Feature</td><td>previous_grade_dec (decimal)</td></tr><tr><td>Distance</td><td>miles (miles)</td></tr><tr><td>Target</td><td>gge (gallons_gasoline)</td></tr><tr><td>Predicted Consumption</td><td>29.413 (miles/gallons_gasoline)</td></tr><tr><td>Real World Predicted Consumption</td><td>25.225 (miles/gallons_gasoline)</td></tr><tr><th colspan="2" style="border-bottom: 2px solid black; text-align: center;">Estimator Summary</th></tr><tr><td>Feature</td><td>previous_speed_mph (mph)</td></tr><tr><td>Feature</td><td>speed_mph (mph)</td></tr><tr><td>Feature</td><td>previous_grade_dec (decimal)</td></tr><tr><td>Feature</td><td>grade_dec (decimal)</td></tr><tr><td>Feature</td><td>entry_angle (degrees)</td></tr><tr><td>Feature</td><td>exit_angle (degrees)</td></tr><tr><td>Distance</td><td>miles (miles)</td></tr><tr><td>Target</td><td>gge (gallons_gasoline)</td></tr><tr><td>Predicted Consumption</td><td>29.393 (miles/gallons_gasoline)</td></tr><tr><td>Real World Predicted Consumption</td><td>25.208 (miles/gallons_gasoline)</td></tr></table></div></div>
 </div>
+<p>Now, let's predict energy consumption over a sample route.
+RouteE Powertrain expects the inputs to be a pandas dataframe in which each row represents a road network link.
+There is a sample route included with the package that we'll use for demonstration.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="n">links</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s2">&quot;speed_mph&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
-    <span class="s2">&quot;previous_speed_mph&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
-    <span class="s2">&quot;grade_dec&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-    <span class="s2">&quot;previous_grade_dec&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-    <span class="s2">&quot;entry_angle&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-    <span class="s2">&quot;miles&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="p">})</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>The pretrained Camry model has multiple estimators available for you to use depending on what features you might have available. You can see a summary of all the estimators in the model summary shown above but you can also just list which feature sets are available:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span><span class="o">.</span><span class="n">estimators</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_route</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_sample_route</span><span class="p">()</span>
+<span class="n">sample_route</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dict_keys([&#39;speed_mph&#39;, &#39;grade_dec&amp;speed_mph&#39;, &#39;grade_dec&amp;previous_grade_dec&amp;previous_speed_mph&amp;speed_mph&#39;, &#39;entry_angle&amp;exit_angle&amp;grade_dec&amp;previous_grade_dec&amp;previous_speed_mph&amp;speed_mph&#39;])
-</pre></div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>speed_mph</th>
+      <th>grade_dec</th>
+      <th>miles</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7.632068</td>
+      <td>-0.008963</td>
+      <td>0.015469</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>6.329613</td>
+      <td>-0.047001</td>
+      <td>0.003516</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>12.248512</td>
+      <td>0.000000</td>
+      <td>0.003402</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>23.752604</td>
+      <td>-0.000463</td>
+      <td>0.019768</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>46.024926</td>
+      <td>-0.004641</td>
+      <td>0.038378</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>7.415272</td>
+      <td>-0.001339</td>
+      <td>0.006128</td>
+    </tr>
+    <tr>
+      <th>121</th>
+      <td>27.685268</td>
+      <td>-0.030748</td>
+      <td>0.023170</td>
+    </tr>
+    <tr>
+      <th>122</th>
+      <td>51.322545</td>
+      <td>-0.008490</td>
+      <td>0.028510</td>
+    </tr>
+    <tr>
+      <th>123</th>
+      <td>50.431920</td>
+      <td>-0.010533</td>
+      <td>0.028015</td>
+    </tr>
+    <tr>
+      <th>124</th>
+      <td>48.325893</td>
+      <td>-0.017581</td>
+      <td>0.040274</td>
+    </tr>
+  </tbody>
+</table>
+<p>125 rows × 3 columns</p>
+</div></div></div>
 </div>
-</div>
-</div>
-<p>If we just pass in the links DataFrame without any other information, the model will assume we want to use all the feature and in this case will look for an internal estimator with features to match all the columns.</p>
+<p>If we just pass in the links DataFrame without any other information, the model will assume we want to use all the features and in this case will look for an internal estimator with features to match all the columns.</p>
+<p>Based on the model summary shown above, we do have an estimator that takes in the link features <code class="docutils literal notranslate"><span class="pre">speed_mph</span></code> and <code class="docutils literal notranslate"><span class="pre">grade_dec</span></code> with a distance of <code class="docutils literal notranslate"><span class="pre">miles</span></code> and so it will automatically select that estimator when we predict.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">links</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">camry</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">links</span><span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nrel/routee/powertrain/core/model.py:223,</span> in <span class="ni">Model.predict</span><span class="nt">(self, links_df, feature_columns, distance_column, apply_real_world_adjustment)</span>
-<span class="g g-Whitespace">    </span><span class="mi">221</span>     <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimators</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">feature_set_id</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">222</span>     <span class="k">if</span> <span class="n">estimator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">223</span>         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">224</span>             <span class="s2">&quot;This model has multiple feature sets and no features were &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">225</span>             <span class="s2">&quot;explicitly provided. &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">226</span>             <span class="s2">&quot;We attempted to just use the columns in the incoming dataframe &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">227</span>             <span class="s2">&quot;but we couldn&#39;t find an estiamtor that matches the features: &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">228</span>             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_columns</span><span class="si">}</span><span class="s2">. &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">229</span>             <span class="s2">&quot;Please provide an explicit list of feature names to the features &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">230</span>             <span class="s2">&quot;paramter of the predict method or provide a dataframe that only &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">231</span>             <span class="s2">&quot;contains the features you want to use. &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">232</span>             <span class="s2">&quot;Here are the feature sets that can be used: &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">233</span>             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_set_lists</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">234</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">235</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">236</span>     <span class="n">feature_set_id</span> <span class="o">=</span> <span class="n">feature_names_to_id</span><span class="p">(</span><span class="n">feature_columns</span><span class="p">)</span>
-
-<span class="ne">ValueError</span>: This model has multiple feature sets and no features were explicitly provided. We attempted to just use the columns in the incoming dataframe but we couldn&#39;t find an estiamtor that matches the features: [&#39;speed_mph&#39;, &#39;previous_speed_mph&#39;, &#39;grade_dec&#39;, &#39;previous_grade_dec&#39;, &#39;entry_angle&#39;]. Please provide an explicit list of feature names to the features paramter of the predict method or provide a dataframe that only contains the features you want to use. Here are the feature sets that can be used: [[&#39;speed_mph&#39;], [&#39;grade_dec&#39;, &#39;speed_mph&#39;], [&#39;grade_dec&#39;, &#39;previous_grade_dec&#39;, &#39;previous_speed_mph&#39;, &#39;speed_mph&#39;], [&#39;entry_angle&#39;, &#39;exit_angle&#39;, &#39;grade_dec&#39;, &#39;previous_grade_dec&#39;, &#39;previous_speed_mph&#39;, &#39;speed_mph&#39;]]
-</pre></div>
-</div>
-</div>
-</div>
-<p>If we want to use a different estimator, we can tell the predict method to only use a subset of the features. In this case, we'll tell the model to only use speed &amp; grade</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">links</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;speed_mph&quot;</span><span class="p">,</span> <span class="s2">&quot;grade_dec&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_route</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -556,26 +603,130 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.048834</td>
+      <td>0.000893</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.042926</td>
+      <td>0.000226</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.017658</td>
+      <td>0.000148</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.053413</td>
+      <td>0.000863</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.025090</td>
+      <td>0.000913</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>0.000362</td>
+    </tr>
+    <tr>
+      <th>121</th>
+      <td>0.000732</td>
+    </tr>
+    <tr>
+      <th>122</th>
+      <td>0.000666</td>
+    </tr>
+    <tr>
+      <th>123</th>
+      <td>0.000593</td>
+    </tr>
+    <tr>
+      <th>124</th>
+      <td>0.000790</td>
     </tr>
   </tbody>
 </table>
+<p>125 rows × 1 columns</p>
+</div></div></div>
+</div>
+<p>If we want to use a different estimator, we can tell the predict method to only use a subset of the features. In this case, we'll tell the model to only use speed.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_route</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;speed_mph&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>gge</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.000982</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.000250</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.000161</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.000898</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.001028</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>0.000386</td>
+    </tr>
+    <tr>
+      <th>121</th>
+      <td>0.000984</td>
+    </tr>
+    <tr>
+      <th>122</th>
+      <td>0.000769</td>
+    </tr>
+    <tr>
+      <th>123</th>
+      <td>0.000755</td>
+    </tr>
+    <tr>
+      <th>124</th>
+      <td>0.001079</td>
+    </tr>
+  </tbody>
+</table>
+<p>125 rows × 1 columns</p>
 </div></div></div>
 </div>
 <p>We can also apply some correction factors for effects that are not directly captured in the energy data the model was trained on. These include things like:</p>
@@ -586,7 +737,7 @@ document.write(`
 <p>These are powertrain specific and can be included by passing the <code class="docutils literal notranslate"><span class="pre">apply_real_world_adjustment</span></code> paramter which is set to False by default.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">links</span><span class="p">,</span> <span class="n">apply_real_world_adjustment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_route</span><span class="p">,</span> <span class="n">apply_real_world_adjustment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -615,39 +766,54 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.057429</td>
+      <td>0.001041</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.036736</td>
+      <td>0.000264</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.014761</td>
+      <td>0.000173</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.057456</td>
+      <td>0.001006</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.026616</td>
+      <td>0.001065</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>0.000423</td>
+    </tr>
+    <tr>
+      <th>121</th>
+      <td>0.000854</td>
+    </tr>
+    <tr>
+      <th>122</th>
+      <td>0.000777</td>
+    </tr>
+    <tr>
+      <th>123</th>
+      <td>0.000692</td>
+    </tr>
+    <tr>
+      <th>124</th>
+      <td>0.000922</td>
     </tr>
   </tbody>
 </table>
+<p>125 rows × 1 columns</p>
 </div></div></div>
 </div>
-<p>Note that we see higher energy values when apply these factors</p>
-<p>Lastly, we can take a look at the validation errors for each estimator that the model has.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span><span class="o">.</span><span class="n">errors</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table border="1" style="border-collapse: collapse;"><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>speed_mph</td></tr><tr><td>Target</td><td>gge</td></tr><tr><td>Link RMSE</td><td>0.00143</td></tr><tr><td>Link Norm RMSE</td><td>0.79152</td></tr><tr><td>Link Weighted RPD</td><td>0.43271</td></tr><tr><td>Net Error</td><td>0.01712</td></tr><tr><td>Actual Dist/Energy</td><td>31.35030</td></tr><tr><td>Predicted Dist/Energy</td><td>30.82275</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>26.43460</td></tr><tr><td>Trip RPD</td><td>0.19218</td></tr><tr><td>Trip Weighted RPD</td><td>0.11734</td></tr><tr><td>Trip RMSE</td><td>0.00952</td></tr><tr><td>Trip Norm RMSE</td><td>0.19153</td></tr><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>grade_dec&speed_mph</td></tr><tr><td>Target</td><td>gge</td></tr><tr><td>Link RMSE</td><td>0.00119</td></tr><tr><td>Link Norm RMSE</td><td>0.66342</td></tr><tr><td>Link Weighted RPD</td><td>0.36693</td></tr><tr><td>Net Error</td><td>0.01707</td></tr><tr><td>Actual Dist/Energy</td><td>31.35030</td></tr><tr><td>Predicted Dist/Energy</td><td>30.82415</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>26.43581</td></tr><tr><td>Trip RPD</td><td>0.16905</td></tr><tr><td>Trip Weighted RPD</td><td>0.09714</td></tr><tr><td>Trip RMSE</td><td>0.00767</td></tr><tr><td>Trip Norm RMSE</td><td>0.15441</td></tr><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>entry_angle&grade_dec&previous_grade_dec&previous_speed_mph&speed_mph</td></tr><tr><td>Target</td><td>gge</td></tr><tr><td>Link RMSE</td><td>0.00121</td></tr><tr><td>Link Norm RMSE</td><td>0.67380</td></tr><tr><td>Link Weighted RPD</td><td>0.33009</td></tr><tr><td>Net Error</td><td>0.03165</td></tr><tr><td>Actual Dist/Energy</td><td>31.35030</td></tr><tr><td>Predicted Dist/Energy</td><td>30.38837</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>26.06206</td></tr><tr><td>Trip RPD</td><td>0.15983</td></tr><tr><td>Trip Weighted RPD</td><td>0.09823</td></tr><tr><td>Trip RMSE</td><td>0.00861</td></tr><tr><td>Trip Norm RMSE</td><td>0.17330</td></tr></table></div></div>
-</div>
+<p>Note that we see slightly higher energy values when apply these factors.</p>
 <section id="model-visualization">
 <h2>Model Visualization<a class="headerlink" href="#model-visualization" title="Permalink to this heading">#</a></h2>
 <p>There are a few different functions we can visualize what a model is predicting over a range of inputs.</p>
@@ -670,8 +836,14 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f0fe1349e4004614461b164a8998e3d4a5167ef42fed66e57c1275ee6d5c6961.png" src="_images/f0fe1349e4004614461b164a8998e3d4a5167ef42fed66e57c1275ee6d5c6961.png" />
-<img alt="_images/223af8f47b003bc3eac91ada7ee0a8ac2406243f7ba412c909f74566ccece558.png" src="_images/223af8f47b003bc3eac91ada7ee0a8ac2406243f7ba412c909f74566ccece558.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-08 13:16:46,102 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: In FT2Font: Can not load face (unknown file format; error code 0x2)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-08 13:16:46,962 [INFO] - generated new fontManager
+</pre></div>
+</div>
+<img alt="_images/a3a52d6b08a8f13cbaa2294fa8834287622f4218ebc514c21372abea8659ddb6.png" src="_images/a3a52d6b08a8f13cbaa2294fa8834287622f4218ebc514c21372abea8659ddb6.png" />
+<img alt="_images/92b98bf053a2f7f45ac7b317a24b357d727994945300fcbcacadfbf97be25eda.png" src="_images/92b98bf053a2f7f45ac7b317a24b357d727994945300fcbcacadfbf97be25eda.png" />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 0 Axes&gt;
 </pre></div>
 </div>
@@ -685,7 +857,7 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/23e55d7c9297f4cb496611694368184602ac54b3e27b509fa01c2226201cfedb.png" src="_images/23e55d7c9297f4cb496611694368184602ac54b3e27b509fa01c2226201cfedb.png" />
+<img alt="_images/aabb62e85e1999ed713aa0b8c046853862747f61ef5a7f9b4d8e65e280c7e1e2.png" src="_images/aabb62e85e1999ed713aa0b8c046853862747f61ef5a7f9b4d8e65e280c7e1e2.png" />
 </div>
 </div>
 </section>
@@ -802,8 +974,8 @@ By The Jupyter Book Community
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=c5ced968eda925caa686"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=c5ced968eda925caa686"></script>
+  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
 
   <footer class="bd-footer">
   </footer>
