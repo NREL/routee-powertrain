@@ -77,7 +77,7 @@ class TestTrainEstimatePipeline(TestCase):
         outfile = self.out_path / "estimator.onnx"
         estimator = list(vehicle_model.estimators.values())[0]
         estimator.to_file(outfile)
-        new_estimator = ONNXEstimator.from_file(outfile)
+        _ = ONNXEstimator.from_file(outfile)
         outfile.unlink()
 
         r2 = new_vehicle_model.predict(self.df)
@@ -104,13 +104,13 @@ class TestTrainEstimatePipeline(TestCase):
         outfile = self.out_path / "estimator.json"
         estimator = list(vehicle_model.estimators.values())[0]
         estimator.to_file(outfile)
-        new_estimator = SmartCoreEstimator.from_file(outfile)
+        _ = SmartCoreEstimator.from_file(outfile)
         outfile.unlink()
 
         outfile = self.out_path / "estimator.bin"
         estimator = list(vehicle_model.estimators.values())[0]
         estimator.to_file(outfile)
-        new_estimator = SmartCoreEstimator.from_file(outfile)
+        _ = SmartCoreEstimator.from_file(outfile)
         outfile.unlink()
 
         r2 = new_vehicle_model.predict(self.df)

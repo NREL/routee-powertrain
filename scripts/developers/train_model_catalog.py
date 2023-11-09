@@ -183,27 +183,27 @@ def compute_angle(line1, line2) -> float:
 
 
 def add_entry_link_angles(group):
-    l = [0]  # can't determine first link entry angle so we set to 0
+    angles = [0]  # can't determine first link entry angle so we set to 0
     for i in range(1, len(group)):
         link1 = group.iloc[i - 1]
         link2 = group.iloc[i]
         line1, line2 = match_link_geoms(link1, link2)
         angle = compute_angle(line1, line2)
-        l.append(angle)
-    s = pd.Series(l, index=group.index)
+        angles.append(angle)
+    s = pd.Series(angles, index=group.index)
     return s
 
 
 def add_exit_link_angles(group):
-    l = []
+    angles = []
     for i in range(0, len(group) - 1):
         link1 = group.iloc[i]
         link2 = group.iloc[i + 1]
         line1, line2 = match_link_geoms(link1, link2)
         angle = compute_angle(line1, line2)
-        l.append(angle)
-    l.append(0)  # can't determine last link exit angle so we set to 0
-    s = pd.Series(l, index=group.index)
+        angles.append(angle)
+    angles.append(0)  # can't determine last link exit angle so we set to 0
+    s = pd.Series(angles, index=group.index)
     return s
 
 

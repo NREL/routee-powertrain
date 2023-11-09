@@ -31,6 +31,7 @@ dev = [
     "mypy",
     "maturin",
     "ruff",
+    "shapely",
     "boxsdk",
     "jupyter-book",
     "sphinx-book-theme",
@@ -51,7 +52,7 @@ include = [
 ] # package names should match these glob patterns (["*"] by default)
 
 [tool.setuptools.package-data]
-"*" = ["py.typed"]
+"nrel.routee.powertrain" = ["py.typed"]
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]

@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import json
 import warnings
-from dataclasses import dataclass, replace
-from typing import Optional
+from dataclasses import dataclass
 
 from nrel.routee.powertrain.core.model_config import ModelConfig
 from nrel.routee.powertrain.utils.fs import get_version
