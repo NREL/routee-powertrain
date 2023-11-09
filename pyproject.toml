@@ -18,7 +18,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 dependencies = ["pandas", "numpy", "onnx", "onnxruntime"]
-requires-python = ">=3.8"
+requires-python = ">=3.8,<3.12"
 
 [project.optional-dependencies]
 scikit = ["scikit-learn", "skl2onnx"]
