@@ -13,7 +13,7 @@ RouteE-Powertrain is a Python package that allows users to work with a set of pr
 
 The typical user will utilize RouteE's catalog of pre-trained models. Currently, the
 catalog consists of light-duty vehicle models, including conventional gasoline, diesel,
-hybrid electric (HEV), and battery electric (BEV). These models can be applied to link-level driving data (in the form
+hybrid electric (HEV), plugin hybrid electric (PHEV) and battery electric (BEV). These models can be applied to link-level driving data (in the form
 of [pandas](https://pandas.pydata.org/) dataframes) to output energy consumption predictions.
 
 Users that wish to train new RouteE models can do so. The model training function of RouteE enables users to use their
