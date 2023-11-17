@@ -388,7 +388,8 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="model-prediction">
 <h1>Model Prediction<a class="headerlink" href="#model-prediction" title="Permalink to this heading">#</a></h1>
-<p>RouteE models can be loaded from a large library of pre-trained models</p>
+<p>RouteE models can be loaded from a large library of pre-trained models. Conventional gasoline (CV), hybrid electric (HEV), plug-in hybrid electric (PHEV), and battery electric (BEV) powertrain types are all available.</p>
+<p><strong>A note on PHEVs</strong>: Plug-in hybrids have two general operating modes 1) &quot;Charge Depleting&quot; or &quot;EV&quot; mode, where the vehicle relies only on energy from the battery to power the motor and 2) &quot;Charge Sustaining&quot; or &quot;Hybrid&quot; mode, where the vehicle operates like a typical parallel hybrid, using a combination of the combustion energy and electric motor for tractive effort and regenerative braking. Since the operating mode depends on battery state-of-charge and driver decisions, pre-trained RouteE-Powertrain models for both operating modes are provided for all PHEVs and it is up to the user to decide which is most appropriate for a particular application.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nrel.routee.powertrain</span> <span class="k">as</span> <span class="nn">pt</span>
@@ -409,13 +410,20 @@ document.write(`
  &#39;2012_Ford_Fusion&#39;,
  &#39;2016_AUDI_A3_4cyl_2WD&#39;,
  &#39;2016_BMW_328d_4cyl_2WD&#39;,
+ &#39;2016_BMW_i3_REx_PHEV_Charge_Depleting&#39;,
+ &#39;2016_BMW_i3_REx_PHEV_Charge_Sustaining&#39;,
  &#39;2016_CHEVROLET_Malibu_4cyl_2WD&#39;,
  &#39;2016_CHEVROLET_Spark_EV&#39;,
+ &#39;2016_CHEVROLET_Volt_Charge_Depleting&#39;,
+ &#39;2016_CHEVROLET_Volt_Charge_Sustaining&#39;,
+ &#39;2016_FORD_C-MAX_(PHEV)_Charge_Depleting&#39;,
+ &#39;2016_FORD_C-MAX_(PHEV)_Charge_Sustaining&#39;,
  &#39;2016_FORD_C-MAX_HEV&#39;,
  &#39;2016_FORD_Escape_4cyl_2WD&#39;,
  &#39;2016_FORD_Explorer_4cyl_2WD&#39;,
  &#39;2016_HYUNDAI_Elantra_4cyl_2WD&#39;,
- &#39;2016_Hyundai_Tucson_Fuel_Cell&#39;,
+ &#39;2016_HYUNDAI_Sonata_PHEV_Charge_Depleting&#39;,
+ &#39;2016_HYUNDAI_Sonata_PHEV_Charge_Sustaining&#39;,
  &#39;2016_KIA_Optima_Hybrid&#39;,
  &#39;2016_Leaf_24_kWh&#39;,
  &#39;2016_MITSUBISHI_i-MiEV&#39;,
@@ -427,6 +435,8 @@ document.write(`
  &#39;2016_Toyota_Prius_Two_FWD&#39;,
  &#39;2017_CHEVROLET_Bolt&#39;,
  &#39;2017_Maruti_Dzire_VDI&#39;,
+ &#39;2017_Prius_Prime_Charge_Depleting&#39;,
+ &#39;2017_Prius_Prime_Charge_Sustaining&#39;,
  &#39;2017_Toyota_Highlander_3&#39;,
  &#39;2020_Chevrolet_Colorado_2WD_Diesel&#39;,
  &#39;2020_VW_Golf_1&#39;,
@@ -836,10 +846,10 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-08 13:23:26,466 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: In FT2Font: Can not load face (unknown file format; error code 0x2)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-17 15:21:58,687 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: In FT2Font: Can not load face (unknown file format; error code 0x2)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-08 13:23:26,936 [INFO] - generated new fontManager
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-17 15:21:58,720 [INFO] - generated new fontManager
 </pre></div>
 </div>
 <img alt="_images/a3a52d6b08a8f13cbaa2294fa8834287622f4218ebc514c21372abea8659ddb6.png" src="_images/a3a52d6b08a8f13cbaa2294fa8834287622f4218ebc514c21372abea8659ddb6.png" />
