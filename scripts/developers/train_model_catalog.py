@@ -312,17 +312,17 @@ feature_set_3 = [
     pt.DataColumn(name="grade_dec", units="decimal"),
     pt.DataColumn(name="entry_angle", units="degrees"),
 ]
-features = [ 
+features = [
     [pt.DataColumn(name="speed_mph", units="mph")],
     [
         pt.DataColumn(name="speed_mph", units="mph"),
-        pt.DataColumn(name="grade_dec", units="decimal")
+        pt.DataColumn(name="grade_dec", units="decimal"),
     ],
     [
         pt.DataColumn(name="speed_mph", units="mph"),
         pt.DataColumn(name="previous_speed_mph", units="mph"),
         pt.DataColumn(name="grade_dec", units="decimal"),
-        pt.DataColumn(name="previous_grade_dec", units="decimal")
+        pt.DataColumn(name="previous_grade_dec", units="decimal"),
     ],
     [
         pt.DataColumn(name="previous_speed_mph", units="mph"),
@@ -330,7 +330,7 @@ features = [
         pt.DataColumn(name="previous_grade_dec", units="decimal"),
         pt.DataColumn(name="grade_dec", units="decimal"),
         pt.DataColumn(name="entry_angle", units="degrees"),
-        pt.DataColumn(name="exit_angle", units="degrees")
+        pt.DataColumn(name="exit_angle", units="degrees"),
     ],
 ]
 

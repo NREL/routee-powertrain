@@ -7,4 +7,6 @@ ADJUSTMENT_FACTORS = {
     PowertrainType.ICE: 1.166,
     PowertrainType.HEV: 1.1252,
     PowertrainType.BEV: 1.3958,
+    PowertrainType.PHEV_EV_MODE: 1.3958,
+    PowertrainType.PHEV_HEV_MODE: 1.1252,
 }

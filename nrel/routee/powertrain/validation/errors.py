@@ -28,22 +28,18 @@ REPR_ROWS = {
 }
 
 
-def mean_squared_error(
-    A: np.ndarray, B: np.ndarray, axis: Optional[int] = None
-) -> float:
+def mean_squared_error(A, B, axis: Optional[int] = None) -> float:
     return np.square(A - B).mean(axis=axis)
 
 
-def net_energy_error(target: np.ndarray, target_pred: np.ndarray) -> float:
+def net_energy_error(target, target_pred) -> float:
     net_e = np.sum(target)
     net_e_pred = np.sum(target_pred)
     net_error = (net_e_pred - net_e) / net_e
     return net_error
 
 
-def weighted_relative_percent_difference(
-    target: np.ndarray, target_pred: np.ndarray
-) -> float:
+def weighted_relative_percent_difference(target, target_pred) -> float:
     epsilon = np.finfo(np.float64).eps
 
     w = np.array(np.abs(target) / np.sum(np.abs(target)))
@@ -61,7 +57,7 @@ def weighted_relative_percent_difference(
     return mean_error
 
 
-def relative_percent_difference(target: np.ndarray, target_pred: np.ndarray) -> float:
+def relative_percent_difference(target, target_pred) -> float:
     epsilon = np.finfo(np.float64).eps
 
     error_norm = np.abs(
