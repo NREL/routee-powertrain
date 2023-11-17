@@ -1,6 +1,6 @@
 from enum import Enum
 import pandas as pd
-from skl2onnx import to_onnx
+from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
 from sklearn.ensemble import RandomForestRegressor
 
@@ -55,10 +55,19 @@ class SklearnRandomForestTrainer(Trainer):
         if self.output_type == RandomForestTrainerOutput.ONNX:
             # convert to ONNX
             n_features = len(features.columns)
+            n_targets = len(target.columns)
+
+            # explicity specify the output shape since skl2onnx was not able to infer it
+            def custom_transform_shape_calculator(operator):
+                operator.outputs[0].type = FloatTensorType([None, n_targets])
+
             initial_type = [(ONNX_INPUT_NAME, FloatTensorType([None, n_features]))]
-            onnx_model = to_onnx(
+            onnx_model = convert_sklearn(
                 rf,
                 initial_types=initial_type,
+                custom_shape_calculators={
+                    rf.__class__: custom_transform_shape_calculator
+                },
             )
 
             estimator = ONNXEstimator(onnx_model)

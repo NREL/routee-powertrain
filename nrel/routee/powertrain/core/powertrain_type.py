@@ -9,6 +9,8 @@ class PowertrainType(Enum):
     ICE = 1
     HEV = 2
     BEV = 3
+    PHEV_EV_MODE = 4
+    PHEV_HEV_MODE = 5
 
     @classmethod
     def from_string(cls, s: Optional[str]) -> PowertrainType:

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nrel.routee.powertrain"
-version = "1.0.2"
+version = "1.0.3"
 description = "RouteE-Powertrain is a tool for predicting energy usage over a set of road links."
 readme = "README.md"
 authors = [{ name = "National Renewable Energy Laboratory" }]
@@ -39,7 +39,8 @@ dev = [
     "types-protobuf",
     "types-python-dateutil",
     "types-redis",
-    "types-requests"
+    "types-requests",
+    "pandas-stubs",
 ]
 
 [project.urls]
@@ -56,3 +57,9 @@ include = [
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
+
+[tool.mypy]
+ignore_missing_imports = true
+namespace_packages = true
+explicit_package_bases = true
+exclude = ["docs/", "build/", "dist/"]
