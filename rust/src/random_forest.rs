@@ -9,6 +9,7 @@ use pyo3::prelude::*;
 use anyhow::Result;
 
 #[pyclass]
+#[derive(Default)]
 pub struct RustRandomForest {
     pub rf: Option<RandomForestRegressor<f64, f64, DenseMatrix<f64>, Vec<f64>>>,
 }
@@ -17,7 +18,7 @@ pub struct RustRandomForest {
 impl RustRandomForest {
     #[new]
     pub fn new() -> RustRandomForest {
-        RustRandomForest { rf: None }
+        RustRandomForest::default()
     }
     pub fn train(&mut self, train_data: Vec<Vec<f64>>, target: Vec<f64>) {
         let x = DenseMatrix::from_2d_vec(&train_data);
@@ -73,5 +74,4 @@ impl RustRandomForest {
             bincode::deserialize(&bincode)?;
         Ok(RustRandomForest { rf: Some(rf) })
     }
-
 }

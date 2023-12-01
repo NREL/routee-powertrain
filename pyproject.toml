@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nrel.routee.powertrain"
-version = "1.0.3"
+version = "1.0.4"
 description = "RouteE-Powertrain is a tool for predicting energy usage over a set of road links."
 readme = "README.md"
 authors = [{ name = "National Renewable Energy Laboratory" }]
