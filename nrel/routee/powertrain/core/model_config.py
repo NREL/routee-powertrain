@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import Dict, List, Optional
 
 
@@ -12,6 +13,22 @@ from nrel.routee.powertrain.core.features import (
     feature_names_to_id,
 )
 from nrel.routee.powertrain.core.powertrain_type import PowertrainType
+
+
+class PredictMethod(Enum):
+    # Predict the rate of energy consumption and then multiply it by the distance.
+    RATE = "rate"
+    # Predict the total energy consumption for the link (including distance as a feature).
+    RAW = "raw"
+
+    @classmethod
+    def from_string(cls, string: str) -> PredictMethod:
+        if string.lower() == "rate":
+            return PredictMethod.RATE
+        elif string.lower() == "raw":
+            return PredictMethod.RAW
+        else:
+            raise ValueError("Unknown predict method: {}".format(string))
 
 
 @dataclass
@@ -29,6 +46,8 @@ class ModelConfig:
     feature_sets: List[FeatureSet]
     distance: DataColumn
     target: TargetSet
+
+    predict_method: PredictMethod = PredictMethod.RATE
 
     test_size: float = 0.2
     random_seed: int = 42
@@ -69,6 +88,9 @@ class ModelConfig:
         if isinstance(self.powertrain_type, str):
             self.powertrain_type = PowertrainType.from_string(self.powertrain_type)
 
+        if isinstance(self.predict_method, str):
+            self.predict_method = PredictMethod.from_string(self.predict_method)
+
         # check to make sure the feature sets are unique
         feature_set_ids = [f.features_id for f in self.feature_sets]
         if len(feature_set_ids) != len(set(feature_set_ids)):
@@ -89,6 +111,8 @@ class ModelConfig:
                 raise ValueError("Feature sets must be a list of FeatureSets")
         if not isinstance(self.powertrain_type, PowertrainType):
             raise ValueError("Powertrain type must be a PowertrainType")
+        if not isinstance(self.predict_method, PredictMethod):
+            raise ValueError("Predict method must be a PredictMethod")
 
     @classmethod
     def from_dict(cls, d: dict) -> ModelConfig:
@@ -100,6 +124,7 @@ class ModelConfig:
         d["feature_sets"] = [f.to_dict() for f in self.feature_sets]
         d["distance"] = self.distance.to_dict()
         d["target"] = self.target.to_dict()
+        d["predict_method"] = self.predict_method.value
 
         return d
 
@@ -132,5 +157,8 @@ class ModelConfig:
             for feature in feature_set.features:
                 if feature not in all_features:
                     all_features.append(feature)
+
+        if self.predict_method == PredictMethod.RAW:
+            all_features.append(self.distance)
 
         return all_features

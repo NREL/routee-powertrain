@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import pandas as pd
 from nrel.routee.powertrain.core.features import DataColumn, FeatureSet, TargetSet
+from nrel.routee.powertrain.core.model_config import PredictMethod
 
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 
@@ -79,11 +80,12 @@ class SmartCoreEstimator(Estimator):
         feature_set: FeatureSet,
         distance: DataColumn,
         target_set: TargetSet,
+        predict_method: PredictMethod = PredictMethod.RATE,
     ) -> pd.DataFrame:
         if len(target_set.targets) != 1:
             raise ValueError(
-                "SmartCore only supports a single energy rate. "
-                "Please use a different estimator."
+                "SmartCore only supports a single energy target. "
+                "Please use a different estimator for multiple energy targets."
             )
         energy = target_set.targets[0]
 
@@ -91,11 +93,18 @@ class SmartCoreEstimator(Estimator):
 
         x = links_df[feature_set.feature_name_list].values
 
-        energy_pred_rates = self.model.predict(x.tolist())
+        energy_pred_series = self.model.predict(x.tolist())
 
         energy_df = pd.DataFrame(index=links_df.index)
 
-        energy_pred = energy_pred_rates * links_df[distance_col]
+        if predict_method == PredictMethod.RAW:
+            energy_pred = energy_pred_series
+        elif predict_method == PredictMethod.RATE:
+            energy_pred = energy_pred_series * links_df[distance_col]
+        else:
+            raise ValueError(
+                f"Predict method {predict_method} is not supported by SmartCoreEstimator"
+            )
         energy_df[energy.name] = energy_pred
 
         return energy_df

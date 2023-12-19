@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 from nrel.routee.powertrain.core.features import DataColumn, FeatureSet, TargetSet
+from nrel.routee.powertrain.core.model_config import PredictMethod
 
 
 class Estimator(ABC):
@@ -41,6 +42,7 @@ class Estimator(ABC):
         feature_set: FeatureSet,
         distance: DataColumn,
         target_set: TargetSet,
+        predict_method: PredictMethod = PredictMethod.RATE,
     ) -> pd.DataFrame:
         """
         Predict absolute energy consumption for each link

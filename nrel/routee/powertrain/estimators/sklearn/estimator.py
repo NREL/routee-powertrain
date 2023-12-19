@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 from nrel.routee.powertrain.core.features import DataColumn, FeatureSet, TargetSet
+from nrel.routee.powertrain.core.model_config import PredictMethod
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 
 from .port_to_c import (
@@ -99,21 +100,27 @@ class SKLearnEstimator(Estimator):
         feature_set: FeatureSet,
         distance: DataColumn,
         target_set: TargetSet,
+        predict_method: PredictMethod = PredictMethod.RATE,
     ) -> pd.DataFrame:
         distance_col = distance.name
 
         x = links_df[feature_set.feature_name_list].values
 
-        raw_energy_pred_rates = self.sklearn_model.predict(x)
+        raw_energy_pred = self.sklearn_model.predict(x)
 
         energy_df = pd.DataFrame(index=links_df.index)
 
         for i, energy in enumerate(target_set.targets):
-            energy_pred_rates = pd.Series(
-                raw_energy_pred_rates[:, i], index=links_df.index
-            )
+            energy_pred_series = pd.Series(raw_energy_pred[:, i], index=links_df.index)
 
-            energy_pred = energy_pred_rates * links_df[distance_col]
+            if predict_method == PredictMethod.RAW:
+                energy_pred = energy_pred_series
+            elif predict_method == PredictMethod.RATE:
+                energy_pred = energy_pred_series * links_df[distance_col]
+            else:
+                raise ValueError(
+                    f"Predict method {predict_method} is not supported by SKLearnEstimator"
+                )
             energy_df[energy.name] = energy_pred
 
         return energy_df
