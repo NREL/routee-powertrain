@@ -243,9 +243,14 @@ def compute_errors(
         feature_set = config.feature_set_map[feature_set_id]
         target_set = config.target
         distance = config.distance
+        predict_method = config.predict_method
 
         predictions = estimator.predict(
-            test_df, feature_set=feature_set, distance=distance, target_set=target_set
+            test_df,
+            feature_set=feature_set,
+            distance=distance,
+            target_set=target_set,
+            predict_method=predict_method,
         )
 
         estimator_errors = {}

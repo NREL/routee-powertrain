@@ -253,6 +253,7 @@ class Model:
             feature_set,
             self.metadata.config.distance,
             self.metadata.config.target,
+            self.metadata.config.predict_method,
         )
 
         for energy in config.target.targets:
