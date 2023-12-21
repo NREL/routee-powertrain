@@ -103,8 +103,16 @@ class SKLearnEstimator(Estimator):
         predict_method: PredictMethod = PredictMethod.RATE,
     ) -> pd.DataFrame:
         distance_col = distance.name
+        if predict_method == PredictMethod.RATE:
+            feature_name_list = feature_set.feature_name_list
+        elif predict_method == PredictMethod.RAW:
+            feature_name_list = feature_set.feature_name_list + [distance_col]
+        else:
+            raise ValueError(
+                f"Predict method {predict_method} is not supported by ONNXEstimator"
+            )
 
-        x = links_df[feature_set.feature_name_list].values
+        x = links_df[feature_name_list].values
 
         raw_energy_pred = self.sklearn_model.predict(x)
 
