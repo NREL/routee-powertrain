@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="python" >
+<html lang="python" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
-  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -139,6 +139,7 @@ const thebe_selector_output = ".output, .cell_output"
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="intro.html">
@@ -334,6 +335,7 @@ const thebe_selector_output = ".output, .cell_output"
 </button>
 
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -343,6 +345,7 @@ document.write(`
   </button>
 `);
 </script>
+
 
 <script>
 document.write(`
@@ -530,6 +533,21 @@ You can access this dataset yourself <a class="reference external" href="https:/
 </div>
 </div>
 </div>
+<p>We also need to decide how we want to predict the energy.
+We have two options: &quot;rate&quot; or &quot;raw&quot;.
+&quot;rate&quot; will take our energy values and divide them by the distance column to arrive at and energy rate.
+Then, the estimator will be trained to predict the rate value (without using distance as a feature) and then the model will multiply the rate value by the incoming link distance to give a final raw energy value.
+This can be useful in your training data is sparse as it allows the model to be flexible to distance.
+&quot;raw&quot; will tell the estimator to predict the energy on the link directly, using distance as an explicit feature.
+This can be more robust for situations where the energy rate on a link might vary with respect to distance but can lead to weird results if there are not a good representation of different distance values in the training dataset.
+In our case we'll use &quot;rate&quot; since our training data is very sparse.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">predict_method</span> <span class="o">=</span> <span class="s2">&quot;rate&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
 <p>Finally, we can build a model configuration that we can pass to the trainer. This will also include things like the vehicle powertrain type and a model name</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -539,7 +557,8 @@ You can access this dataset yourself <a class="reference external" href="https:/
     <span class="n">feature_sets</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
     <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">,</span>
     <span class="n">target</span><span class="o">=</span><span class="n">energy_target</span><span class="p">,</span>
-    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">predict_method</span><span class="o">=</span><span class="n">predict_method</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -562,11 +581,6 @@ You can access this dataset yourself <a class="reference external" href="https:/
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_vehicle</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-17 15:22:01,734 [INFO] - filtered out 0 rows with energy rates outside of the limits of -inf and inf for energy target gallons_fastsim
 </pre></div>
 </div>
 </div>
@@ -616,7 +630,7 @@ You can access this dataset yourself <a class="reference external" href="https:/
               
               
                 <footer class="prev-next-footer">
-                  <!-- Previous / next buttons -->
+                  
 <div class="prev-next-area">
     <a class="left-prev"
        href="model_prediction.html"
@@ -659,6 +673,7 @@ By The Jupyter Book Community
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
       © Copyright 2022.
@@ -685,8 +700,8 @@ By The Jupyter Book Community
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>
