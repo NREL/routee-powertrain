@@ -319,6 +319,9 @@ class Model:
                     f"Real World Predicted Consumption: {target_errors.real_world_pred_dist_per_energy:.3f} "
                     f"({config.distance.units}/{target.units})"
                 )
+            summary_lines.append(
+                f"Predict Method: {config.predict_method.value.upper()}"
+            )
             summary_lines.append("=" * 40)
         return "\n".join(summary_lines)
 
@@ -393,6 +396,10 @@ class Model:
                     f"<td>{target_errors.real_world_pred_dist_per_energy:.3f} "
                     f"({config.distance.units}/{target.units})</td></tr>"
                 )
+            html_lines.append(
+                f"<tr><td>Predict Method</td>"
+                f"<td>{config.predict_method.value.upper()}</td></tr>"
+            )
 
         # End the HTML table
         html_lines.append("</table>")
