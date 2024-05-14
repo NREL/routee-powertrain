@@ -18,3 +18,4 @@ parts:
   - caption: Developers 
     chapters:
     - file: build_the_docs 
+    - file: contributing 
