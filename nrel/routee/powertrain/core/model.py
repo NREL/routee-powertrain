@@ -13,11 +13,17 @@ from nrel.routee.powertrain.core.features import (
     feature_names_to_id,
 )
 
+from nrel.routee.powertrain.core.features import feature_id_to_names
 from nrel.routee.powertrain.core.metadata import Metadata
 from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
 from nrel.routee.powertrain.estimators.smart_core import SmartCoreEstimator
+
+from nrel.routee.powertrain.validation.feature_visualization import (
+    contour_plot,
+    visualize_features,
+)
 from nrel.routee.powertrain.validation.errors import ModelErrors
 
 REGISTERED_ESTIMATORS = {
@@ -174,6 +180,62 @@ class Model:
         output_dict = self.to_dict()
         with path.open("w") as f:
             json.dump(output_dict, f)
+
+    def visualize_features(
+        self,
+        estimator_id: str,
+        output_path: Optional[str] = None,
+    ):
+        feature_set = self.metadata.config.get_feature_set(
+            feature_id_to_names(estimator_id)
+        )
+        if feature_set is None:
+            raise KeyError(
+                f"Model does not have a feature set with the features: {feature_set.feature_name_list}"
+            )
+        feature_ranges = {
+            f.name: {
+                "max": f.constraints.upper,
+                "min": f.constraints.lower,
+                "steps": 100,
+            }
+            for f in feature_set.features
+        }
+
+        return visualize_features(
+            model=self, feature_ranges=feature_ranges, output_path=output_path
+        )
+
+    def contour(
+        self,
+        x_feature: str,
+        y_feature: str,
+        estimator_id: str,
+        output_path: Optional[str] = None,
+    ):
+        feature_set = self.metadata.config.get_feature_set(
+            feature_id_to_names(estimator_id)
+        )
+        if feature_set is None:
+            raise KeyError(
+                f"Model does not have a feature set with the features: {feature_set.feature_name_list}"
+            )
+        feature_ranges = {
+            f.name: {
+                "max": f.constraints.upper,
+                "min": f.constraints.lower,
+                "steps": 100,
+            }
+            for f in feature_set.features
+        }
+
+        return contour_plot(
+            model=self,
+            x_feature=x_feature,
+            y_feature=y_feature,
+            feature_ranges=feature_ranges,
+            output_path=output_path,
+        )
 
     def predict(
         self,

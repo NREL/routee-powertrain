@@ -1,18 +1,19 @@
 import logging
 import traceback
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, TYPE_CHECKING
 
 import numpy as np
 from pandas import DataFrame
 
-from nrel.routee.powertrain.core.model import Model
+if TYPE_CHECKING:
+    from nrel.routee.powertrain.core.model import Model
 
 log = logging.getLogger(__name__)
 
 
 def visualize_features(
-    model: Model,
+    model: "Model",
     feature_ranges: Dict[str, dict],
     output_path: Optional[str] = None,
 ) -> dict:
@@ -149,7 +150,7 @@ def visualize_features(
 
 
 def contour_plot(
-    model: Model,
+    model: "Model",
     x_feature: str,
     y_feature: str,
     feature_ranges: Dict[str, Dict],
