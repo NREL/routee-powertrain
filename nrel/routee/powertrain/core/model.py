@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
+from math import isinf
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 from urllib import request
@@ -185,6 +186,7 @@ class Model:
         self,
         estimator_id: str,
         output_path: Optional[str] = None,
+        n_samples: Optional[int] = 100,
     ):
         feature_set = self.metadata.config.get_feature_set(
             feature_id_to_names(estimator_id)
@@ -193,14 +195,19 @@ class Model:
             raise KeyError(
                 f"Model does not have a feature set with the features: {feature_set.feature_name_list}"
             )
-        feature_ranges = {
-            f.name: {
-                "max": f.constraints.upper,
-                "min": f.constraints.lower,
-                "steps": 100,
+        feature_ranges = {}
+        for f in feature_set.features:
+            if isinf(f.constraints.upper) or isinf(f.constraints.lower):
+                raise ValueError(
+                    f"Feature: {f.name} has constraints with positive/negative infinity in the lower/upper bound. "
+                    f"You can add constraints when training a model or set custom constraints during visualization using "
+                    f"nrel.routee.powertrain.validation.feature_visualization.visualize_features"
+                )
+            feature_ranges[f.name] = {
+                "upper": f.constraints.upper,
+                "lower": f.constraints.lower,
+                "n_samples": n_samples,
             }
-            for f in feature_set.features
-        }
 
         return visualize_features(
             model=self, feature_ranges=feature_ranges, output_path=output_path
@@ -212,6 +219,7 @@ class Model:
         y_feature: str,
         estimator_id: str,
         output_path: Optional[str] = None,
+        n_samples: Optional[int] = 100,
     ):
         feature_set = self.metadata.config.get_feature_set(
             feature_id_to_names(estimator_id)
@@ -220,14 +228,19 @@ class Model:
             raise KeyError(
                 f"Model does not have a feature set with the features: {feature_set.feature_name_list}"
             )
-        feature_ranges = {
-            f.name: {
-                "max": f.constraints.upper,
-                "min": f.constraints.lower,
-                "steps": 100,
+        feature_ranges = {}
+        for f in feature_set.features:
+            if isinf(f.constraints.upper) or isinf(f.constraints.lower):
+                raise ValueError(
+                    f"Feature: {f.name} has constraints with positive/negative infinity in the lower/upper bound. "
+                    f"You can add constraints when training a model or set custom constraints during visualization using "
+                    f"nrel.routee.powertrain.validation.feature_visualization.contour_plot"
+                )
+            feature_ranges[f.name] = {
+                "upper": f.constraints.upper,
+                "lower": f.constraints.lower,
+                "n_samples": n_samples,
             }
-            for f in feature_set.features
-        }
 
         return contour_plot(
             model=self,
