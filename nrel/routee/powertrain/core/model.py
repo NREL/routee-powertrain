@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import json
 from math import isinf
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 from urllib import request
 
 import pandas as pd
@@ -26,6 +26,9 @@ from nrel.routee.powertrain.validation.feature_visualization import (
     visualize_features,
 )
 from nrel.routee.powertrain.validation.errors import ModelErrors
+
+if TYPE_CHECKING:
+    from pandas import Series
 
 REGISTERED_ESTIMATORS = {
     "ONNXEstimator": ONNXEstimator,
@@ -185,9 +188,22 @@ class Model:
     def visualize_features(
         self,
         estimator_id: str,
-        output_path: Optional[str] = None,
         n_samples: Optional[int] = 100,
-    ):
+        output_path: Optional[str] = None,
+        return_predictions: Optional[bool] = False,
+    ) -> Optional[Dict[str, "Series"]]:
+        """
+        generates test links to independently test the model's features
+        and creates plots of those predictions for the given estimator id
+
+        Args:
+            estimator_id: the estimator id for generating the plots
+            n_samples: the number of samples used to generate the plots
+            output_path: an optional path to save the plots as png files.
+            return_predictions: if true, returns the dictionary containing the prediction values
+
+        Returns: optionally returns a dictionary containing the predictions where the key is the feature tested
+        """
         feature_set = self.metadata.config.get_feature_set(
             feature_id_to_names(estimator_id)
         )
@@ -210,17 +226,33 @@ class Model:
             }
 
         return visualize_features(
-            model=self, feature_ranges=feature_ranges, output_path=output_path
+            model=self,
+            feature_ranges=feature_ranges,
+            output_path=output_path,
+            return_predictions=return_predictions,
         )
 
     def contour(
         self,
+        estimator_id: str,
         x_feature: str,
         y_feature: str,
-        estimator_id: str,
-        output_path: Optional[str] = None,
         n_samples: Optional[int] = 100,
+        output_path: Optional[str] = None,
     ):
+        """
+        generates a contour plot of the two test features: x_feature and y_feature.
+        for the given estimator id
+
+        Args:
+            estimator_id: the estimator id for generating the plots
+            x_feature: one of the features used to generate the energy matrix
+                and will be the x-axis feature
+            y_feature: one of the features used to generate the energy matrix
+                and will be the y-axis feature
+            n_samples: the number of samples used to generate the plots
+            output_path: an optional path to save the plots as png files.
+        """
         feature_set = self.metadata.config.get_feature_set(
             feature_id_to_names(estimator_id)
         )

@@ -174,7 +174,7 @@ def contour_plot(
             each value should be another dictionary containing "lower", "upper", and "n_sample" keys/values.
             These correspond to the lower/upper boundaries and n samples used to generate the plot.
             n_samples must be an integer and lower/upper are floats.
-        output_path: an optional path to save the plots as png files.
+        output_path: an optional path to save the plot as a png file.
     """
     try:
         import matplotlib.pyplot as plt
