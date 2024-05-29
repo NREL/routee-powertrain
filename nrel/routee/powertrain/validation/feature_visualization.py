@@ -151,6 +151,8 @@ def visualize_features(
 
     if return_predictions:
         return predictions
+    else:
+        return None
 
 
 def contour_plot(
@@ -273,3 +275,5 @@ def contour_plot(
         plt.show()
 
     plt.close()
+
+    return None
