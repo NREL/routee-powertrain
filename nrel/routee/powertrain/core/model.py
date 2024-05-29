@@ -209,7 +209,7 @@ class Model:
         )
         if feature_set is None:
             raise KeyError(
-                f"Model does not have a feature set with the features: {feature_set.feature_name_list}"
+                f"Model does not have a feature set with the features: {feature_id_to_names(estimator_id)}"
             )
         feature_ranges = {}
         for f in feature_set.features:
