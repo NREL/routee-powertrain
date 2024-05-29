@@ -187,7 +187,7 @@ class Model:
 
     def visualize_features(
         self,
-        estimator_id: str,
+        estimator_id: FeatureSetId,
         n_samples: Optional[int] = 100,
         output_path: Optional[str] = None,
         return_predictions: Optional[bool] = False,
@@ -234,7 +234,7 @@ class Model:
 
     def contour(
         self,
-        estimator_id: str,
+        estimator_id: FeatureSetId,
         x_feature: str,
         y_feature: str,
         n_samples: Optional[int] = 100,
