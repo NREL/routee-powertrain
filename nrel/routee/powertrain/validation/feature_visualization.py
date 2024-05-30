@@ -1,34 +1,38 @@
 import logging
 import traceback
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, TYPE_CHECKING, Union
 
 import numpy as np
 from pandas import DataFrame
 
-from nrel.routee.powertrain.core.model import Model
+if TYPE_CHECKING:
+    from nrel.routee.powertrain.core.model import Model
+    from pandas import Series
 
 log = logging.getLogger(__name__)
 
 
 def visualize_features(
-    model: Model,
+    model: "Model",
     feature_ranges: Dict[str, dict],
-    output_path: Optional[str] = None,
-) -> dict:
+    output_path: Optional[Union[str, Path]] = None,
+    return_predictions: Optional[bool] = False,
+) -> Optional[Dict[str, "Series"]]:
     """
     takes a model and generates test links to independently test the model's features
     and creates plots of those predictions
 
-    :param model: the model to be tested
-    :param feature_ranges: a dictionary with value ranges to generate test links
-    :param output_path: if not none, saves results to this location. Else the plots
-        are displayed rather than saved
+    Args:
+        model: the model that will be used to generate the plots
+        feature_ranges: a nested dictionary where each key should be a feature name and
+            each value should be another dictionary containing "lower", "upper", and "n_sample" keys/values.
+            These correspond to the lower/upper boundaries and n samples used to generate the plot.
+            n_samples must be an integer and lower/upper are floats.
+        output_path: an optional path to save the plots as png files.
+        return_predictions: if true, returns the dictionary containing the prediction values
 
-    :return: a dictionary containing the predictions where the key is the feature tested
-
-    :raises Exception due to IOErrors, KeyError due to missing features ranges required
-        by the model
+    Returns: optionally returns a dictionary containing the predictions where the key is the feature tested
     """
     try:
         import matplotlib.pyplot as plt
@@ -83,9 +87,9 @@ def visualize_features(
         sample_points = []
         for feature_name in feature_units_dict.keys():
             points = np.linspace(
-                feature_ranges[feature_name]["min"],
-                feature_ranges[feature_name]["max"],
-                feature_ranges[feature_name]["steps"],
+                feature_ranges[feature_name]["lower"],
+                feature_ranges[feature_name]["upper"],
+                feature_ranges[feature_name]["n_samples"],
             )
             sample_points.append(points)
 
@@ -124,11 +128,11 @@ def visualize_features(
         # if an output filepath is specified, save th results instead of displaying them
         if output_path is not None:
             try:
-                Path(output_path).joinpath(f"{model_name}").mkdir(
-                    parents=True, exist_ok=True
-                )
+                if isinstance(output_path, str):
+                    output_path = Path(output_path)
+                output_path.joinpath(f"{model_name}").mkdir(parents=True, exist_ok=True)
                 plt.savefig(
-                    Path(output_path).joinpath(f"{model_name}/{current_feature}.png"),
+                    output_path.joinpath(f"{model_name}/{current_feature}.png"),
                     format="png",
                 )
             except Exception:
@@ -145,31 +149,34 @@ def visualize_features(
         plt.clf()
         predictions[current_feature] = prediction
 
-    return predictions
+    if return_predictions:
+        return predictions
+    else:
+        return None
 
 
 def contour_plot(
-    model: Model,
+    model: "Model",
     x_feature: str,
     y_feature: str,
     feature_ranges: Dict[str, Dict],
-    output_path: Optional[str] = None,
+    output_path: Optional[Union[str, Path]] = None,
 ):
     """
     takes a model and generates a contour plot of the two test features:
-    x_Feature and y_feature.
+    x_feature and y_feature.
 
-    :param model: the model to be tested
-    :param x_feature: one of the features used to generate the energy matrix
-        and will be the x-axis feature
-    :param y_feature: one of the features used to generate the energy matrix
-        and will be the y-axis feature
-    :param feature_ranges: a dictionary with value ranges to generate test links
-    :param output_path: if not none, saves results to this location.
-        Else the plot is displayed rather than saved
-
-    :raises Exception due to IOErrors, KeyError due to missing features ranges required
-    by the model, KeyError due to incompatible x/y features
+    Args:
+        model: the model that will be used to generate the plots
+        x_feature: one of the features used to generate the energy matrix
+            and will be the x-axis feature
+        y_feature: one of the features used to generate the energy matrix
+            and will be the y-axis feature
+        feature_ranges: a nested dictionary where each key should be a feature name and
+            each value should be another dictionary containing "lower", "upper", and "n_sample" keys/values.
+            These correspond to the lower/upper boundaries and n samples used to generate the plot.
+            n_samples must be an integer and lower/upper are floats.
+        output_path: an optional path to save the plot as a png file.
     """
     try:
         import matplotlib.pyplot as plt
@@ -219,9 +226,9 @@ def contour_plot(
 
     points = {
         n: np.linspace(
-            f["min"],
-            f["max"],
-            f["steps"],
+            f["lower"],
+            f["upper"],
+            f["n_samples"],
         )
         for n, f in feature_ranges.items()
     }
@@ -252,9 +259,12 @@ def contour_plot(
     # if an output filepath is specified, save th results instead of displaying them
     if output_path is not None:
         try:
+            if isinstance(output_path, str):
+                output_path = Path(output_path)
+            output_path.joinpath(f"{model_name}").mkdir(parents=True, exist_ok=True)
             plt.savefig(
-                Path(output_path).joinpath(
-                    f"{model_name}_[{x_feature}_{y_feature}].png"
+                output_path.joinpath(
+                    f"{model_name}/{model_name}_[{x_feature}_{y_feature}].png"
                 ),
                 format="png",
             )
@@ -265,3 +275,5 @@ def contour_plot(
         plt.show()
 
     plt.close()
+
+    return None

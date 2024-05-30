@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
+from math import isinf
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 from urllib import request
 
 import pandas as pd
@@ -13,12 +14,21 @@ from nrel.routee.powertrain.core.features import (
     feature_names_to_id,
 )
 
+from nrel.routee.powertrain.core.features import feature_id_to_names
 from nrel.routee.powertrain.core.metadata import Metadata
 from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
 from nrel.routee.powertrain.estimators.smart_core import SmartCoreEstimator
+
+from nrel.routee.powertrain.validation.feature_visualization import (
+    contour_plot,
+    visualize_features,
+)
 from nrel.routee.powertrain.validation.errors import ModelErrors
+
+if TYPE_CHECKING:
+    from pandas import Series
 
 REGISTERED_ESTIMATORS = {
     "ONNXEstimator": ONNXEstimator,
@@ -174,6 +184,103 @@ class Model:
         output_dict = self.to_dict()
         with path.open("w") as f:
             json.dump(output_dict, f)
+
+    def visualize_features(
+        self,
+        estimator_id: FeatureSetId,
+        n_samples: Optional[int] = 100,
+        output_path: Optional[str] = None,
+        return_predictions: Optional[bool] = False,
+    ) -> Optional[Dict[str, "Series"]]:
+        """
+        generates test links to independently test the model's features
+        and creates plots of those predictions for the given estimator id
+
+        Args:
+            estimator_id: the estimator id for generating the plots
+            n_samples: the number of samples used to generate the plots
+            output_path: an optional path to save the plots as png files.
+            return_predictions: if true, returns the dictionary containing the prediction values
+
+        Returns: optionally returns a dictionary containing the predictions where the key is the feature tested
+        """
+        feature_set = self.metadata.config.get_feature_set(
+            feature_id_to_names(estimator_id)
+        )
+        if feature_set is None:
+            raise KeyError(
+                f"Model does not have a feature set with the features: {feature_id_to_names(estimator_id)}"
+            )
+        feature_ranges = {}
+        for f in feature_set.features:
+            if isinf(f.constraints.upper) or isinf(f.constraints.lower):
+                raise ValueError(
+                    f"Feature: {f.name} has constraints with positive/negative infinity in the lower/upper bound. "
+                    f"You can add constraints when training a model or set custom constraints during visualization using "
+                    f"nrel.routee.powertrain.validation.feature_visualization.visualize_features"
+                )
+            feature_ranges[f.name] = {
+                "upper": f.constraints.upper,
+                "lower": f.constraints.lower,
+                "n_samples": n_samples,
+            }
+
+        return visualize_features(
+            model=self,
+            feature_ranges=feature_ranges,
+            output_path=output_path,
+            return_predictions=return_predictions,
+        )
+
+    def contour(
+        self,
+        estimator_id: FeatureSetId,
+        x_feature: str,
+        y_feature: str,
+        n_samples: Optional[int] = 100,
+        output_path: Optional[str] = None,
+    ):
+        """
+        generates a contour plot of the two test features: x_feature and y_feature.
+        for the given estimator id
+
+        Args:
+            estimator_id: the estimator id for generating the plots
+            x_feature: one of the features used to generate the energy matrix
+                and will be the x-axis feature
+            y_feature: one of the features used to generate the energy matrix
+                and will be the y-axis feature
+            n_samples: the number of samples used to generate the plots
+            output_path: an optional path to save the plots as png files.
+        """
+        feature_set = self.metadata.config.get_feature_set(
+            feature_id_to_names(estimator_id)
+        )
+        if feature_set is None:
+            raise KeyError(
+                f"Model does not have a feature set with the features: {feature_id_to_names(estimator_id)}"
+            )
+        feature_ranges = {}
+        for f in feature_set.features:
+            if isinf(f.constraints.upper) or isinf(f.constraints.lower):
+                raise ValueError(
+                    f"Feature: {f.name} has constraints with positive/negative infinity in the lower/upper bound. "
+                    f"You can add constraints when training a model or set custom constraints during visualization using "
+                    f"nrel.routee.powertrain.validation.feature_visualization.contour_plot"
+                )
+            feature_ranges[f.name] = {
+                "upper": f.constraints.upper,
+                "lower": f.constraints.lower,
+                "n_samples": n_samples,
+            }
+
+        return contour_plot(
+            model=self,
+            x_feature=x_feature,
+            y_feature=y_feature,
+            feature_ranges=feature_ranges,
+            output_path=output_path,
+        )
 
     def predict(
         self,
