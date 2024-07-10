@@ -24,6 +24,7 @@ own drive-cycle data, powertrain modeling system, and road network data to train
 RouteE Powertrain is available on PyPI and can be installed with `pip`:
 
 ```bash
+pip install pip --upgrade
 pip install nrel.routee.powertrain
 ```
 
