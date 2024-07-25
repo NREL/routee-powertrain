@@ -11,6 +11,7 @@ class PowertrainType(Enum):
     BEV = 3
     PHEV_EV_MODE = 4
     PHEV_HEV_MODE = 5
+    HEAVY_DUTY = 6
 
     @classmethod
     def from_string(cls, s: Optional[str]) -> PowertrainType:
