@@ -1,7 +1,7 @@
 from enum import Enum
 import pandas as pd
-# from skl2onnx import convert_sklearn
-# from skl2onnx.common.data_types import FloatTensorType
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
 from sklearn.ensemble import RandomForestRegressor
 
 from nrel.routee.powertrain.core.model_config import ModelConfig

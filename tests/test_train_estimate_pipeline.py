@@ -10,11 +10,21 @@ from nrel.routee.powertrain.core.model_config import PredictMethod
 from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
 from nrel.routee.powertrain.estimators.smart_core import SmartCoreEstimator
 
+# import sys
+# import os
+
+# # Ensure the local package is prioritized
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from nrel.routee.powertrain.estimators.ngboost_estimator import NGBoostEstimator
+
 from nrel.routee.powertrain.trainers.sklearn_random_forest import (
     SklearnRandomForestTrainer,
 )
 from nrel.routee.powertrain.trainers.smartcore_random_forest import (
     SmartcoreRandomForestTrainer,
+)
+from nrel.routee.powertrain.trainers.ngboost_trainer import (
+    NGBoostTrainer,
 )
 
 this_dir = Path(__file__).parent
@@ -146,6 +156,58 @@ class TestTrainEstimatePipeline(TestCase):
         estimator = list(vehicle_model.estimators.values())[0]
         estimator.to_file(outfile)
         _ = SmartCoreEstimator.from_file(outfile)
+        outfile.unlink()
+
+        r2 = new_vehicle_model.predict(self.df)
+        energy2 = round(r2.gallons_fastsim.sum(), 2)
+
+        self.assertTrue(math.isclose(energy1, energy2))
+
+    def test_ngboost_rate(self):
+        trainer = NGBoostTrainer()
+
+        vehicle_model = trainer.train(self.df, self.rate_config)
+
+        r1 = vehicle_model.predict(self.df)
+        energy1 = round(r1.gallons_fastsim.sum(), 2)
+
+        # test out writing and reading to file
+        outfile = self.out_path / "model_rate.json"
+        vehicle_model.to_file(outfile)
+        new_vehicle_model = pt.load_model(outfile)
+        outfile.unlink()
+
+        # test writing inner estimator to file
+        outfile = self.out_path / "estimator_rate.json"
+        estimator = list(vehicle_model.estimators.values())[0]
+        estimator.to_file(outfile)
+        _ = NGBoostEstimator.from_file(outfile)
+        outfile.unlink()
+
+        r2 = new_vehicle_model.predict(self.df)
+        energy2 = round(r2.gallons_fastsim.sum(), 2)
+
+        self.assertTrue(math.isclose(energy1, energy2))
+
+    def test_ngboost_raw(self):
+        trainer = NGBoostTrainer()
+
+        vehicle_model = trainer.train(self.df, self.raw_config)
+
+        r1 = vehicle_model.predict(self.df)
+        energy1 = round(r1.gallons_fastsim.sum(), 2)
+
+        # test out writing and reading to file
+        outfile = self.out_path / "model_raw.json"
+        vehicle_model.to_file(outfile)
+        new_vehicle_model = pt.load_model(outfile)
+        outfile.unlink()
+
+        # test writing inner estimator to file
+        outfile = self.out_path / "estimator_raw.json"
+        estimator = list(vehicle_model.estimators.values())[0]
+        estimator.to_file(outfile)
+        _ = NGBoostEstimator.from_file(outfile)
         outfile.unlink()
 
         r2 = new_vehicle_model.predict(self.df)

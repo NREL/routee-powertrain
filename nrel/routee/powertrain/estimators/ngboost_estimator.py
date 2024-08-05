@@ -14,11 +14,10 @@ from core.model_config import PredictMethod
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 
 
-
 class NGBoostEstimator(Estimator):
 
     def __init__(self, ngboost) -> None:
-        self.model = ngboost  
+        self.model = ngboost
 
     @classmethod
     def from_file(cls, filepath: str | Path) -> Estimator:
@@ -29,7 +28,7 @@ class NGBoostEstimator(Estimator):
 
         with filepath.open("rb") as f:
             loaded_dict = json.load(f)
-        
+
         return cls.from_dict(loaded_dict)
 
     def to_file(self, filepath: str | Path):
@@ -41,22 +40,22 @@ class NGBoostEstimator(Estimator):
         # with filepath.open("wb") as f:
         #     json.dump(self.to_dict(), f)
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             json.dump(self.to_dict(), f)
 
-
     @classmethod
-    def from_dict(cls, in_dict: dict) -> 'NGBRegressor':
-
+    def from_dict(cls, in_dict: dict) -> "NGBRegressor":
         """
         Load an estimator from a bytes object in memory
         """
 
-        # model_base64 = in_dict.get("ngboost_model")
-        model_base64 = in_dict
+        model_base64 = in_dict.get("ngboost_model")
+        # model_base64 = in_dict
         # print
         if model_base64 is None:
-            raise ValueError("Model file must contain ngboost model at key: 'ngboost_model'")
+            raise ValueError(
+                "Model file must contain ngboost model at key: 'ngboost_model'"
+            )
         byte_stream = io.BytesIO(base64.b64decode(model_base64))
         ngboost_model = joblib.load(byte_stream)
         return cls(ngboost_model)
@@ -68,7 +67,7 @@ class NGBoostEstimator(Estimator):
         byte_stream = io.BytesIO()
         joblib.dump(self.model, byte_stream)
         byte_stream.seek(0)
-        model_base64 = base64.b64encode(byte_stream.read()).decode('utf-8')
+        model_base64 = base64.b64encode(byte_stream.read()).decode("utf-8")
         # print((model_base64))
 
         out_dict = dict({"ngboost_model": model_base64})
@@ -78,9 +77,6 @@ class NGBoostEstimator(Estimator):
         return out_dict
         # return model_base64
         # raise('Value Error')
-
-    def print_som():
-        print("It's working")
 
     def predict(
         self,
@@ -109,20 +105,31 @@ class NGBoostEstimator(Estimator):
         x = links_df[feature_name_list].values
         # print(x)
 
-        energy_pred_series = self.model.predict(x.tolist())
+        # energy_pred_series = self.model.predict(x.tolist())
+        energy_pred_series = self.model.pred_dist(x.tolist())
+        energy_pred_mean = energy_pred_series.loc
+        energy_pred_std = energy_pred_series.scale
 
         energy_df = pd.DataFrame(index=links_df.index)
 
         if predict_method == PredictMethod.RAW:
-            energy_pred = energy_pred_series
+            # energy_pred = energy_pred_series
+            energy_pred_mean = energy_pred_mean
+            energy_pred_std = energy_pred_std
+
         elif predict_method == PredictMethod.RATE:
-            energy_pred = energy_pred_series * links_df[distance_col]
+            # energy_pred = energy_pred_series * links_df[distance_col]
+            energy_pred_mean = energy_pred_mean * links_df[distance_col]
+            energy_pred_std = energy_pred_std * links_df[distance_col]
+
         else:
             raise ValueError(
                 f"Predict method {predict_method} is not supported by NGBoostEstimator"
             )
-        energy_df[energy.name] = energy_pred
+
+        # energy_df[energy.name] = energy_pred
+
+        energy_df[energy.name] = energy_pred_mean
+        energy_df[energy.name + "_std"] = energy_pred_std
 
         return energy_df
-
- 
