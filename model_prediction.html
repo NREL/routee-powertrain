@@ -627,8 +627,117 @@ There is a sample route included with the package that we'll use for demonstrati
 <p>125 rows × 3 columns</p>
 </div></div></div>
 </div>
+<p>Note that the dataframe columns don't quite match what the model is expecting.
+The <code class="docutils literal notranslate"><span class="pre">speed_mph</span></code> column matches what the model expects but it looks like it wants the grade column to be called <code class="docutils literal notranslate"><span class="pre">grade_percent</span></code> and it should be in the percent unit.
+Our current grade in represented as a decimal and so we'll have to multiply it by 100 to get it into the units the model expects.
+Also note that we need to rename the <code class="docutils literal notranslate"><span class="pre">miles</span></code> column to <code class="docutils literal notranslate"><span class="pre">distance</span></code> to match the model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_route</span><span class="p">[</span><span class="s2">&quot;grade_percent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">grade_dec</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="n">sample_route</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s2">&quot;grade_dec&quot;</span><span class="p">)</span>
+<span class="n">sample_route</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;miles&quot;</span><span class="p">:</span> <span class="s2">&quot;distance&quot;</span><span class="p">})</span>
+<span class="n">sample_route</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>speed_mph</th>
+      <th>distance</th>
+      <th>grade_percent</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7.632068</td>
+      <td>0.015469</td>
+      <td>-0.896343</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>6.329613</td>
+      <td>0.003516</td>
+      <td>-4.700083</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>12.248512</td>
+      <td>0.003402</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>23.752604</td>
+      <td>0.019768</td>
+      <td>-0.046280</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>46.024926</td>
+      <td>0.038378</td>
+      <td>-0.464073</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>7.415272</td>
+      <td>0.006128</td>
+      <td>-0.133898</td>
+    </tr>
+    <tr>
+      <th>121</th>
+      <td>27.685268</td>
+      <td>0.023170</td>
+      <td>-3.074826</td>
+    </tr>
+    <tr>
+      <th>122</th>
+      <td>51.322545</td>
+      <td>0.028510</td>
+      <td>-0.848964</td>
+    </tr>
+    <tr>
+      <th>123</th>
+      <td>50.431920</td>
+      <td>0.028015</td>
+      <td>-1.053289</td>
+    </tr>
+    <tr>
+      <th>124</th>
+      <td>48.325893</td>
+      <td>0.040274</td>
+      <td>-1.758078</td>
+    </tr>
+  </tbody>
+</table>
+<p>125 rows × 3 columns</p>
+</div></div></div>
+</div>
 <p>If we just pass in the links DataFrame without any other information, the model will assume we want to use all the features and in this case will look for an internal estimator with features to match all the columns.</p>
-<p>Based on the model summary shown above, we do have an estimator that takes in the link features <code class="docutils literal notranslate"><span class="pre">speed_mph</span></code> and <code class="docutils literal notranslate"><span class="pre">grade_dec</span></code> with a distance of <code class="docutils literal notranslate"><span class="pre">miles</span></code> and so it will automatically select that estimator when we predict.</p>
+<p>Based on the model summary shown above, we do have an estimator that takes in the link features <code class="docutils literal notranslate"><span class="pre">speed_mph</span></code> and <code class="docutils literal notranslate"><span class="pre">grade_percent</span></code> with a distance of <code class="docutils literal notranslate"><span class="pre">distance</span></code> and so it will automatically select that estimator when we predict.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_route</span><span class="p">)</span>
@@ -636,24 +745,76 @@ There is a sample route included with the package that we'll use for demonstrati
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">camry</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_route</span><span class="p">)</span>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.14/x64/lib/python3.10/site-packages/nrel/routee/powertrain/core/model.py:309,</span> in <span class="ni">Model.predict</span><span class="nt">(self, links_df, feature_columns, distance_column, apply_real_world_adjustment)</span>
-<span class="g g-Whitespace">    </span><span class="mi">307</span>     <span class="n">distance_column</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">name</span>
-<span class="g g-Whitespace">    </span><span class="mi">308</span>     <span class="k">if</span> <span class="n">distance_column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">links_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">309</span>         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">310</span>             <span class="sa">f</span><span class="s2">&quot;links_df must contain a distance column named: &#39;</span><span class="si">{</span><span class="n">distance_column</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">311</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">312</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">313</span>     <span class="n">links_df</span> <span class="o">=</span> <span class="n">links_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">distance_column</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-<span class="ne">ValueError</span>: links_df must contain a distance column named: &#39;distance&#39;
-</pre></div>
-</div>
-</div>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>gge</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.000882</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.000216</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.000149</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.000853</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.000906</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>0.000352</td>
+    </tr>
+    <tr>
+      <th>121</th>
+      <td>0.000660</td>
+    </tr>
+    <tr>
+      <th>122</th>
+      <td>0.000627</td>
+    </tr>
+    <tr>
+      <th>123</th>
+      <td>0.000616</td>
+    </tr>
+    <tr>
+      <th>124</th>
+      <td>0.000760</td>
+    </tr>
+  </tbody>
+</table>
+<p>125 rows × 1 columns</p>
+</div></div></div>
 </div>
 <p>If we want to use a different estimator, we can tell the predict method to only use a subset of the features. In this case, we'll tell the model to only use speed.</p>
 <div class="cell docutils container">
@@ -687,23 +848,23 @@ There is a sample route included with the package that we'll use for demonstrati
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.000982</td>
+      <td>0.000939</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.000250</td>
+      <td>0.000241</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.000161</td>
+      <td>0.000158</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.000898</td>
+      <td>0.000829</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.001028</td>
+      <td>0.000982</td>
     </tr>
     <tr>
       <th>...</th>
@@ -711,23 +872,23 @@ There is a sample route included with the package that we'll use for demonstrati
     </tr>
     <tr>
       <th>120</th>
-      <td>0.000386</td>
+      <td>0.000379</td>
     </tr>
     <tr>
       <th>121</th>
-      <td>0.000984</td>
+      <td>0.000895</td>
     </tr>
     <tr>
       <th>122</th>
-      <td>0.000769</td>
+      <td>0.000730</td>
     </tr>
     <tr>
       <th>123</th>
-      <td>0.000755</td>
+      <td>0.000717</td>
     </tr>
     <tr>
       <th>124</th>
-      <td>0.001079</td>
+      <td>0.001031</td>
     </tr>
   </tbody>
 </table>
@@ -771,23 +932,23 @@ There is a sample route included with the package that we'll use for demonstrati
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.001041</td>
+      <td>0.001028</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.000264</td>
+      <td>0.000252</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.000173</td>
+      <td>0.000174</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.001006</td>
+      <td>0.000995</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.001065</td>
+      <td>0.001056</td>
     </tr>
     <tr>
       <th>...</th>
@@ -795,23 +956,23 @@ There is a sample route included with the package that we'll use for demonstrati
     </tr>
     <tr>
       <th>120</th>
-      <td>0.000423</td>
+      <td>0.000411</td>
     </tr>
     <tr>
       <th>121</th>
-      <td>0.000854</td>
+      <td>0.000769</td>
     </tr>
     <tr>
       <th>122</th>
-      <td>0.000777</td>
+      <td>0.000731</td>
     </tr>
     <tr>
       <th>123</th>
-      <td>0.000692</td>
+      <td>0.000719</td>
     </tr>
     <tr>
       <th>124</th>
-      <td>0.000922</td>
+      <td>0.000886</td>
     </tr>
   </tbody>
 </table>
@@ -827,8 +988,8 @@ In order to use this we first have to define what ranges the features should be 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">feature_ranges</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;speed_mph&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">},</span>
-    <span class="s2">&quot;grade_dec&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">}</span>
+    <span class="s2">&quot;speed_mph&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">},</span>
+    <span class="s2">&quot;grade_percent&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -841,8 +1002,14 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a3a52d6b08a8f13cbaa2294fa8834287622f4218ebc514c21372abea8659ddb6.png" src="_images/a3a52d6b08a8f13cbaa2294fa8834287622f4218ebc514c21372abea8659ddb6.png" />
-<img alt="_images/92b98bf053a2f7f45ac7b317a24b357d727994945300fcbcacadfbf97be25eda.png" src="_images/92b98bf053a2f7f45ac7b317a24b357d727994945300fcbcacadfbf97be25eda.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-08-06 21:34:57,203 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: In FT2Font: Can not load face (unknown file format; error code 0x2)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-08-06 21:34:57,278 [INFO] - generated new fontManager
+</pre></div>
+</div>
+<img alt="_images/6fb1daa9c4d6257cc93438849370b5ee86c648932c531dfe647e634f9af17826.png" src="_images/6fb1daa9c4d6257cc93438849370b5ee86c648932c531dfe647e634f9af17826.png" />
+<img alt="_images/dc91e93feb9d9a8b370c0a76a7fc12e7806a99178e8687749acc076e9f8bb55c.png" src="_images/dc91e93feb9d9a8b370c0a76a7fc12e7806a99178e8687749acc076e9f8bb55c.png" />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 0 Axes&gt;
 </pre></div>
 </div>
@@ -851,12 +1018,12 @@ In order to use this we first have to define what ranges the features should be 
 <p>We can also look at two features simultaneously with the <code class="docutils literal notranslate"><span class="pre">contour_plot</span></code> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pt</span><span class="o">.</span><span class="n">contour_plot</span><span class="p">(</span><span class="n">camry</span><span class="p">,</span> <span class="n">x_feature</span><span class="o">=</span><span class="s2">&quot;speed_mph&quot;</span><span class="p">,</span> <span class="n">y_feature</span><span class="o">=</span><span class="s2">&quot;grade_dec&quot;</span><span class="p">,</span> <span class="n">feature_ranges</span><span class="o">=</span><span class="n">feature_ranges</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pt</span><span class="o">.</span><span class="n">contour_plot</span><span class="p">(</span><span class="n">camry</span><span class="p">,</span> <span class="n">x_feature</span><span class="o">=</span><span class="s2">&quot;speed_mph&quot;</span><span class="p">,</span> <span class="n">y_feature</span><span class="o">=</span><span class="s2">&quot;grade_percent&quot;</span><span class="p">,</span> <span class="n">feature_ranges</span><span class="o">=</span><span class="n">feature_ranges</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/aabb62e85e1999ed713aa0b8c046853862747f61ef5a7f9b4d8e65e280c7e1e2.png" src="_images/aabb62e85e1999ed713aa0b8c046853862747f61ef5a7f9b4d8e65e280c7e1e2.png" />
+<img alt="_images/eab997b731bd2808ab7a236e0744fc397d031d98c652a0cbd0f112549ddaec89.png" src="_images/eab997b731bd2808ab7a236e0744fc397d031d98c652a0cbd0f112549ddaec89.png" />
 </div>
 </div>
 </section>
