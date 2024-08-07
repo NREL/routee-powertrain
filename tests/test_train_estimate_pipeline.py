@@ -9,12 +9,6 @@ import nrel.routee.powertrain as pt
 from nrel.routee.powertrain.core.model_config import PredictMethod
 from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
 from nrel.routee.powertrain.estimators.smart_core import SmartCoreEstimator
-
-# import sys
-# import os
-
-# # Ensure the local package is prioritized
-# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from nrel.routee.powertrain.estimators.ngboost_estimator import NGBoostEstimator
 
 from nrel.routee.powertrain.trainers.sklearn_random_forest import (

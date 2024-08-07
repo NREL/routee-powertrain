@@ -7,8 +7,7 @@ from ngboost.distns import Exponential, Normal
 
 from nrel.routee.powertrain.core.model_config import ModelConfig
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
-from nrel.routee.powertrain.estimators.onnx import ONNX_INPUT_NAME, ONNXEstimator
-from estimators.ngboost_estimator import NGBoostEstimator
+from nrel.routee.powertrain.estimators.ngboost_estimator import NGBoostEstimator
 from nrel.routee.powertrain.trainers.trainer import Trainer
 
 
