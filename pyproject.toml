@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nrel.routee.powertrain"
-version = "1.0.4"
+version = "1.1.1"
 description = "RouteE-Powertrain is a tool for predicting energy usage over a set of road links."
 readme = "README.md"
 authors = [{ name = "National Renewable Energy Laboratory" }]
@@ -17,8 +17,8 @@ classifiers = [
     "Programming Language :: Python",
     "Topic :: Scientific/Engineering",
 ]
-dependencies = ["pandas", "numpy", "onnx", "onnxruntime"]
-requires-python = ">=3.8,<3.12"
+dependencies = ["pandas", "numpy", "onnx", "onnxruntime==1.18.1"]
+requires-python = ">=3.8"
 
 [project.optional-dependencies]
 scikit = ["scikit-learn", "skl2onnx"]
@@ -28,6 +28,7 @@ dev = [
     "nrel.routee.powertrain[scikit]",
     "nrel.routee.powertrain[plot]",
     "nrel.routee.powertrain[ngboost]",
+    "tqdm",
     "pytest",
     "black",
     "mypy",
