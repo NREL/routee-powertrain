@@ -10,7 +10,7 @@ import pandas as pd
 from ngboost import NGBRegressor
 
 from nrel.routee.powertrain.core.features import DataColumn, FeatureSet, TargetSet
-from core.model_config import PredictMethod
+from nrel.routee.powertrain.core.model_config import PredictMethod
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 
 
