@@ -37,9 +37,6 @@ class NGBoostEstimator(Estimator):
         """
         filepath = Path(filepath)
 
-        # with filepath.open("wb") as f:
-        #     json.dump(self.to_dict(), f)
-
         with open(filepath, "w") as f:
             json.dump(self.to_dict(), f)
 
@@ -50,8 +47,7 @@ class NGBoostEstimator(Estimator):
         """
 
         model_base64 = in_dict.get("ngboost_model")
-        # model_base64 = in_dict
-        # print
+
         if model_base64 is None:
             raise ValueError(
                 "Model file must contain ngboost model at key: 'ngboost_model'"
@@ -68,15 +64,10 @@ class NGBoostEstimator(Estimator):
         joblib.dump(self.model, byte_stream)
         byte_stream.seek(0)
         model_base64 = base64.b64encode(byte_stream.read()).decode("utf-8")
-        # print((model_base64))
-
         out_dict = dict({"ngboost_model": model_base64})
-        # print(out_dict)
-        # out_dict = {'ngboost_model' :model_base64}
-        # print(out_dict)
+
         return out_dict
-        # return model_base64
-        # raise('Value Error')
+
 
     def predict(
         self,
@@ -103,9 +94,7 @@ class NGBoostEstimator(Estimator):
                 f"Predict method {predict_method} is not supported by NGBoostEstimator"
             )
         x = links_df[feature_name_list].values
-        # print(x)
 
-        # energy_pred_series = self.model.predict(x.tolist())
         energy_pred_series = self.model.pred_dist(x.tolist())
         energy_pred_mean = energy_pred_series.loc
         energy_pred_std = energy_pred_series.scale
@@ -113,12 +102,10 @@ class NGBoostEstimator(Estimator):
         energy_df = pd.DataFrame(index=links_df.index)
 
         if predict_method == PredictMethod.RAW:
-            # energy_pred = energy_pred_series
             energy_pred_mean = energy_pred_mean
             energy_pred_std = energy_pred_std
 
         elif predict_method == PredictMethod.RATE:
-            # energy_pred = energy_pred_series * links_df[distance_col]
             energy_pred_mean = energy_pred_mean * links_df[distance_col]
             energy_pred_std = energy_pred_std * links_df[distance_col]
 
@@ -126,8 +113,6 @@ class NGBoostEstimator(Estimator):
             raise ValueError(
                 f"Predict method {predict_method} is not supported by NGBoostEstimator"
             )
-
-        # energy_df[energy.name] = energy_pred
 
         energy_df[energy.name] = energy_pred_mean
         energy_df[energy.name + "_std"] = energy_pred_std
