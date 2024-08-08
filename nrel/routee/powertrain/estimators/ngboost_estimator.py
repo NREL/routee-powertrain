@@ -68,7 +68,6 @@ class NGBoostEstimator(Estimator):
 
         return out_dict
 
-
     def predict(
         self,
         links_df: pd.DataFrame,

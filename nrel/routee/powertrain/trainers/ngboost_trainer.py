@@ -14,14 +14,12 @@ from nrel.routee.powertrain.trainers.trainer import Trainer
 class NGBoostTrainer(Trainer):
     def __init__(
         self,
-
         n_estimators: int = 100,
         dist=Normal,
         verbose: bool = True,
         verbose_eval: int = 20,
         learning_rate: float = 0.01,
         random_state: int = 52,
-
     ):
 
         self.n_estimators = n_estimators
@@ -30,7 +28,6 @@ class NGBoostTrainer(Trainer):
         self.verbose_eval = verbose_eval
         self.learning_rate = learning_rate
         self.random_state = random_state
-
 
     def inner_train(
         self, features: pd.DataFrame, target: pd.DataFrame, config: ModelConfig
@@ -44,8 +41,7 @@ class NGBoostTrainer(Trainer):
             verbose=self.verbose,
             verbose_eval=self.verbose_eval,
             random_state=self.random_state,
-            learning_rate=self.learning_rate
-
+            learning_rate=self.learning_rate,
         )
         X = features.values
         y = target.values
