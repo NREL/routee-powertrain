@@ -22,10 +22,12 @@ requires-python = ">=3.8"
 
 [project.optional-dependencies]
 scikit = ["scikit-learn", "skl2onnx"]
+ngboost = ["ngboost"]
 plot = ["matplotlib"]
 dev = [
     "nrel.routee.powertrain[scikit]",
     "nrel.routee.powertrain[plot]",
+    "nrel.routee.powertrain[ngboost]",
     "tqdm",
     "pytest",
     "black",

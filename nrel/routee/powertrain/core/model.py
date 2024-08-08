@@ -20,6 +20,7 @@ from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTOR
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
 from nrel.routee.powertrain.estimators.smart_core import SmartCoreEstimator
+from nrel.routee.powertrain.estimators.ngboost_estimator import NGBoostEstimator
 
 from nrel.routee.powertrain.validation.feature_visualization import (
     contour_plot,
@@ -33,6 +34,7 @@ if TYPE_CHECKING:
 REGISTERED_ESTIMATORS = {
     "ONNXEstimator": ONNXEstimator,
     "SmartCoreEstimator": SmartCoreEstimator,
+    "NGBoostEstimator": NGBoostEstimator,
 }
 
 METADATA_SERIALIZATION_KEY = "metadata"
