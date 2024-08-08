@@ -9,7 +9,6 @@ from nrel.routee.powertrain.core.model_config import PredictMethod
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 
 
-# dwbd
 class SmartCoreEstimator(Estimator):
     def __init__(self, smartcore_rf) -> None:
         self.model = smartcore_rf
