@@ -14,7 +14,6 @@ from nrel.routee.powertrain.core.features import (
     feature_names_to_id,
 )
 
-from nrel.routee.powertrain.core.features import feature_id_to_names
 from nrel.routee.powertrain.core.metadata import Metadata
 from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
@@ -289,7 +288,7 @@ class Model:
         links_df: pd.DataFrame,
         feature_columns: Optional[List[str]] = None,
         distance_column: Optional[str] = None,
-        apply_real_world_adjustment: bool = False,
+        apply_real_world_adjustment: bool = True,
     ) -> pd.DataFrame:
         """
         Predict absolute energy consumption for each link
