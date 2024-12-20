@@ -77,6 +77,7 @@ def relative_percent_difference(target, target_pred) -> float:
 
     return mean_error
 
+
 def calculate_nll(target, target_pred, target_std) -> float:
     """
     Calculate Negative Log-Likelihood (NLL).
@@ -84,14 +85,18 @@ def calculate_nll(target, target_pred, target_std) -> float:
     nll = -np.mean(norm.logpdf(target, loc=target_pred, scale=target_std))
     return nll
 
+
 def calculate_crps(target, target_pred, target_std) -> float:
     """
     Calculate Continuous Ranked Probability Score (CRPS).
     """
     # CDF of the predicted distribution
     z = (target - target_pred) / target_std
-    crps = target_std * (z * (2 * norm.cdf(z) - 1) + 2 * norm.pdf(z) - 1 / np.sqrt(np.pi))
+    crps = target_std * (
+        z * (2 * norm.cdf(z) - 1) + 2 * norm.pdf(z) - 1 / np.sqrt(np.pi)
+    )
     return np.mean(crps)
+
 
 def calculate_picp(target, lower_bound, upper_bound) -> float:
     """
@@ -328,10 +333,16 @@ def compute_errors(
                 z = norm.ppf(1 - alpha / 2)  # z-score for 95% confidence
                 lower_bound = target_pred - z * target_std
                 upper_bound = target_pred + z * target_std
-                
-                errors['link_negative_log_likelihood'] = calculate_nll(target, target_pred, target_std)
-                errors['link_continuous_ranked_probability_score'] = calculate_crps(target, target_pred, target_std)
-                errors['link_prediction_interval_coverage_probability'] = round(calculate_picp(target, lower_bound, upper_bound),2)
+
+                errors["link_negative_log_likelihood"] = calculate_nll(
+                    target, target_pred, target_std
+                )
+                errors["link_continuous_ranked_probability_score"] = calculate_crps(
+                    target, target_pred, target_std
+                )
+                errors["link_prediction_interval_coverage_probability"] = round(
+                    calculate_picp(target, lower_bound, upper_bound), 2
+                )
 
             errors["net_error"] = net_energy_error(target, target_pred)
 
