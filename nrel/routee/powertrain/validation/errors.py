@@ -5,10 +5,12 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
+from scipy.stats import norm
 
 from nrel.routee.powertrain.core.features import FeatureSetId
 from nrel.routee.powertrain.core.model_config import ModelConfig
 from nrel.routee.powertrain.estimators.estimator_interface import Estimator
+from nrel.routee.powertrain.estimators.ngboost_estimator import NGBoostEstimator
 from nrel.routee.powertrain.core.real_world_adjustments import ADJUSTMENT_FACTORS
 
 REPR_ROWS = {
@@ -25,6 +27,9 @@ REPR_ROWS = {
     "trip_weighted_relative_percent_difference": "Trip Weighted RPD",
     "trip_root_mean_squared_error": "Trip RMSE",
     "trip_norm_root_mean_squared_error": "Trip Norm RMSE",
+    "link_negative_log_likelihood": "Link NLL",
+    "link_continuous_ranked_probability_score": "Link CRPS",
+    "link_prediction_interval_coverage_probability": "Link PICP",
 }
 
 
@@ -73,6 +78,35 @@ def relative_percent_difference(target, target_pred) -> float:
     return mean_error
 
 
+def calculate_nll(target, target_pred, target_std) -> float:
+    """
+    Calculate Negative Log-Likelihood (NLL).
+    """
+    nll = -np.mean(norm.logpdf(target, loc=target_pred, scale=target_std))
+    return nll
+
+
+def calculate_crps(target, target_pred, target_std) -> float:
+    """
+    Calculate Continuous Ranked Probability Score (CRPS).
+    """
+    # CDF of the predicted distribution
+    z = (target - target_pred) / target_std
+    crps = target_std * (
+        z * (2 * norm.cdf(z) - 1) + 2 * norm.pdf(z) - 1 / np.sqrt(np.pi)
+    )
+    return np.mean(crps)
+
+
+def calculate_picp(target, lower_bound, upper_bound) -> float:
+    """
+    Calculate Prediction Interval Coverage Probability (PICP).
+    """
+    inside_interval = (target >= lower_bound) & (target <= upper_bound)
+    picp = np.mean(inside_interval)
+    return picp
+
+
 def errors_to_html_lines(errors: Errors) -> List[str]:
     html_lines = []
     for error_name, error_value in errors.to_dict().items():
@@ -99,6 +133,10 @@ class Errors:
     trip_weighted_relative_percent_difference: Optional[float] = None
     trip_root_mean_squared_error: Optional[float] = None
     trip_norm_root_mean_squared_error: Optional[float] = None
+
+    link_negative_log_likelihood: Optional[float] = None
+    link_continuous_ranked_probability_score: Optional[float] = None
+    link_prediction_interval_coverage_probability: Optional[float] = None
 
     @classmethod
     def from_dict(self, d: dict) -> Errors:
@@ -287,6 +325,23 @@ def compute_errors(
                 errors["trip_root_mean_squared_error"] = t_rmse
                 errors["trip_norm_root_mean_squared_error"] = t_rmse / (
                     sum(gb[energy_name]) / len(gb)
+                )
+
+            if isinstance(estimator, NGBoostEstimator):
+                target_std = np.array(predictions[energy_name + "_std"])
+                alpha = 0.05
+                z = norm.ppf(1 - alpha / 2)  # z-score for 95% confidence
+                lower_bound = target_pred - z * target_std
+                upper_bound = target_pred + z * target_std
+
+                errors["link_negative_log_likelihood"] = calculate_nll(
+                    target, target_pred, target_std
+                )
+                errors["link_continuous_ranked_probability_score"] = calculate_crps(
+                    target, target_pred, target_std
+                )
+                errors["link_prediction_interval_coverage_probability"] = round(
+                    calculate_picp(target, lower_bound, upper_bound), 2
                 )
 
             errors["net_error"] = net_energy_error(target, target_pred)
