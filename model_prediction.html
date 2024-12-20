@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -36,10 +38,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -64,6 +67,7 @@
     <link rel="prev" title="What is RouteE?" href="what_is_routee.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -79,19 +83,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -99,7 +92,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -107,8 +99,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -124,7 +116,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -154,21 +147,17 @@
     
     
     <img src="_static/routeelogo.png" class="logo__image only-light" alt="My sample book - Home"/>
-    <script>document.write(`<img src="_static/routeelogo.png" class="logo__image only-dark" alt="My sample book - Home"/>`);</script>
+    <img src="_static/routeelogo.png" class="logo__image only-dark pst-js-only" alt="My sample book - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -202,9 +191,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -348,24 +342,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -769,23 +755,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.000882</td>
+      <td>0.001028</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.000216</td>
+      <td>0.000252</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.000149</td>
+      <td>0.000174</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.000853</td>
+      <td>0.000995</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.000906</td>
+      <td>0.001056</td>
     </tr>
     <tr>
       <th>...</th>
@@ -793,23 +779,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
     </tr>
     <tr>
       <th>120</th>
-      <td>0.000352</td>
+      <td>0.000411</td>
     </tr>
     <tr>
       <th>121</th>
-      <td>0.000660</td>
+      <td>0.000769</td>
     </tr>
     <tr>
       <th>122</th>
-      <td>0.000627</td>
+      <td>0.000731</td>
     </tr>
     <tr>
       <th>123</th>
-      <td>0.000616</td>
+      <td>0.000719</td>
     </tr>
     <tr>
       <th>124</th>
-      <td>0.000760</td>
+      <td>0.000886</td>
     </tr>
   </tbody>
 </table>
@@ -848,23 +834,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.000939</td>
+      <td>0.001095</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.000241</td>
+      <td>0.000281</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.000158</td>
+      <td>0.000185</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.000829</td>
+      <td>0.000967</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.000982</td>
+      <td>0.001145</td>
     </tr>
     <tr>
       <th>...</th>
@@ -872,23 +858,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
     </tr>
     <tr>
       <th>120</th>
-      <td>0.000379</td>
+      <td>0.000442</td>
     </tr>
     <tr>
       <th>121</th>
-      <td>0.000895</td>
+      <td>0.001043</td>
     </tr>
     <tr>
       <th>122</th>
-      <td>0.000730</td>
+      <td>0.000851</td>
     </tr>
     <tr>
       <th>123</th>
-      <td>0.000717</td>
+      <td>0.000836</td>
     </tr>
     <tr>
       <th>124</th>
-      <td>0.001031</td>
+      <td>0.001202</td>
     </tr>
   </tbody>
 </table>
@@ -1002,14 +988,14 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-08-06 21:34:57,203 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: In FT2Font: Can not load face (unknown file format; error code 0x2)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-12-20 20:52:35,298 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-08-06 21:34:57,278 [INFO] - generated new fontManager
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-12-20 20:52:35,346 [INFO] - generated new fontManager
 </pre></div>
 </div>
-<img alt="_images/6fb1daa9c4d6257cc93438849370b5ee86c648932c531dfe647e634f9af17826.png" src="_images/6fb1daa9c4d6257cc93438849370b5ee86c648932c531dfe647e634f9af17826.png" />
-<img alt="_images/dc91e93feb9d9a8b370c0a76a7fc12e7806a99178e8687749acc076e9f8bb55c.png" src="_images/dc91e93feb9d9a8b370c0a76a7fc12e7806a99178e8687749acc076e9f8bb55c.png" />
+<img alt="_images/2e96d1c7bd51f075251630cafd5f6ad9c695cd9a1493c3fd98c6a9a185f08cd6.png" src="_images/2e96d1c7bd51f075251630cafd5f6ad9c695cd9a1493c3fd98c6a9a185f08cd6.png" />
+<img alt="_images/e4a0e83d00a1f2f5890adf111502bf3b8d799dc9ce5362fbb9c2d2e2fc2f307f.png" src="_images/e4a0e83d00a1f2f5890adf111502bf3b8d799dc9ce5362fbb9c2d2e2fc2f307f.png" />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 0 Axes&gt;
 </pre></div>
 </div>
@@ -1023,7 +1009,7 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/eab997b731bd2808ab7a236e0744fc397d031d98c652a0cbd0f112549ddaec89.png" src="_images/eab997b731bd2808ab7a236e0744fc397d031d98c652a0cbd0f112549ddaec89.png" />
+<img alt="_images/63f3fbd8bab0fba65cd51d36d4ca5f9e789b5ab4b8fdf56d8162b3940c8d8210.png" src="_images/63f3fbd8bab0fba65cd51d36d4ca5f9e789b5ab4b8fdf56d8162b3940c8d8210.png" />
 </div>
 </div>
 </section>
@@ -1084,7 +1070,8 @@ In order to use this we first have to define what ranges the features should be 
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1142,8 +1129,8 @@ By The Jupyter Book Community
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

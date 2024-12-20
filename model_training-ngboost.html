@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Model Training (Smartcore) &#8212; My sample book</title>
+    <title>Model Training (NGBoost) &#8212; My sample book</title>
   
   
   
@@ -60,7 +60,7 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'model_training-smartcore';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'model_training-ngboost';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -259,7 +259,7 @@
       
       
       
-      <li><a href="https://github.com/NREL/routee-powertrain/issues/new?title=Issue%20on%20page%20%2Fmodel_training-smartcore.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/routee-powertrain/issues/new?title=Issue%20on%20page%20%2Fmodel_training-ngboost.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -289,7 +289,7 @@
       
       
       
-      <li><a href="_sources/model_training-smartcore.ipynb" target="_blank"
+      <li><a href="_sources/model_training-ngboost.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -365,7 +365,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Model Training (Smartcore)</h1>
+    <h1>Model Training (NGBoost)</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -387,31 +387,30 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="model-training-smartcore">
-<h1>Model Training (Smartcore)<a class="headerlink" href="#model-training-smartcore" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="model-training-ngboost">
+<h1>Model Training (NGBoost)<a class="headerlink" href="#model-training-ngboost" title="Link to this heading">#</a></h1>
 <p>If you have your own ground truth energy data, you can train a custom RouteE powertrain model.</p>
 <p>You'll want to make sure you've installed the proper dependencies that are not installed by default when you do a pip install.</p>
-<p>In this example, we'll use the rust SmartCore trainer and estimator which you can install by doing:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>rust
+<p>In this example, we'll use the NGBoost trainer and estimator which you can install by doing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ngboost
 </pre></div>
 </div>
-<p>Then, you'll have to build the python rust extension for powertrain:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>maturin
-
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/NREL/routee-powertrain.git
-<span class="nb">cd</span><span class="w"> </span>routee-powertrain/rust
-maturin<span class="w"> </span>develop<span class="w"> </span>--release
-</pre></div>
-</div>
-<p>This will install the <code class="docutils literal notranslate"><span class="pre">powertrain_rust</span></code> extension and should support usage of the following trainers:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">SmartcoreRandomForestTrainer</span></code></p></li>
-</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nrel.routee.powertrain</span> <span class="k">as</span> <span class="nn">pt</span>
 
-<span class="kn">from</span> <span class="nn">nrel.routee.powertrain.trainers.smartcore_random_forest</span> <span class="kn">import</span> <span class="n">SmartcoreRandomForestTrainer</span>
+<span class="kn">from</span> <span class="nn">nrel.routee.powertrain.trainers.ngboost_trainer</span> <span class="kn">import</span> <span class="n">NGBoostTrainer</span>
+<span class="kn">from</span> <span class="nn">nrel.routee.powertrain.trainers.sklearn_random_forest</span> <span class="kn">import</span> <span class="n">SklearnRandomForestTrainer</span>
+
+<span class="kn">from</span> <span class="nn">nrel.routee.powertrain.estimators.ngboost_estimator</span> <span class="kn">import</span> <span class="n">NGBoostEstimator</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">r2_score</span>
 </pre></div>
 </div>
 </div>
@@ -429,7 +428,11 @@ You can access this dataset yourself <a class="reference external" href="https:/
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the data</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../tests/routee-powertrain-test-data/sample_train_data.csv&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;gallons_fastsim&#39;</span><span class="p">:</span> <span class="s1">&#39;gge&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -455,7 +458,7 @@ You can access this dataset yourself <a class="reference external" href="https:/
       <th>speed_mph</th>
       <th>grade_dec</th>
       <th>miles</th>
-      <th>gallons_fastsim</th>
+      <th>gge</th>
       <th>trip_id</th>
       <th>road_class</th>
     </tr>
@@ -546,7 +549,7 @@ You can access this dataset yourself <a class="reference external" href="https:/
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">energy_target</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">DataColumn</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gallons_fastsim&quot;</span><span class="p">,</span> 
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gge&quot;</span><span class="p">,</span> 
     <span class="n">units</span><span class="o">=</span><span class="s2">&quot;gallons_gasoline&quot;</span><span class="p">,</span> 
 <span class="p">)</span>
 </pre></div>
@@ -578,7 +581,7 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
     <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">,</span>
     <span class="n">target</span><span class="o">=</span><span class="n">energy_target</span><span class="p">,</span>
     <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-    <span class="c1">#predict_method=predict_method</span>
+    <span class="n">predict_method</span><span class="o">=</span><span class="n">predict_method</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -587,7 +590,7 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 <p>Now we build the random forest trainer and give it the desired parameters</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">SmartcoreRandomForestTrainer</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">NGBoostTrainer</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -600,41 +603,35 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.15/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/smartcore_random_forest.py:17,</span> in <span class="ni">SmartcoreRandomForestTrainer.inner_train</span><span class="nt">(self, features, target, config)</span>
-<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">17</span>     <span class="kn">from</span> <span class="nn">powertrain_rust</span> <span class="kn">import</span> <span class="n">RustRandomForest</span>
-<span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;powertrain_rust&#39;
-
-<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
-
-<span class="ne">ImportError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">test_vehicle</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.15/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/trainer.py:56,</span> in <span class="ni">Trainer.train</span><span class="nt">(self, data, config)</span>
-<span class="g g-Whitespace">     </span><span class="mi">54</span>         <span class="n">name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distance_name</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">55</span>     <span class="n">sub_features</span> <span class="o">=</span> <span class="n">all_features</span><span class="p">[</span><span class="n">name_list</span><span class="p">]</span>
-<span class="ne">---&gt; </span><span class="mi">56</span>     <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_train</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">57</span>         <span class="n">features</span><span class="o">=</span><span class="n">sub_features</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span>
-<span class="g g-Whitespace">     </span><span class="mi">58</span>     <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">59</span>     <span class="n">estimators</span><span class="p">[</span><span class="n">feature_set</span><span class="o">.</span><span class="n">features_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator</span>
-<span class="g g-Whitespace">     </span><span class="mi">61</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">Metadata</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.15/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/smartcore_random_forest.py:19,</span> in <span class="ni">SmartcoreRandomForestTrainer.inner_train</span><span class="nt">(self, features, target, config)</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="kn">from</span> <span class="nn">powertrain_rust</span> <span class="kn">import</span> <span class="n">RustRandomForest</span>
-<span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">19</span>     <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">20</span>         <span class="s2">&quot;Please install powertrain_rust to use &quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">21</span>         <span class="s2">&quot;the SmartCoreRandomForest estimator.&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span>     <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">24</span> <span class="n">x</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">25</span> <span class="n">y</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">values</span>
-
-<span class="ne">ImportError</span>: Please install powertrain_rust to use the SmartCoreRandomForest estimator.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[iter 0] loss=-1.8281 val_loss=0.0000 scale=2.0000 norm=0.9229
+[iter 20] loss=-2.0561 val_loss=0.0000 scale=2.0000 norm=0.6237
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[iter 40] loss=-2.1728 val_loss=0.0000 scale=2.0000 norm=0.6440
+[iter 60] loss=-2.2729 val_loss=0.0000 scale=2.0000 norm=0.6562
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[iter 80] loss=-2.3627 val_loss=0.0000 scale=2.0000 norm=0.6721
+[iter 0] loss=-1.8281 val_loss=0.0000 scale=1.0000 norm=0.4615
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[iter 20] loss=-1.9869 val_loss=0.0000 scale=1.0000 norm=0.3494
+[iter 40] loss=-2.1154 val_loss=0.0000 scale=2.0000 norm=0.6274
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[iter 60] loss=-2.2324 val_loss=0.0000 scale=2.0000 norm=0.6587
+[iter 80] loss=-2.3335 val_loss=0.0000 scale=2.0000 norm=0.6733
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[iter 0] loss=-1.8281 val_loss=0.0000 scale=1.0000 norm=0.4615
+[iter 20] loss=-1.9869 val_loss=0.0000 scale=1.0000 norm=0.3494
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[iter 40] loss=-2.1156 val_loss=0.0000 scale=2.0000 norm=0.6275
+[iter 60] loss=-2.2329 val_loss=0.0000 scale=2.0000 norm=0.6575
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[iter 80] loss=-2.3344 val_loss=0.0000 scale=2.0000 norm=0.6724
 </pre></div>
 </div>
 </div>
@@ -647,7 +644,68 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><table border="1" style="border-collapse: collapse;"><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>speed_mph</td></tr><tr><td>Target</td><td>gallons_fastsim</td></tr><tr><td>Link RMSE</td><td>0.00158</td></tr><tr><td>Link Norm RMSE</td><td>0.99731</td></tr><tr><td>Link Weighted RPD</td><td>0.82687</td></tr><tr><td>Net Error</td><td>-0.33547</td></tr><tr><td>Actual Dist/Energy</td><td>18.87243</td></tr><tr><td>Predicted Dist/Energy</td><td>28.39965</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>24.35648</td></tr><tr><td>Trip RPD</td><td>0.40308</td></tr><tr><td>Trip Weighted RPD</td><td>0.40308</td></tr><tr><td>Trip RMSE</td><td>0.01380</td></tr><tr><td>Trip Norm RMSE</td><td>0.33547</td></tr><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>grade_dec&speed_mph</td></tr><tr><td>Target</td><td>gallons_fastsim</td></tr><tr><td>Link RMSE</td><td>0.00136</td></tr><tr><td>Link Norm RMSE</td><td>0.85802</td></tr><tr><td>Link Weighted RPD</td><td>0.66681</td></tr><tr><td>Net Error</td><td>-0.24353</td></tr><tr><td>Actual Dist/Energy</td><td>18.87243</td></tr><tr><td>Predicted Dist/Energy</td><td>24.94792</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>21.39615</td></tr><tr><td>Trip RPD</td><td>0.27729</td></tr><tr><td>Trip Weighted RPD</td><td>0.27729</td></tr><tr><td>Trip RMSE</td><td>0.01002</td></tr><tr><td>Trip Norm RMSE</td><td>0.24353</td></tr><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>grade_dec&road_class&speed_mph</td></tr><tr><td>Target</td><td>gallons_fastsim</td></tr><tr><td>Link RMSE</td><td>0.00128</td></tr><tr><td>Link Norm RMSE</td><td>0.80778</td></tr><tr><td>Link Weighted RPD</td><td>0.65296</td></tr><tr><td>Net Error</td><td>-0.25203</td></tr><tr><td>Actual Dist/Energy</td><td>18.87243</td></tr><tr><td>Predicted Dist/Energy</td><td>25.23138</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>21.63926</td></tr><tr><td>Trip RPD</td><td>0.28836</td></tr><tr><td>Trip Weighted RPD</td><td>0.28836</td></tr><tr><td>Trip RMSE</td><td>0.01037</td></tr><tr><td>Trip Norm RMSE</td><td>0.25203</td></tr></table></div></div>
+<div class="output text_html"><table border="1" style="border-collapse: collapse;"><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>speed_mph</td></tr><tr><td>Target</td><td>gge</td></tr><tr><td>Link RMSE</td><td>0.00147</td></tr><tr><td>Link Norm RMSE</td><td>0.92759</td></tr><tr><td>Link Weighted RPD</td><td>0.76701</td></tr><tr><td>Net Error</td><td>-0.29279</td></tr><tr><td>Actual Dist/Energy</td><td>18.87243</td></tr><tr><td>Predicted Dist/Energy</td><td>26.68559</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>22.88644</td></tr><tr><td>Trip RPD</td><td>0.34300</td></tr><tr><td>Trip Weighted RPD</td><td>0.34300</td></tr><tr><td>Trip RMSE</td><td>0.01204</td></tr><tr><td>Trip Norm RMSE</td><td>0.29279</td></tr><tr><td>Link NLL</td><td>35.87225</td></tr><tr><td>Link CRPS</td><td>0.00074</td></tr><tr><td>Link PICP</td><td>0.77000</td></tr><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>grade_dec&speed_mph</td></tr><tr><td>Target</td><td>gge</td></tr><tr><td>Link RMSE</td><td>0.00134</td></tr><tr><td>Link Norm RMSE</td><td>0.84574</td></tr><tr><td>Link Weighted RPD</td><td>0.66150</td></tr><tr><td>Net Error</td><td>-0.22083</td></tr><tr><td>Actual Dist/Energy</td><td>18.87243</td></tr><tr><td>Predicted Dist/Energy</td><td>24.22131</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>20.77299</td></tr><tr><td>Trip RPD</td><td>0.24824</td></tr><tr><td>Trip Weighted RPD</td><td>0.24824</td></tr><tr><td>Trip RMSE</td><td>0.00908</td></tr><tr><td>Trip Norm RMSE</td><td>0.22083</td></tr><tr><td>Link NLL</td><td>28.80077</td></tr><tr><td>Link CRPS</td><td>0.00067</td></tr><tr><td>Link PICP</td><td>0.77000</td></tr><tr><td colspan='2' style='border-bottom: 2px solid black;text-align: center;'><b>Estimator Errors</b></td></tr><tr><td>Feature Set ID</td><td>grade_dec&road_class&speed_mph</td></tr><tr><td>Target</td><td>gge</td></tr><tr><td>Link RMSE</td><td>0.00134</td></tr><tr><td>Link Norm RMSE</td><td>0.84576</td></tr><tr><td>Link Weighted RPD</td><td>0.66152</td></tr><tr><td>Net Error</td><td>-0.22085</td></tr><tr><td>Actual Dist/Energy</td><td>18.87243</td></tr><tr><td>Predicted Dist/Energy</td><td>24.22193</td></tr><tr><td>Real World Predicted Dist/Energy</td><td>20.77352</td></tr><tr><td>Trip RPD</td><td>0.24827</td></tr><tr><td>Trip Weighted RPD</td><td>0.24827</td></tr><tr><td>Trip RMSE</td><td>0.00908</td></tr><tr><td>Trip Norm RMSE</td><td>0.22085</td></tr><tr><td>Link NLL</td><td>29.10197</td></tr><tr><td>Link CRPS</td><td>0.00067</td></tr><tr><td>Link PICP</td><td>0.77000</td></tr></table></div></div>
+</div>
+<p>To use this model to predict results on a dataframe, use the following code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result_df</span> <span class="o">=</span> <span class="n">test_vehicle</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;grade_dec&#39;</span><span class="p">,</span> <span class="s1">&#39;speed_mph&#39;</span><span class="p">,</span><span class="s1">&#39;road_class&#39;</span><span class="p">],</span> <span class="s1">&#39;miles&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">result_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>gge</th>
+      <th>gge_std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.000852</td>
+      <td>0.000296</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.000152</td>
+      <td>0.000065</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.000171</td>
+      <td>0.000106</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.001199</td>
+      <td>0.000789</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.001252</td>
+      <td>0.000776</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <p>While this training dataset is far too small to draw real conclusions, these metrics can give you an idea of how well the model performed on a holdout test set (20% of the training data as we specificed by the <code class="docutils literal notranslate"><span class="pre">test_size</span></code> parameter in the configuration.</p>
 <p>Now, we can write the model to a json file that can be loaded later:</p>
@@ -657,6 +715,14 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_vehicle</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="s2">&quot;Test_Vehicle.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To retrieve a saved model from a json file for further use can be done by doing the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_vehicle</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;Test_Vehicle.json&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -672,9 +738,9 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.smart_core.SmartCoreEstimator at 0x127cc7750&gt;,
- &#39;grade_dec&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.smart_core.SmartCoreEstimator at 0x127d50690&gt;,
- &#39;grade_dec&amp;road_class&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.smart_core.SmartCoreEstimator at 0x127d50850&gt;}
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7fea76ad7fd0&gt;,
+ &#39;grade_dec&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7fea76a959f0&gt;,
+ &#39;grade_dec&amp;road_class&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7fea74913fd0&gt;}
 </pre></div>
 </div>
 </div>
