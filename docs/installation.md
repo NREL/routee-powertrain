@@ -1,4 +1,5 @@
 # Installation
+(In case `pip` is unavailable, use `pip3`)
 
 ## From PyPI
 
@@ -38,7 +39,15 @@ This should support usage of the following trainers:
 ### Rust Smartcore
 
 The rust smartcore training pipeline requires a rust compiler to be installed on your system.
-One way to do this is to use Anaconda:
+One way to do this is to use [Anaconda](https://docs.anaconda.com/anaconda/install/):
+
+Create a conda virtual environment as `routee`:
+
+```bash
+conda create --name routee
+conda init
+conda activate routee
+```
 
 ```bash
 conda install rust
