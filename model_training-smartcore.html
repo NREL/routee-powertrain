@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -409,9 +409,9 @@ maturin<span class="w"> </span>develop<span class="w"> </span>--release
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nrel.routee.powertrain</span> <span class="k">as</span> <span class="nn">pt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">nrel.routee.powertrain</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pt</span>
 
-<span class="kn">from</span> <span class="nn">nrel.routee.powertrain.trainers.smartcore_random_forest</span> <span class="kn">import</span> <span class="n">SmartcoreRandomForestTrainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nrel.routee.powertrain.trainers.smartcore_random_forest</span><span class="w"> </span><span class="kn">import</span> <span class="n">SmartcoreRandomForestTrainer</span>
 </pre></div>
 </div>
 </div>
@@ -420,7 +420,7 @@ maturin<span class="w"> </span>develop<span class="w"> </span>--release
 You can access this dataset yourself <a class="reference external" href="https://github.com/NREL/routee-powertrain/blob/main/tests/routee-powertrain-test-data/sample_train_data.csv">here</a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../tests/routee-powertrain-test-data/sample_train_data.csv&quot;</span><span class="p">)</span>
 </pre></div>
@@ -602,9 +602,9 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.15/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/smartcore_random_forest.py:17,</span> in <span class="ni">SmartcoreRandomForestTrainer.inner_train</span><span class="nt">(self, features, target, config)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.10.16/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/smartcore_random_forest.py:17,</span> in <span class="ni">SmartcoreRandomForestTrainer.inner_train</span><span class="nt">(self, features, target, config)</span>
 <span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">17</span>     <span class="kn">from</span> <span class="nn">powertrain_rust</span> <span class="kn">import</span> <span class="n">RustRandomForest</span>
+<span class="ne">---&gt; </span><span class="mi">17</span>     <span class="kn">from</span><span class="w"> </span><span class="nn">powertrain_rust</span><span class="w"> </span><span class="kn">import</span> <span class="n">RustRandomForest</span>
 <span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
 
 <span class="ne">ModuleNotFoundError</span>: No module named &#39;powertrain_rust&#39;
@@ -615,7 +615,7 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">test_vehicle</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.15/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/trainer.py:56,</span> in <span class="ni">Trainer.train</span><span class="nt">(self, data, config)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.10.16/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/trainer.py:56,</span> in <span class="ni">Trainer.train</span><span class="nt">(self, data, config)</span>
 <span class="g g-Whitespace">     </span><span class="mi">54</span>         <span class="n">name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distance_name</span><span class="p">)</span>
 <span class="g g-Whitespace">     </span><span class="mi">55</span>     <span class="n">sub_features</span> <span class="o">=</span> <span class="n">all_features</span><span class="p">[</span><span class="n">name_list</span><span class="p">]</span>
 <span class="ne">---&gt; </span><span class="mi">56</span>     <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_train</span><span class="p">(</span>
@@ -624,8 +624,8 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 <span class="g g-Whitespace">     </span><span class="mi">59</span>     <span class="n">estimators</span><span class="p">[</span><span class="n">feature_set</span><span class="o">.</span><span class="n">features_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator</span>
 <span class="g g-Whitespace">     </span><span class="mi">61</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">Metadata</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.15/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/smartcore_random_forest.py:19,</span> in <span class="ni">SmartcoreRandomForestTrainer.inner_train</span><span class="nt">(self, features, target, config)</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="kn">from</span> <span class="nn">powertrain_rust</span> <span class="kn">import</span> <span class="n">RustRandomForest</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.10.16/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/smartcore_random_forest.py:19,</span> in <span class="ni">SmartcoreRandomForestTrainer.inner_train</span><span class="nt">(self, features, target, config)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="kn">from</span><span class="w"> </span><span class="nn">powertrain_rust</span><span class="w"> </span><span class="kn">import</span> <span class="n">RustRandomForest</span>
 <span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
 <span class="ne">---&gt; </span><span class="mi">19</span>     <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
 <span class="g g-Whitespace">     </span><span class="mi">20</span>         <span class="s2">&quot;Please install powertrain_rust to use &quot;</span>

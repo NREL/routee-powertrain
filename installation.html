@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -395,6 +395,7 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h1>
+<p>(In case <code class="docutils literal notranslate"><span class="pre">pip</span></code> is unavailable, use <code class="docutils literal notranslate"><span class="pre">pip3</span></code>)</p>
 <section id="from-pypi">
 <h2>From PyPI<a class="headerlink" href="#from-pypi" title="Link to this heading">#</a></h2>
 <p>To install the base package for model prediction, we recommend you use <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
@@ -429,7 +430,13 @@ Each training pipeline has its own set of dependencies.</p>
 <section id="rust-smartcore">
 <h3>Rust Smartcore<a class="headerlink" href="#rust-smartcore" title="Link to this heading">#</a></h3>
 <p>The rust smartcore training pipeline requires a rust compiler to be installed on your system.
-One way to do this is to use Anaconda:</p>
+One way to do this is to use <a class="reference external" href="https://docs.anaconda.com/anaconda/install/">Anaconda</a>:</p>
+<p>Create a conda virtual environment as <code class="docutils literal notranslate"><span class="pre">routee</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>routee
+conda<span class="w"> </span>init
+conda<span class="w"> </span>activate<span class="w"> </span>routee
+</pre></div>
+</div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>rust
 </pre></div>
 </div>

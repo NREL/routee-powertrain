@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -397,20 +397,20 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nrel.routee.powertrain</span> <span class="k">as</span> <span class="nn">pt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">nrel.routee.powertrain</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pt</span>
 
-<span class="kn">from</span> <span class="nn">nrel.routee.powertrain.trainers.ngboost_trainer</span> <span class="kn">import</span> <span class="n">NGBoostTrainer</span>
-<span class="kn">from</span> <span class="nn">nrel.routee.powertrain.trainers.sklearn_random_forest</span> <span class="kn">import</span> <span class="n">SklearnRandomForestTrainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nrel.routee.powertrain.trainers.ngboost_trainer</span><span class="w"> </span><span class="kn">import</span> <span class="n">NGBoostTrainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nrel.routee.powertrain.trainers.sklearn_random_forest</span><span class="w"> </span><span class="kn">import</span> <span class="n">SklearnRandomForestTrainer</span>
 
-<span class="kn">from</span> <span class="nn">nrel.routee.powertrain.estimators.ngboost_estimator</span> <span class="kn">import</span> <span class="n">NGBoostEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nrel.routee.powertrain.estimators.ngboost_estimator</span><span class="w"> </span><span class="kn">import</span> <span class="n">NGBoostEstimator</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">r2_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">r2_score</span>
 </pre></div>
 </div>
 </div>
@@ -419,7 +419,7 @@
 You can access this dataset yourself <a class="reference external" href="https://github.com/NREL/routee-powertrain/blob/main/tests/routee-powertrain-test-data/sample_train_data.csv">here</a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../tests/routee-powertrain-test-data/sample_train_data.csv&quot;</span><span class="p">)</span>
 </pre></div>
@@ -738,9 +738,9 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7fea76ad7fd0&gt;,
- &#39;grade_dec&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7fea76a959f0&gt;,
- &#39;grade_dec&amp;road_class&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7fea74913fd0&gt;}
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7fb85e36bf10&gt;,
+ &#39;grade_dec&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7fb85e3a3fd0&gt;,
+ &#39;grade_dec&amp;road_class&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7fb85e36bb50&gt;}
 </pre></div>
 </div>
 </div>
