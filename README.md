@@ -88,7 +88,7 @@ links_df = pd.DataFrame(
     {
         "distance": [0.1, 0.2, 0.3], # miles
         "speed_mph": [30, 40, 50], # mph
-        "grade_percent": [-0.05, 0, 0.05], # decimal
+        "grade_percent": [-0.5, 0, 0.5], # percent
     }
 )
 
