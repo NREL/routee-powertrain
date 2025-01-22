@@ -28,6 +28,12 @@ pip install pip --upgrade
 pip install nrel.routee.powertrain
 ```
 
+If `pip` is unavailable, use `pip3`:
+```bash
+pip3 install pip --upgrade
+pip3 install nrel.routee.powertrain
+```
+
 (For more detailed instructions, see [here](https://nrel.github.io/routee-powertrain/installation.html))
 
 Then, you can import the package and use a pre-trained model from the RouteE model catalog:
@@ -80,9 +86,9 @@ print(model)
 # Predict energy consumption for a set of road links
 links_df = pd.DataFrame(
     {
-        "miles": [0.1, 0.2, 0.3], # miles
+        "distance": [0.1, 0.2, 0.3], # miles
         "speed_mph": [30, 40, 50], # mph
-        "grade_dec": [-0.05, 0, 0.05], # decimal
+        "grade_percent": [-0.5, 0, 0.5], # percent
     }
 )
 
