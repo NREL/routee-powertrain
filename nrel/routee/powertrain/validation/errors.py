@@ -109,11 +109,12 @@ def calculate_picp(target, lower_bound, upper_bound) -> float:
     picp = np.mean(inside_interval)
     return picp
 
+
 def calculate_combined_sd(target_std) -> float:
     """
     Calculate the combined standard deviation of the target.
     """
-    combined_variance = (target_std ** 2).sum()
+    combined_variance = (target_std**2).sum()
     combined_sd = np.sqrt(combined_variance)
     return combined_sd
 
@@ -363,7 +364,11 @@ def compute_errors(
                     test_df["energy_pred"] = target_pred
                     test_df["energy_pred_std"] = target_std
                     gb = test_df.groupby(trip_column).agg(
-                        {energy_name: "sum", "energy_pred": "sum", "energy_pred_std": calculate_combined_sd}
+                        {
+                            energy_name: "sum",
+                            "energy_pred": "sum",
+                            "energy_pred_std": calculate_combined_sd,
+                        }
                     )
                     lower_bound = gb["energy_pred"] - z * gb["energy_pred_std"]
                     upper_bound = gb["energy_pred"] + z * gb["energy_pred_std"]
