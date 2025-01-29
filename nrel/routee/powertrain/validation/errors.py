@@ -30,6 +30,9 @@ REPR_ROWS = {
     "link_negative_log_likelihood": "Link NLL",
     "link_continuous_ranked_probability_score": "Link CRPS",
     "link_prediction_interval_coverage_probability": "Link PICP",
+    "trip_negative_log_likelihood": "Trip NLL",
+    "trip_continuous_ranked_probability_score": "Trip CRPS",
+    "trip_prediction_interval_coverage_probability": "Trip PICP",
 }
 
 
@@ -107,6 +110,15 @@ def calculate_picp(target, lower_bound, upper_bound) -> float:
     return picp
 
 
+def calculate_combined_sd(target_std) -> float:
+    """
+    Calculate the combined standard deviation of the target.
+    """
+    combined_variance = (target_std**2).sum()
+    combined_sd = np.sqrt(combined_variance)
+    return combined_sd
+
+
 def errors_to_html_lines(errors: Errors) -> List[str]:
     html_lines = []
     for error_name, error_value in errors.to_dict().items():
@@ -137,6 +149,10 @@ class Errors:
     link_negative_log_likelihood: Optional[float] = None
     link_continuous_ranked_probability_score: Optional[float] = None
     link_prediction_interval_coverage_probability: Optional[float] = None
+
+    trip_negative_log_likelihood: Optional[float] = None
+    trip_continuous_ranked_probability_score: Optional[float] = None
+    trip_prediction_interval_coverage_probability: Optional[float] = None
 
     @classmethod
     def from_dict(self, d: dict) -> Errors:
@@ -343,6 +359,29 @@ def compute_errors(
                 errors["link_prediction_interval_coverage_probability"] = round(
                     calculate_picp(target, lower_bound, upper_bound), 2
                 )
+
+                if trip_column in test_df.columns:
+                    test_df["energy_pred"] = target_pred
+                    test_df["energy_pred_std"] = target_std
+                    gb = test_df.groupby(trip_column).agg(
+                        {
+                            energy_name: "sum",
+                            "energy_pred": "sum",
+                            "energy_pred_std": calculate_combined_sd,
+                        }
+                    )
+                    lower_bound = gb["energy_pred"] - z * gb["energy_pred_std"]
+                    upper_bound = gb["energy_pred"] + z * gb["energy_pred_std"]
+
+                    errors["trip_negative_log_likelihood"] = calculate_nll(
+                        gb[energy_name], gb["energy_pred"], gb["energy_pred_std"]
+                    )
+                    errors["trip_continuous_ranked_probability_score"] = calculate_crps(
+                        gb[energy_name], gb["energy_pred"], gb["energy_pred_std"]
+                    )
+                    errors["trip_prediction_interval_coverage_probability"] = round(
+                        calculate_picp(gb[energy_name], lower_bound, upper_bound), 2
+                    )
 
             errors["net_error"] = net_energy_error(target, target_pred)
 
