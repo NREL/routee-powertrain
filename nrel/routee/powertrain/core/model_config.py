@@ -95,8 +95,9 @@ class ModelConfig:
         feature_set_ids = [f.features_id for f in self.feature_sets]
         if len(feature_set_ids) != len(set(feature_set_ids)):
             raise ValueError(
-                "Feature sets must have unique ids. "
-                "Found duplicate ids: {}".format(feature_set_ids)
+                "Feature sets must have unique ids. Found duplicate ids: {}".format(
+                    feature_set_ids
+                )
             )
 
         # now check all the types

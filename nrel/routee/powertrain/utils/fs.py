@@ -13,7 +13,7 @@ def read(path: Path):
         return fp.read()
 
 
-def get_version(path: Path = root() / "__init__.py"):
+def get_version(path: Path = root() / "__about__.py"):
     with path.open("r") as fp:
         for line in fp.readlines():
             if line.startswith("__version__"):

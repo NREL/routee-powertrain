@@ -1,8 +1,7 @@
-from enum import Enum
 import pandas as pd
 
 from ngboost import NGBRegressor
-from ngboost.distns import Exponential, Normal
+from ngboost.distns import Normal
 
 
 from nrel.routee.powertrain.core.model_config import ModelConfig
@@ -21,7 +20,6 @@ class NGBoostTrainer(Trainer):
         learning_rate: float = 0.01,
         random_state: int = 52,
     ):
-
         self.n_estimators = n_estimators
         self.dist = dist
         self.verbose = verbose
