@@ -1,7 +1,7 @@
 # <img src="docs/images/routeelogo.png" alt="Routee Powertrain" width="100"/>
 
 <div align="left">
-    <img src="https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue"/>
+    <img src="https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-blue"/>
   <a href="https://pypi.org/project/nrel.routee.powertrain/">
     <img src="https://img.shields.io/pypi/v/nrel.routee.powertrain" alt="PyPi Latest Release"/>
   </a>

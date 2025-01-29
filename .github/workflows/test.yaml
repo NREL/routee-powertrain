@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11"]
 
     env:
       PYTHON: ${{ matrix.python-version }}
@@ -38,12 +38,17 @@ jobs:
           pip install ".[dev]"
 
       - name: Run mypy
-        run: mypy . 
+        run: mypy .
 
-      - name: Run black
+      - name: Lint with ruff
         run: |
-          black nrel tests --check
+          ruff check
+
+      - name: ruff format check
+        run: |
+          ruff format --check
 
       - name: Python unit tests
         run: |
-          pytest tests/ -v
+          python -m unittest discover tests/
+          

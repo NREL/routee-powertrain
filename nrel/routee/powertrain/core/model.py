@@ -411,7 +411,7 @@ class Model:
             for feature in feature_set.features:
                 summary_lines.append(f"Feature: {feature.name} ({feature.units})")
             summary_lines.append(
-                f"Distance: {config.distance.name} " f"({config.distance.units})"
+                f"Distance: {config.distance.name} ({config.distance.units})"
             )
             for target in config.target.targets:
                 summary_lines.append(f"Target: {target.name} ({target.units})")

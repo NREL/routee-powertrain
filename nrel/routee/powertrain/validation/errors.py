@@ -5,7 +5,6 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
-from scipy.stats import norm
 
 from nrel.routee.powertrain.core.features import FeatureSetId
 from nrel.routee.powertrain.core.model_config import ModelConfig
@@ -85,6 +84,13 @@ def calculate_nll(target, target_pred, target_std) -> float:
     """
     Calculate Negative Log-Likelihood (NLL).
     """
+    try:
+        from scipy.stats import norm
+    except ImportError:
+        raise ImportError(
+            "The calculate_nll function requires scipy. "
+            "To install, you can do pip install scipy"
+        )
     nll = -np.mean(norm.logpdf(target, loc=target_pred, scale=target_std))
     return nll
 
@@ -93,6 +99,13 @@ def calculate_crps(target, target_pred, target_std) -> float:
     """
     Calculate Continuous Ranked Probability Score (CRPS).
     """
+    try:
+        from scipy.stats import norm
+    except ImportError:
+        raise ImportError(
+            "The calculate_nll function requires scipy. "
+            "To install, you can do pip install scipy"
+        )
     # CDF of the predicted distribution
     z = (target - target_pred) / target_std
     crps = target_std * (
@@ -344,6 +357,13 @@ def compute_errors(
                 )
 
             if isinstance(estimator, NGBoostEstimator):
+                try:
+                    from scipy.stats import norm
+                except ImportError:
+                    raise ImportError(
+                        "The errors for the NGBoostEstimator requires other dependnecies like scipy. "
+                        "To install, you can do `pip install nrel.routee.powertrain[ngboost]"
+                    )
                 target_std = np.array(predictions[energy_name + "_std"])
                 alpha = 0.05
                 z = norm.ppf(1 - alpha / 2)  # z-score for 95% confidence

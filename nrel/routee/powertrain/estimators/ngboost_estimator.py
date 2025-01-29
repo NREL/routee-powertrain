@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-# from abc import ABC, abstractmethod
 from pathlib import Path
-import joblib
 import base64
 import io
 import json
 import pandas as pd
-from ngboost import NGBRegressor
+
+from importlib.util import find_spec
 
 from nrel.routee.powertrain.core.features import DataColumn, FeatureSet, TargetSet
 from nrel.routee.powertrain.core.model_config import PredictMethod
@@ -15,7 +14,6 @@ from nrel.routee.powertrain.estimators.estimator_interface import Estimator
 
 
 class NGBoostEstimator(Estimator):
-
     def __init__(self, ngboost) -> None:
         self.model = ngboost
 
@@ -41,10 +39,23 @@ class NGBoostEstimator(Estimator):
             json.dump(self.to_dict(), f)
 
     @classmethod
-    def from_dict(cls, in_dict: dict) -> "NGBRegressor":
+    def from_dict(cls, in_dict: dict) -> NGBoostEstimator:
         """
         Load an estimator from a bytes object in memory
         """
+        if find_spec("ngboost") is None:
+            raise ImportError(
+                "The NGBoostEstimator estimator requires extra dependencies like joblib and ngboost. "
+                "To install, you can do pip install nrel.routee.powertrain[ngboost]"
+            )
+
+        if find_spec("joblib") is None:
+            raise ImportError(
+                "The NGBoostEstimator estimator requires extra dependencies like joblib and ngboost. "
+                "To install, you can do pip install nrel.routee.powertrain[ngboost]"
+            )
+        else:
+            import joblib
 
         model_base64 = in_dict.get("ngboost_model")
 
@@ -60,6 +71,13 @@ class NGBoostEstimator(Estimator):
         """
         Serialize an estimator to a python dictionary
         """
+        try:
+            import joblib
+        except ImportError:
+            raise ImportError(
+                "The NGBoostEstimator estimator requires extra dependencies like joblib and ngboost. "
+                "To install, you can do pip install nrel.routee.powertrain[ngboost]"
+            )
         byte_stream = io.BytesIO()
         joblib.dump(self.model, byte_stream)
         byte_stream.seek(0)

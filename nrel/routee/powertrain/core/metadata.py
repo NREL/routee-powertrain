@@ -33,7 +33,11 @@ class Metadata:
     @classmethod
     def from_dict(cls, d: dict) -> Metadata:
         v = get_version()
-        if d["routee_version"] != v:
+        major_v = v.split(".")[0]
+
+        incoming_v = d["routee_version"]
+        incoming_major_v = incoming_v.split(".")[0]
+        if incoming_major_v != major_v:
             warnings.warn(
                 "this model was trained using routee-powertrain version "
                 f"{d['routee_version']} but you're using version {v}"
