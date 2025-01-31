@@ -56,7 +56,7 @@ path = "nrel/routee/powertrain/__about__.py"
 exclude = ["scripts/", "tests/", "docs/"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["nrel/routee/powertrain"]
+packages = ["nrel"]
 
 [tool.mypy]
 ignore_missing_imports = true
