@@ -17,11 +17,16 @@ classifiers = [
     "Programming Language :: Python",
     "Topic :: Scientific/Engineering",
 ]
-dependencies = ["pandas", "numpy", "onnx", "onnxruntime==1.18.1"]
+dependencies = [
+    "pandas>=2.2,<3.0",
+    "numpy>=1.26,<2.0",
+    "onnx==1.17.0",
+    "onnxruntime==1.18.1",
+]
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-scikit = ["scikit-learn==1.6.1", "skl2onnx"]
+scikit = ["scikit-learn==1.6.1", "skl2onnx==1.18.0"]
 ngboost = ["ngboost==0.5.2", "scikit-learn==1.6.1"]
 plot = ["matplotlib"]
 dev = [
