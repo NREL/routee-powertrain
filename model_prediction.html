@@ -16,33 +16,30 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
-  <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -67,7 +64,6 @@
     <link rel="prev" title="What is RouteE?" href="what_is_routee.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
-  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,8 +79,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -92,6 +99,7 @@
   <input type="search"
          class="form-control"
          name="q"
+         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -99,8 +107,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -116,8 +124,7 @@
       
       
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -147,17 +154,21 @@
     
     
     <img src="_static/routeelogo.png" class="logo__image only-light" alt="My sample book - Home"/>
-    <img src="_static/routeelogo.png" class="logo__image only-dark pst-js-only" alt="My sample book - Home"/>
+    <script>document.write(`<img src="_static/routeelogo.png" class="logo__image only-dark" alt="My sample book - Home"/>`);</script>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -191,14 +202,9 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
   </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -342,16 +348,24 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
 
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+  </button>
+`);
+</script>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -397,16 +411,6 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span><span class="w"> </span><span class="nn">nrel.routee.powertrain</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pt</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;nrel&#39;
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -444,6 +448,7 @@
  &#39;2016_TESLA_Model_S60_2WD&#39;,
  &#39;2016_TOYOTA_Camry_4cyl_2WD&#39;,
  &#39;2016_TOYOTA_Corolla_4cyl_2WD&#39;,
+ &#39;2016_TOYOTA_Corolla_4cyl_2WD_Stochastic&#39;,
  &#39;2016_TOYOTA_Highlander_Hybrid&#39;,
  &#39;2016_Toyota_Prius_Two_FWD&#39;,
  &#39;2017_CHEVROLET_Bolt&#39;,
@@ -452,6 +457,7 @@
  &#39;2017_Prius_Prime_Charge_Sustaining&#39;,
  &#39;2017_Toyota_Highlander_3&#39;,
  &#39;2020_Chevrolet_Colorado_2WD_Diesel&#39;,
+ &#39;2020_Chevrolet_Colorado_2WD_Diesel_Stochastic&#39;,
  &#39;2020_VW_Golf_1&#39;,
  &#39;2020_VW_Golf_2&#39;,
  &#39;2021_BMW_iX_xDrive40&#39;,
@@ -465,8 +471,10 @@
  &#39;2022_Renault_Zoe_ZE50_R135&#39;,
  &#39;2022_Tesla_Model_3_RWD&#39;,
  &#39;2022_Tesla_Model_Y_RWD&#39;,
+ &#39;2022_Tesla_Model_Y_RWD_Stochastic&#39;,
  &#39;2022_Toyota_Avanza_E_J_MT&#39;,
  &#39;2022_Toyota_RAV4_Hybrid_LE&#39;,
+ &#39;2022_Toyota_RAV4_Hybrid_LE_Stochastic&#39;,
  &#39;2022_Toyota_Yaris_Hybrid_Mid&#39;,
  &#39;2022_Volvo_XC40_Recharge_twin&#39;,
  &#39;2023_Mitsubishi_Pajero_Sport&#39;,
@@ -765,23 +773,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.000882</td>
+      <td>0.001028</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.000216</td>
+      <td>0.000252</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.000149</td>
+      <td>0.000174</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.000853</td>
+      <td>0.000995</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.000906</td>
+      <td>0.001056</td>
     </tr>
     <tr>
       <th>...</th>
@@ -789,23 +797,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
     </tr>
     <tr>
       <th>120</th>
-      <td>0.000352</td>
+      <td>0.000411</td>
     </tr>
     <tr>
       <th>121</th>
-      <td>0.000660</td>
+      <td>0.000769</td>
     </tr>
     <tr>
       <th>122</th>
-      <td>0.000627</td>
+      <td>0.000731</td>
     </tr>
     <tr>
       <th>123</th>
-      <td>0.000616</td>
+      <td>0.000719</td>
     </tr>
     <tr>
       <th>124</th>
-      <td>0.000760</td>
+      <td>0.000886</td>
     </tr>
   </tbody>
 </table>
@@ -844,23 +852,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.000939</td>
+      <td>0.001095</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.000241</td>
+      <td>0.000281</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.000158</td>
+      <td>0.000185</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.000829</td>
+      <td>0.000967</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.000982</td>
+      <td>0.001145</td>
     </tr>
     <tr>
       <th>...</th>
@@ -868,23 +876,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
     </tr>
     <tr>
       <th>120</th>
-      <td>0.000379</td>
+      <td>0.000442</td>
     </tr>
     <tr>
       <th>121</th>
-      <td>0.000895</td>
+      <td>0.001043</td>
     </tr>
     <tr>
       <th>122</th>
-      <td>0.000730</td>
+      <td>0.000851</td>
     </tr>
     <tr>
       <th>123</th>
-      <td>0.000717</td>
+      <td>0.000836</td>
     </tr>
     <tr>
       <th>124</th>
-      <td>0.001031</td>
+      <td>0.001202</td>
     </tr>
   </tbody>
 </table>
@@ -998,8 +1006,14 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/84e66a3fc2b50775b8d1845da43176e14a5b441472813ee6219d82fc83dde8f6.png" src="_images/84e66a3fc2b50775b8d1845da43176e14a5b441472813ee6219d82fc83dde8f6.png" />
-<img alt="_images/f83225d613692165b4a1fc680fde742b3ff310987239550730fe0b4b90dc4048.png" src="_images/f83225d613692165b4a1fc680fde742b3ff310987239550730fe0b4b90dc4048.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-25 21:30:32,388 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-25 21:30:33,859 [INFO] - generated new fontManager
+</pre></div>
+</div>
+<img alt="_images/2e96d1c7bd51f075251630cafd5f6ad9c695cd9a1493c3fd98c6a9a185f08cd6.png" src="_images/2e96d1c7bd51f075251630cafd5f6ad9c695cd9a1493c3fd98c6a9a185f08cd6.png" />
+<img alt="_images/e4a0e83d00a1f2f5890adf111502bf3b8d799dc9ce5362fbb9c2d2e2fc2f307f.png" src="_images/e4a0e83d00a1f2f5890adf111502bf3b8d799dc9ce5362fbb9c2d2e2fc2f307f.png" />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 0 Axes&gt;
 </pre></div>
 </div>
@@ -1013,7 +1027,7 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/13ddcbed661fcd0b607196f96c636bf33f414162cd26c8edbb35de1461c24e94.png" src="_images/13ddcbed661fcd0b607196f96c636bf33f414162cd26c8edbb35de1461c24e94.png" />
+<img alt="_images/63f3fbd8bab0fba65cd51d36d4ca5f9e789b5ab4b8fdf56d8162b3940c8d8210.png" src="_images/63f3fbd8bab0fba65cd51d36d4ca5f9e789b5ab4b8fdf56d8162b3940c8d8210.png" />
 </div>
 </div>
 </section>
@@ -1074,8 +1088,7 @@ In order to use this we first have to define what ranges the features should be 
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1133,8 +1146,8 @@ By The Jupyter Book Community
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>
