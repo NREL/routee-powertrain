@@ -29,10 +29,10 @@ class SmartcoreRandomForestTrainer(Trainer):
                 "SmartCore only supports a single energy rate. "
                 "Please use a different estimator."
             )
-        y = y.ravel().tolist()
+        y = y.ravel()
 
         model = RustRandomForest()
-        model.train(x, y)
+        model.train(x, y.tolist())
 
         estimator = SmartCoreEstimator(model)
 
