@@ -19,7 +19,7 @@ classifiers = [
 ]
 dependencies = [
     "pandas>=2.2,<3.0",
-    "numpy>=1.26,<2.0",
+    "numpy>=2.0,<3.0",
     "onnx>=1.17,<2.0",
     "onnxruntime>=1.18.1,<2.0",
 ]
