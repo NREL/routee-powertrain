@@ -14,6 +14,10 @@ parts:
     - file: model_prediction 
     - file: model_training 
     - file: api_docs
+  
+  - caption: Examples
+    chapters:
+    - file: examples/temperature_models_example
 
   - caption: Developers 
     chapters:

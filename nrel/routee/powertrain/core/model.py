@@ -288,7 +288,6 @@ class Model:
         links_df: pd.DataFrame,
         feature_columns: Optional[List[str]] = None,
         distance_column: Optional[str] = None,
-        apply_real_world_adjustment: bool = True,
     ) -> pd.DataFrame:
         """
         Predict absolute energy consumption for each link
@@ -297,8 +296,6 @@ class Model:
             links_df: a dataframe containing the links to predict on
             feature_columns: the features to use for prediction
             distance_column: the column to use for distance
-            apply_real_world_adjustment: whether to apply a real world adjustment
-                to the predicted energy consumption
 
         Returns: a dataframe containing the predicted energy consumption for each link
         """
@@ -365,7 +362,7 @@ class Model:
         )
 
         for energy in config.target.targets:
-            if apply_real_world_adjustment:
+            if config.apply_real_world_adjustment:
                 adjustment_factor = ADJUSTMENT_FACTORS.get(config.powertrain_type)
                 if adjustment_factor is None:
                     raise ValueError(
