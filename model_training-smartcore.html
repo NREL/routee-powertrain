@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -189,6 +189,10 @@
 <li class="toctree-l1"><a class="reference internal" href="model_prediction.html">Model Prediction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model_training.html">Model Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_docs.html">Python API Docs</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/temperature_models_example.html">Temperature Models Example</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers</span></p>
 <ul class="nav bd-sidenav">
@@ -616,7 +620,7 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.16/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/smartcore_random_forest.py:17,</span> in <span class="ni">SmartcoreRandomForestTrainer.inner_train</span><span class="nt">(self, features, target, config)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/smartcore_random_forest.py:17,</span> in <span class="ni">SmartcoreRandomForestTrainer.inner_train</span><span class="nt">(self, features, target, config)</span>
 <span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="k">try</span><span class="p">:</span>
 <span class="ne">---&gt; </span><span class="mi">17</span>     <span class="kn">from</span><span class="w"> </span><span class="nn">powertrain_rust</span><span class="w"> </span><span class="kn">import</span> <span class="n">RustRandomForest</span>
 <span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -629,7 +633,7 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">test_vehicle</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.16/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/trainer.py:56,</span> in <span class="ni">Trainer.train</span><span class="nt">(self, data, config)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/trainer.py:56,</span> in <span class="ni">Trainer.train</span><span class="nt">(self, data, config)</span>
 <span class="g g-Whitespace">     </span><span class="mi">54</span>         <span class="n">name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distance_name</span><span class="p">)</span>
 <span class="g g-Whitespace">     </span><span class="mi">55</span>     <span class="n">sub_features</span> <span class="o">=</span> <span class="n">all_features</span><span class="p">[</span><span class="n">name_list</span><span class="p">]</span>
 <span class="ne">---&gt; </span><span class="mi">56</span>     <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_train</span><span class="p">(</span>
@@ -638,7 +642,7 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 <span class="g g-Whitespace">     </span><span class="mi">59</span>     <span class="n">estimators</span><span class="p">[</span><span class="n">feature_set</span><span class="o">.</span><span class="n">features_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator</span>
 <span class="g g-Whitespace">     </span><span class="mi">61</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">Metadata</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.16/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/smartcore_random_forest.py:19,</span> in <span class="ni">SmartcoreRandomForestTrainer.inner_train</span><span class="nt">(self, features, target, config)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/nrel/routee/powertrain/trainers/smartcore_random_forest.py:19,</span> in <span class="ni">SmartcoreRandomForestTrainer.inner_train</span><span class="nt">(self, features, target, config)</span>
 <span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="kn">from</span><span class="w"> </span><span class="nn">powertrain_rust</span><span class="w"> </span><span class="kn">import</span> <span class="n">RustRandomForest</span>
 <span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
 <span class="ne">---&gt; </span><span class="mi">19</span>     <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>

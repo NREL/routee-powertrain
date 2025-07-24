@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -189,6 +189,10 @@
 <li class="toctree-l1"><a class="reference internal" href="model_prediction.html">Model Prediction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model_training.html">Model Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_docs.html">Python API Docs</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/temperature_models_example.html">Temperature Models Example</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers</span></p>
 <ul class="nav bd-sidenav">
@@ -659,57 +663,16 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">result_df</span> <span class="o">=</span> <span class="n">test_vehicle</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;grade_dec&#39;</span><span class="p">,</span> <span class="s1">&#39;speed_mph&#39;</span><span class="p">,</span><span class="s1">&#39;road_class&#39;</span><span class="p">],</span> <span class="s1">&#39;miles&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">result_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>gge</th>
-      <th>gge_std</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0.000852</td>
-      <td>0.000296</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0.000152</td>
-      <td>0.000065</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0.000171</td>
-      <td>0.000106</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>0.001199</td>
-      <td>0.000789</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0.001252</td>
-      <td>0.000776</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
+<span class="ne">TypeError</span>: Model.predict() takes from 2 to 4 positional arguments but 5 were given
+</pre></div>
+</div>
+</div>
 </div>
 <p>While this training dataset is far too small to draw real conclusions, these metrics can give you an idea of how well the model performed on a holdout test set (20% of the training data as we specificed by the <code class="docutils literal notranslate"><span class="pre">test_size</span></code> parameter in the configuration.</p>
 <p>Now, we can write the model to a json file that can be loaded later:</p>
@@ -742,9 +705,9 @@ In our case we'll use &quot;rate&quot; since our training data is very sparse.</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7ffa8d0112d0&gt;,
- &#39;grade_dec&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7ffa8ac37970&gt;,
- &#39;grade_dec&amp;road_class&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x7ffa8ac7bfd0&gt;}
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x1597b3910&gt;,
+ &#39;grade_dec&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x159802b90&gt;,
+ &#39;grade_dec&amp;road_class&amp;speed_mph&#39;: &lt;nrel.routee.powertrain.estimators.ngboost_estimator.NGBoostEstimator at 0x159890850&gt;}
 </pre></div>
 </div>
 </div>

@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -189,6 +189,10 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Model Prediction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model_training.html">Model Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_docs.html">Python API Docs</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/temperature_models_example.html">Temperature Models Example</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers</span></p>
 <ul class="nav bd-sidenav">
@@ -445,6 +449,8 @@ document.write(`
  &#39;2016_Leaf_24_kWh&#39;,
  &#39;2016_MITSUBISHI_i-MiEV&#39;,
  &#39;2016_Nissan_Leaf_30_kWh&#39;,
+ &#39;2016_Nissan_Leaf_30_kWh_0F_110F_steady&#39;,
+ &#39;2016_Nissan_Leaf_30_kWh_0F_110F_transient&#39;,
  &#39;2016_TESLA_Model_S60_2WD&#39;,
  &#39;2016_TOYOTA_Camry_4cyl_2WD&#39;,
  &#39;2016_TOYOTA_Corolla_4cyl_2WD&#39;,
@@ -456,6 +462,8 @@ document.write(`
  &#39;2017_Prius_Prime_Charge_Depleting&#39;,
  &#39;2017_Prius_Prime_Charge_Sustaining&#39;,
  &#39;2017_Toyota_Highlander_3&#39;,
+ &#39;2020_Chevrolet_Bolt_EV_0F_110F_steady&#39;,
+ &#39;2020_Chevrolet_Bolt_EV_0F_110F_transient&#39;,
  &#39;2020_Chevrolet_Colorado_2WD_Diesel&#39;,
  &#39;2020_Chevrolet_Colorado_2WD_Diesel_Stochastic&#39;,
  &#39;2020_VW_Golf_1&#39;,
@@ -470,6 +478,8 @@ document.write(`
  &#39;2022_Renault_Megane_E-Tech&#39;,
  &#39;2022_Renault_Zoe_ZE50_R135&#39;,
  &#39;2022_Tesla_Model_3_RWD&#39;,
+ &#39;2022_Tesla_Model_3_RWD_0F_110F_steady&#39;,
+ &#39;2022_Tesla_Model_3_RWD_0F_110F_transient&#39;,
  &#39;2022_Tesla_Model_Y_RWD&#39;,
  &#39;2022_Tesla_Model_Y_RWD_Stochastic&#39;,
  &#39;2022_Toyota_Avanza_E_J_MT&#39;,
@@ -555,21 +565,21 @@ There is a sample route included with the package that we'll use for demonstrati
     <tr style="text-align: right;">
       <th></th>
       <th>speed_mph</th>
-      <th>grade_dec</th>
-      <th>miles</th>
+      <th>grade_percent</th>
+      <th>distance</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
       <td>7.632068</td>
-      <td>-0.008963</td>
+      <td>-0.896343</td>
       <td>0.015469</td>
     </tr>
     <tr>
       <th>1</th>
       <td>6.329613</td>
-      <td>-0.047001</td>
+      <td>-4.700083</td>
       <td>0.003516</td>
     </tr>
     <tr>
@@ -581,13 +591,13 @@ There is a sample route included with the package that we'll use for demonstrati
     <tr>
       <th>3</th>
       <td>23.752604</td>
-      <td>-0.000463</td>
+      <td>-0.046280</td>
       <td>0.019768</td>
     </tr>
     <tr>
       <th>4</th>
       <td>46.024926</td>
-      <td>-0.004641</td>
+      <td>-0.464073</td>
       <td>0.038378</td>
     </tr>
     <tr>
@@ -599,31 +609,31 @@ There is a sample route included with the package that we'll use for demonstrati
     <tr>
       <th>120</th>
       <td>7.415272</td>
-      <td>-0.001339</td>
+      <td>-0.133898</td>
       <td>0.006128</td>
     </tr>
     <tr>
       <th>121</th>
       <td>27.685268</td>
-      <td>-0.030748</td>
+      <td>-3.074826</td>
       <td>0.023170</td>
     </tr>
     <tr>
       <th>122</th>
       <td>51.322545</td>
-      <td>-0.008490</td>
+      <td>-0.848964</td>
       <td>0.028510</td>
     </tr>
     <tr>
       <th>123</th>
       <td>50.431920</td>
-      <td>-0.010533</td>
+      <td>-1.053289</td>
       <td>0.028015</td>
     </tr>
     <tr>
       <th>124</th>
       <td>48.325893</td>
-      <td>-0.017581</td>
+      <td>-1.758078</td>
       <td>0.040274</td>
     </tr>
   </tbody>
@@ -645,100 +655,25 @@ Also note that we need to rename the <code class="docutils literal notranslate">
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="nn">/tmp/ipykernel_2256/497135928.py</span> in <span class="ni">?</span><span class="nt">()</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">sample_route</span><span class="p">[</span><span class="s2">&quot;grade_percent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">grade_dec</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">sample_route</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s2">&quot;grade_dec&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">sample_route</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;miles&quot;</span><span class="p">:</span> <span class="s2">&quot;distance&quot;</span><span class="p">})</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">sample_route</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+<span class="nn">/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/generic.py</span> in <span class="ni">?</span><span class="nt">(self, name)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6314</span>             <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accessors</span>
+<span class="g g-Whitespace">   </span><span class="mi">6315</span>             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_axis</span><span class="o">.</span><span class="n">_can_hold_identifiers_and_holds_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6316</span>         <span class="p">):</span>
+<span class="g g-Whitespace">   </span><span class="mi">6317</span>             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+<span class="ne">-&gt; </span><span class="mi">6318</span>         <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>speed_mph</th>
-      <th>distance</th>
-      <th>grade_percent</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>7.632068</td>
-      <td>0.015469</td>
-      <td>-0.896343</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>6.329613</td>
-      <td>0.003516</td>
-      <td>-4.700083</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>12.248512</td>
-      <td>0.003402</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>23.752604</td>
-      <td>0.019768</td>
-      <td>-0.046280</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>46.024926</td>
-      <td>0.038378</td>
-      <td>-0.464073</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>120</th>
-      <td>7.415272</td>
-      <td>0.006128</td>
-      <td>-0.133898</td>
-    </tr>
-    <tr>
-      <th>121</th>
-      <td>27.685268</td>
-      <td>0.023170</td>
-      <td>-3.074826</td>
-    </tr>
-    <tr>
-      <th>122</th>
-      <td>51.322545</td>
-      <td>0.028510</td>
-      <td>-0.848964</td>
-    </tr>
-    <tr>
-      <th>123</th>
-      <td>50.431920</td>
-      <td>0.028015</td>
-      <td>-1.053289</td>
-    </tr>
-    <tr>
-      <th>124</th>
-      <td>48.325893</td>
-      <td>0.040274</td>
-      <td>-1.758078</td>
-    </tr>
-  </tbody>
-</table>
-<p>125 rows × 3 columns</p>
-</div></div></div>
+<span class="ne">AttributeError</span>: &#39;DataFrame&#39; object has no attribute &#39;grade_dec&#39;
+</pre></div>
+</div>
+</div>
 </div>
 <p>If we just pass in the links DataFrame without any other information, the model will assume we want to use all the features and in this case will look for an internal estimator with features to match all the columns.</p>
 <p>Based on the model summary shown above, we do have an estimator that takes in the link features <code class="docutils literal notranslate"><span class="pre">speed_mph</span></code> and <code class="docutils literal notranslate"><span class="pre">grade_percent</span></code> with a distance of <code class="docutils literal notranslate"><span class="pre">distance</span></code> and so it will automatically select that estimator when we predict.</p>
@@ -773,23 +708,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.001028</td>
+      <td>0.000882</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.000252</td>
+      <td>0.000216</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.000174</td>
+      <td>0.000149</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.000995</td>
+      <td>0.000853</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.001056</td>
+      <td>0.000906</td>
     </tr>
     <tr>
       <th>...</th>
@@ -797,23 +732,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
     </tr>
     <tr>
       <th>120</th>
-      <td>0.000411</td>
+      <td>0.000352</td>
     </tr>
     <tr>
       <th>121</th>
-      <td>0.000769</td>
+      <td>0.000660</td>
     </tr>
     <tr>
       <th>122</th>
-      <td>0.000731</td>
+      <td>0.000627</td>
     </tr>
     <tr>
       <th>123</th>
-      <td>0.000719</td>
+      <td>0.000616</td>
     </tr>
     <tr>
       <th>124</th>
-      <td>0.000886</td>
+      <td>0.000760</td>
     </tr>
   </tbody>
 </table>
@@ -852,23 +787,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.001095</td>
+      <td>0.000939</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.000281</td>
+      <td>0.000241</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.000185</td>
+      <td>0.000158</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.000967</td>
+      <td>0.000829</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.001145</td>
+      <td>0.000982</td>
     </tr>
     <tr>
       <th>...</th>
@@ -876,114 +811,29 @@ Also note that we need to rename the <code class="docutils literal notranslate">
     </tr>
     <tr>
       <th>120</th>
-      <td>0.000442</td>
+      <td>0.000379</td>
     </tr>
     <tr>
       <th>121</th>
-      <td>0.001043</td>
+      <td>0.000895</td>
     </tr>
     <tr>
       <th>122</th>
-      <td>0.000851</td>
+      <td>0.000730</td>
     </tr>
     <tr>
       <th>123</th>
-      <td>0.000836</td>
+      <td>0.000717</td>
     </tr>
     <tr>
       <th>124</th>
-      <td>0.001202</td>
+      <td>0.001031</td>
     </tr>
   </tbody>
 </table>
 <p>125 rows × 1 columns</p>
 </div></div></div>
 </div>
-<p>We can also apply some correction factors for effects that are not directly captured in the energy data the model was trained on. These include things like:</p>
-<ul class="simple">
-<li><p>Ambient Temperature</p></li>
-<li><p>Auxilary loads (i.e. Air Conditioners)</p></li>
-</ul>
-<p>These are powertrain specific and can be included by passing the <code class="docutils literal notranslate"><span class="pre">apply_real_world_adjustment</span></code> paramter which is set to False by default.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">camry</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_route</span><span class="p">,</span> <span class="n">apply_real_world_adjustment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>gge</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0.001028</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0.000252</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0.000174</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>0.000995</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0.001056</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>120</th>
-      <td>0.000411</td>
-    </tr>
-    <tr>
-      <th>121</th>
-      <td>0.000769</td>
-    </tr>
-    <tr>
-      <th>122</th>
-      <td>0.000731</td>
-    </tr>
-    <tr>
-      <th>123</th>
-      <td>0.000719</td>
-    </tr>
-    <tr>
-      <th>124</th>
-      <td>0.000886</td>
-    </tr>
-  </tbody>
-</table>
-<p>125 rows × 1 columns</p>
-</div></div></div>
-</div>
-<p>Note that we see slightly higher energy values when apply these factors.</p>
 <section id="model-visualization">
 <h2>Model Visualization<a class="headerlink" href="#model-visualization" title="Link to this heading">#</a></h2>
 <p>There are a few different functions we can visualize what a model is predicting over a range of inputs.</p>
@@ -1006,14 +856,8 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-25 21:30:32,388 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-25 21:30:33,859 [INFO] - generated new fontManager
-</pre></div>
-</div>
-<img alt="_images/2e96d1c7bd51f075251630cafd5f6ad9c695cd9a1493c3fd98c6a9a185f08cd6.png" src="_images/2e96d1c7bd51f075251630cafd5f6ad9c695cd9a1493c3fd98c6a9a185f08cd6.png" />
-<img alt="_images/e4a0e83d00a1f2f5890adf111502bf3b8d799dc9ce5362fbb9c2d2e2fc2f307f.png" src="_images/e4a0e83d00a1f2f5890adf111502bf3b8d799dc9ce5362fbb9c2d2e2fc2f307f.png" />
+<img alt="_images/84e66a3fc2b50775b8d1845da43176e14a5b441472813ee6219d82fc83dde8f6.png" src="_images/84e66a3fc2b50775b8d1845da43176e14a5b441472813ee6219d82fc83dde8f6.png" />
+<img alt="_images/f83225d613692165b4a1fc680fde742b3ff310987239550730fe0b4b90dc4048.png" src="_images/f83225d613692165b4a1fc680fde742b3ff310987239550730fe0b4b90dc4048.png" />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 0 Axes&gt;
 </pre></div>
 </div>
@@ -1027,7 +871,7 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/63f3fbd8bab0fba65cd51d36d4ca5f9e789b5ab4b8fdf56d8162b3940c8d8210.png" src="_images/63f3fbd8bab0fba65cd51d36d4ca5f9e789b5ab4b8fdf56d8162b3940c8d8210.png" />
+<img alt="_images/13ddcbed661fcd0b607196f96c636bf33f414162cd26c8edbb35de1461c24e94.png" src="_images/13ddcbed661fcd0b607196f96c636bf33f414162cd26c8edbb35de1461c24e94.png" />
 </div>
 </div>
 </section>
