@@ -84,5 +84,7 @@
     "Toyota_Corolla_Cross_Hybrid": "https://app.box.com/shared/static/h0sfs0xgycmblx6z9e47g2dchcm29stn.json",
     "Toyota_Etios_Liva_diesel": "https://app.box.com/shared/static/8s5iu6ld2q1ts67yele01tpgwxd5cg3v.json",
     "Toyota_Hilux_Double_Cab_4WD": "https://app.box.com/shared/static/hq02ncce7uyloo2ivt9o7zols1wbf782.json",
-    "Toyota_Mirai": "https://app.box.com/shared/static/gs7og2vk40g5cz0ns3xr0zbxlabork7t.json"
+    "Toyota_Mirai": "https://app.box.com/shared/static/gs7og2vk40g5cz0ns3xr0zbxlabork7t.json",
+    "Transit_Bus_Battery_Electric": "https://app.box.com/shared/static/ar21vr7wqs4on2efmsc77b60dkbizexh.json",
+    "Transit_Bus_Diesel": "https://app.box.com/shared/static/dln2zslowubukg58tq5i3ktyfgkhhkpd.json"
 }
