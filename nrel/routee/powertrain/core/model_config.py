@@ -54,6 +54,8 @@ class ModelConfig:
 
     trip_column: str = "trip_id"
 
+    apply_real_world_adjustment: bool = True
+
     def __post_init__(self):
         # convert to the correct types
         if isinstance(self.feature_sets, dict):
