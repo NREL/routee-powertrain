@@ -407,10 +407,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-07-24 21:35:21,526 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-08-05 19:53:22,706 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-07-24 21:35:22,038 [INFO] - generated new fontManager
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-08-05 19:53:23,091 [INFO] - generated new fontManager
 </pre></div>
 </div>
 </div>
@@ -428,37 +428,8 @@ For example, when a vehicle starts a trip in cold weather and has been sitting o
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tesla</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2022_Tesla_Model_3_RWD&quot;</span><span class="p">)</span>
-<span class="n">tesla_with_temp_steady</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span>
-    <span class="s2">&quot;../../../../Downloads/routee-temperature-models/2022_Tesla_Model_3_RWD_0F_110F_steady.json&quot;</span>
-<span class="p">)</span>
-<span class="n">tesla_with_temp_transient</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span>
-    <span class="s2">&quot;../../../../Downloads/routee-temperature-models/2022_Tesla_Model_3_RWD_0F_110F_transient.json&quot;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">tesla</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2022_Tesla_Model_3_RWD&quot;</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">tesla_with_temp_steady</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="s2">&quot;../../../../Downloads/routee-temperature-models/2022_Tesla_Model_3_RWD_0F_110F_steady.json&quot;</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">tesla_with_temp_transient</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="s2">&quot;../../../../Downloads/routee-temperature-models/2022_Tesla_Model_3_RWD_0F_110F_transient.json&quot;</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/nrel/routee/powertrain/io/load.py:83,</span> in <span class="ni">load_model</span><span class="nt">(name)</span>
-<span class="g g-Whitespace">     </span><span class="mi">81</span>     <span class="k">return</span> <span class="n">model</span>
-<span class="g g-Whitespace">     </span><span class="mi">82</span> <span class="k">else</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">83</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">84</span>         <span class="sa">f</span><span class="s2">&quot;Could not load model: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">85</span>         <span class="s2">&quot; try listing available models with pt.list_available_models()&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">86</span>         <span class="s2">&quot; or providing a path to a local model file.&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">87</span>     <span class="p">)</span>
-
-<span class="ne">ValueError</span>: Could not load model: ../../../../Downloads/routee-temperature-models/2022_Tesla_Model_3_RWD_0F_110F_steady.json. try listing available models with pt.list_available_models() or providing a path to a local model file.
+<span class="n">tesla_with_temp_steady</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2022_Tesla_Model_3_RWD_0F_110F_steady&quot;</span><span class="p">)</span>
+<span class="n">tesla_with_temp_transient</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2022_Tesla_Model_3_RWD_0F_110F_transient&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -549,6 +520,12 @@ For example, when a vehicle starts a trip in cold weather and has been sitting o
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f13338df400&gt;
+</pre></div>
+</div>
+<img alt="../_images/501aba9dad9847eb8dda1d8bcda4b2c15562fe4d8254e584e8bbd44d079b42ff.png" src="../_images/501aba9dad9847eb8dda1d8bcda4b2c15562fe4d8254e584e8bbd44d079b42ff.png" />
 </div>
 </div>
 <p>Notice how the energy consumption for the 32°F route is higher than the other two scenarios, reflecting the increased energy demand in colder temperatures.</p>

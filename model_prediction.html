@@ -510,7 +510,9 @@ document.write(`
  &#39;Toyota_Corolla_Cross_Hybrid&#39;,
  &#39;Toyota_Etios_Liva_diesel&#39;,
  &#39;Toyota_Hilux_Double_Cab_4WD&#39;,
- &#39;Toyota_Mirai&#39;]
+ &#39;Toyota_Mirai&#39;,
+ &#39;Transit_Bus_Battery_Electric&#39;,
+ &#39;Transit_Bus_Diesel&#39;]
 </pre></div>
 </div>
 </div>
@@ -641,40 +643,6 @@ There is a sample route included with the package that we'll use for demonstrati
 <p>125 rows × 3 columns</p>
 </div></div></div>
 </div>
-<p>Note that the dataframe columns don't quite match what the model is expecting.
-The <code class="docutils literal notranslate"><span class="pre">speed_mph</span></code> column matches what the model expects but it looks like it wants the grade column to be called <code class="docutils literal notranslate"><span class="pre">grade_percent</span></code> and it should be in the percent unit.
-Our current grade in represented as a decimal and so we'll have to multiply it by 100 to get it into the units the model expects.
-Also note that we need to rename the <code class="docutils literal notranslate"><span class="pre">miles</span></code> column to <code class="docutils literal notranslate"><span class="pre">distance</span></code> to match the model.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_route</span><span class="p">[</span><span class="s2">&quot;grade_percent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">grade_dec</span> <span class="o">*</span> <span class="mi">100</span>
-<span class="n">sample_route</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s2">&quot;grade_dec&quot;</span><span class="p">)</span>
-<span class="n">sample_route</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;miles&quot;</span><span class="p">:</span> <span class="s2">&quot;distance&quot;</span><span class="p">})</span>
-<span class="n">sample_route</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="nn">/tmp/ipykernel_2256/497135928.py</span> in <span class="ni">?</span><span class="nt">()</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">sample_route</span><span class="p">[</span><span class="s2">&quot;grade_percent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">grade_dec</span> <span class="o">*</span> <span class="mi">100</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">sample_route</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s2">&quot;grade_dec&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">sample_route</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;miles&quot;</span><span class="p">:</span> <span class="s2">&quot;distance&quot;</span><span class="p">})</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">sample_route</span>
-
-<span class="nn">/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/generic.py</span> in <span class="ni">?</span><span class="nt">(self, name)</span>
-<span class="g g-Whitespace">   </span><span class="mi">6314</span>             <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accessors</span>
-<span class="g g-Whitespace">   </span><span class="mi">6315</span>             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_axis</span><span class="o">.</span><span class="n">_can_hold_identifiers_and_holds_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">6316</span>         <span class="p">):</span>
-<span class="g g-Whitespace">   </span><span class="mi">6317</span>             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-<span class="ne">-&gt; </span><span class="mi">6318</span>         <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-
-<span class="ne">AttributeError</span>: &#39;DataFrame&#39; object has no attribute &#39;grade_dec&#39;
-</pre></div>
-</div>
-</div>
-</div>
 <p>If we just pass in the links DataFrame without any other information, the model will assume we want to use all the features and in this case will look for an internal estimator with features to match all the columns.</p>
 <p>Based on the model summary shown above, we do have an estimator that takes in the link features <code class="docutils literal notranslate"><span class="pre">speed_mph</span></code> and <code class="docutils literal notranslate"><span class="pre">grade_percent</span></code> with a distance of <code class="docutils literal notranslate"><span class="pre">distance</span></code> and so it will automatically select that estimator when we predict.</p>
 <div class="cell docutils container">
@@ -708,23 +676,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.000882</td>
+      <td>0.001028</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.000216</td>
+      <td>0.000252</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.000149</td>
+      <td>0.000174</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.000853</td>
+      <td>0.000995</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.000906</td>
+      <td>0.001056</td>
     </tr>
     <tr>
       <th>...</th>
@@ -732,23 +700,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
     </tr>
     <tr>
       <th>120</th>
-      <td>0.000352</td>
+      <td>0.000411</td>
     </tr>
     <tr>
       <th>121</th>
-      <td>0.000660</td>
+      <td>0.000769</td>
     </tr>
     <tr>
       <th>122</th>
-      <td>0.000627</td>
+      <td>0.000731</td>
     </tr>
     <tr>
       <th>123</th>
-      <td>0.000616</td>
+      <td>0.000719</td>
     </tr>
     <tr>
       <th>124</th>
-      <td>0.000760</td>
+      <td>0.000886</td>
     </tr>
   </tbody>
 </table>
@@ -787,23 +755,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.000939</td>
+      <td>0.001095</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.000241</td>
+      <td>0.000281</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.000158</td>
+      <td>0.000185</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.000829</td>
+      <td>0.000967</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.000982</td>
+      <td>0.001145</td>
     </tr>
     <tr>
       <th>...</th>
@@ -811,23 +779,23 @@ Also note that we need to rename the <code class="docutils literal notranslate">
     </tr>
     <tr>
       <th>120</th>
-      <td>0.000379</td>
+      <td>0.000442</td>
     </tr>
     <tr>
       <th>121</th>
-      <td>0.000895</td>
+      <td>0.001043</td>
     </tr>
     <tr>
       <th>122</th>
-      <td>0.000730</td>
+      <td>0.000851</td>
     </tr>
     <tr>
       <th>123</th>
-      <td>0.000717</td>
+      <td>0.000836</td>
     </tr>
     <tr>
       <th>124</th>
-      <td>0.001031</td>
+      <td>0.001202</td>
     </tr>
   </tbody>
 </table>
@@ -856,8 +824,8 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/84e66a3fc2b50775b8d1845da43176e14a5b441472813ee6219d82fc83dde8f6.png" src="_images/84e66a3fc2b50775b8d1845da43176e14a5b441472813ee6219d82fc83dde8f6.png" />
-<img alt="_images/f83225d613692165b4a1fc680fde742b3ff310987239550730fe0b4b90dc4048.png" src="_images/f83225d613692165b4a1fc680fde742b3ff310987239550730fe0b4b90dc4048.png" />
+<img alt="_images/87c472857bd540088695334e8a565eb532eb8d0da6d4eec2cb3f721a52307c96.png" src="_images/87c472857bd540088695334e8a565eb532eb8d0da6d4eec2cb3f721a52307c96.png" />
+<img alt="_images/5cbb601c1331d7d86a04da87e8c95ab92419c22bcb4c4888e09def6eb2e2adeb.png" src="_images/5cbb601c1331d7d86a04da87e8c95ab92419c22bcb4c4888e09def6eb2e2adeb.png" />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 0 Axes&gt;
 </pre></div>
 </div>
@@ -871,7 +839,7 @@ In order to use this we first have to define what ranges the features should be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/13ddcbed661fcd0b607196f96c636bf33f414162cd26c8edbb35de1461c24e94.png" src="_images/13ddcbed661fcd0b607196f96c636bf33f414162cd26c8edbb35de1461c24e94.png" />
+<img alt="_images/87b838a591be2ade3b0dd5ccff97d98961bb7c56da6af6fbbbe2a2e1d9a33a3b.png" src="_images/87b838a591be2ade3b0dd5ccff97d98961bb7c56da6af6fbbbe2a2e1d9a33a3b.png" />
 </div>
 </div>
 </section>
