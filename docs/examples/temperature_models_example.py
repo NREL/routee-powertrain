@@ -23,12 +23,9 @@ It's important to understand the distinction between steady-state and transient 
 """
 # %%
 tesla = pt.load_model("2022_Tesla_Model_3_RWD")
-tesla_with_temp_steady = pt.load_model(
-    "../../../../Downloads/routee-temperature-models/2022_Tesla_Model_3_RWD_0F_110F_steady.json"
-)
-tesla_with_temp_transient = pt.load_model(
-    "../../../../Downloads/routee-temperature-models/2022_Tesla_Model_3_RWD_0F_110F_transient.json"
-)
+tesla_with_temp_steady = pt.load_model("2022_Tesla_Model_3_RWD_0F_110F_steady")
+tesla_with_temp_transient = pt.load_model("2022_Tesla_Model_3_RWD_0F_110F_transient")
+
 # %%
 """
 Load a sample route and prepare it for prediction.
