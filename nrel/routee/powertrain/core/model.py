@@ -21,6 +21,7 @@ from nrel.routee.powertrain.estimators.onnx import ONNXEstimator
 from nrel.routee.powertrain.estimators.smart_core import SmartCoreEstimator
 from nrel.routee.powertrain.estimators.ngboost_estimator import NGBoostEstimator
 
+from nrel.routee.powertrain.io.to_lookup_table import to_lookup_table
 from nrel.routee.powertrain.validation.feature_visualization import (
     contour_plot,
     visualize_features,
@@ -185,6 +186,16 @@ class Model:
         output_dict = self.to_dict()
         with path.open("w") as f:
             json.dump(output_dict, f)
+
+    def to_lookup_table(
+        self,
+        feature_paramters: list[dict],
+        energy_target: str,
+    ) -> pd.DataFrame:
+        """
+        Convert the the model to a lookup table for the given estimator id and feature parameters.
+        """
+        return to_lookup_table(self, feature_paramters, energy_target)
 
     def visualize_features(
         self,

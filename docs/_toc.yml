@@ -18,6 +18,7 @@ parts:
   - caption: Examples
     chapters:
     - file: examples/temperature_models_example
+    - file: examples/to_lookup_table_example
 
   - caption: Developers 
     chapters:
