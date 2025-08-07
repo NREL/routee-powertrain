@@ -23,7 +23,7 @@ dependencies = [
     "onnx>=1.17,<2.0",
     "onnxruntime>=1.18.1,<2.0",
 ]
-requires-python = ">=3.9,<3.13"
+requires-python = ">=3.10,<3.13"
 
 [project.optional-dependencies]
 scikit = ["scikit-learn==1.6.1", "skl2onnx>=1.19.1,<1.20"]
@@ -67,7 +67,7 @@ packages = ["nrel"]
 ignore_missing_imports = true
 namespace_packages = true
 explicit_package_bases = true
-exclude = ["docs/", "build/", "dist/"]
+exclude = ["docs/", "build/", "dist/", "py-notebooks/"]
 
 [tool.ruff]
 include = ["nrel/**/*.py", "tests/*.py"]
@@ -105,9 +105,6 @@ exclude = [
 line-length = 88
 indent-width = 4
 
-# Assume Python 3.9
-target-version = "py39"
-
 [tool.ruff.lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
@@ -121,3 +118,55 @@ unfixable = []
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["osx-64", "osx-arm64", "linux-64", "win-64"]
+
+[tool.pixi.feature.py310.dependencies]
+python = "3.10.*"
+[tool.pixi.feature.py311.dependencies]
+python = "3.11.*"
+[tool.pixi.feature.py312.dependencies]
+python = "3.12.*"
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+py310 = { features = ["py310"] }
+py311 = { features = ["py311"] }
+py312 = { features = ["py312"] }
+dev-py310 = { features = [
+    "py310",
+    "dev",
+    "scikit",
+    "plot",
+    "ngboost",
+], solve-group = "py310" }
+dev-py311 = { features = [
+    "py311",
+    "dev",
+    "scikit",
+    "plot",
+    "ngboost",
+], solve-group = "py311" }
+dev-py312 = { features = [
+    "py312",
+    "dev",
+    "scikit",
+    "plot",
+    "ngboost",
+], solve-group = "py312" }
+
+[tool.pixi.feature.dev.tasks]
+fmt_fix = "ruff format"
+fmt_check = "ruff format --check"
+lint_check = "ruff check"
+lint_fix = "ruff check --fix"
+typing = "mypy ."
+test = "pytest tests/"
+docs = "jupyter-book build docs"
+check = { depends-on = ["fmt_fix", "lint_fix", "typing", "test"] }
+ci = { depends-on = ["fmt_check", "lint_check", "typing", "test"] }
+
+[tool.pixi.pypi-dependencies]
+nrel-routee-powertrain = { path = ".", editable = true }
