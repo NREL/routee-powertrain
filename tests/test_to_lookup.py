@@ -30,7 +30,7 @@ class TestToLookup(TestCase):
 
         result = to_lookup_table(
             model=self.mock_model,
-            feature_paramters=feature_parameters,
+            feature_parameters=feature_parameters,
             energy_target="gge",
         )
 
@@ -69,7 +69,7 @@ class TestToLookup(TestCase):
 
         result = to_lookup_table(
             model=self.mock_model,
-            feature_paramters=feature_parameters,
+            feature_parameters=feature_parameters,
             energy_target="gge",
         )
 
@@ -125,7 +125,7 @@ class TestToLookup(TestCase):
 
         result = to_lookup_table(
             model=self.mock_model,
-            feature_paramters=feature_parameters,
+            feature_parameters=feature_parameters,
             energy_target="gge",
         )
 
@@ -151,7 +151,7 @@ class TestToLookup(TestCase):
         with self.assertRaises(KeyError) as context:
             to_lookup_table(
                 model=self.mock_model,
-                feature_paramters=feature_parameters,
+                feature_parameters=feature_parameters,
                 energy_target="invalid_target",
             )
 
@@ -173,7 +173,7 @@ class TestToLookup(TestCase):
         with self.assertRaises(KeyError) as context:
             to_lookup_table(
                 model=self.mock_model,
-                feature_paramters=feature_parameters,
+                feature_parameters=feature_parameters,
                 energy_target="gge",
             )
 
@@ -195,7 +195,7 @@ class TestToLookup(TestCase):
 
         result = to_lookup_table(
             model=self.mock_model,
-            feature_paramters=feature_parameters,
+            feature_parameters=feature_parameters,
             energy_target="gge",
         )
 
@@ -219,7 +219,7 @@ class TestToLookup(TestCase):
 
         result = to_lookup_table(
             model=self.mock_model,
-            feature_paramters=feature_parameters,
+            feature_parameters=feature_parameters,
             energy_target="gge",
         )
 
@@ -242,7 +242,7 @@ class TestToLookup(TestCase):
         with self.assertRaises(Exception):  # This might raise various exceptions
             to_lookup_table(
                 model=self.mock_model,
-                feature_paramters=feature_parameters,
+                feature_parameters=feature_parameters,
                 energy_target="gge",
             )
 

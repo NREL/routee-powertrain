@@ -61,7 +61,7 @@ speed_only_params = [
 
 # Generate lookup table for Toyota Camry
 camry_speed_lookup = toyota_camry.to_lookup_table(
-    feature_paramters=speed_only_params,
+    feature_parameters=speed_only_params,
     energy_target="gge",  # Gallons of gasoline equivalent
 )
 
@@ -95,7 +95,7 @@ speed_grade_params = [
 
 # Generate lookup table for Tesla Model 3
 tesla_speed_grade_lookup = tesla_model3.to_lookup_table(
-    feature_paramters=speed_grade_params,
+    feature_parameters=speed_grade_params,
     energy_target="kwh",
 )
 
@@ -136,7 +136,7 @@ temp_params = [
 
 # Generate lookup table with temperature
 tesla_temp_lookup = tesla_with_temp.to_lookup_table(
-    feature_paramters=temp_params,
+    feature_parameters=temp_params,
     energy_target="kwh",
 )
 

@@ -46,11 +46,11 @@ class LookupTableFeatureParameter:
 
 def to_lookup_table(
     model: "Model",
-    feature_paramters: list[dict],
+    feature_parameters: list[dict],
     energy_target: str,
 ) -> pd.DataFrame:
     """
-    Convert the the model to a lookup table for the given estimator id and feature parameters.
+    Convert the model to a lookup table for the given estimator id and feature parameters.
     """
     if energy_target not in model.metadata.config.target.target_name_list:
         raise KeyError(
@@ -58,11 +58,11 @@ def to_lookup_table(
             f"Here are the available targets: {model.metadata.config.target.target_name_list}"
         )
 
-    parsed_feature_paramters = [
-        LookupTableFeatureParameter.from_dict(fp) for fp in feature_paramters
+    parsed_feature_parameters = [
+        LookupTableFeatureParameter.from_dict(fp) for fp in feature_parameters
     ]
 
-    feature_names_list = [fp.feature_name for fp in parsed_feature_paramters]
+    feature_names_list = [fp.feature_name for fp in parsed_feature_parameters]
     feature_set_id = feature_names_to_id(feature_names_list)
     feature_set = model.metadata.config.feature_set_map.get(feature_set_id)
     if feature_set is None:
@@ -77,7 +77,7 @@ def to_lookup_table(
 
     points = tuple(
         np.linspace(f.lower_bound, f.upper_bound, f.n_samples)
-        for f in parsed_feature_paramters
+        for f in parsed_feature_parameters
     )
     mesh = np.meshgrid(*points)
 

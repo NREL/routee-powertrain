@@ -189,13 +189,13 @@ class Model:
 
     def to_lookup_table(
         self,
-        feature_paramters: list[dict],
+        feature_parameters: list[dict],
         energy_target: str,
     ) -> pd.DataFrame:
         """
         Convert the the model to a lookup table for the given estimator id and feature parameters.
         """
-        return to_lookup_table(self, feature_paramters, energy_target)
+        return to_lookup_table(self, feature_parameters, energy_target)
 
     def visualize_features(
         self,
