@@ -192,6 +192,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../../../examples/temperature_models_example.html">Temperature Models Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../examples/to_lookup_table_example.html">Lookup Table Example</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers</span></p>
 <ul class="nav bd-sidenav">
@@ -370,6 +371,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">nrel.routee.powertrain.estimators.smart_core</span><span class="w"> </span><span class="kn">import</span> <span class="n">SmartCoreEstimator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">nrel.routee.powertrain.estimators.ngboost_estimator</span><span class="w"> </span><span class="kn">import</span> <span class="n">NGBoostEstimator</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">nrel.routee.powertrain.io.to_lookup_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_lookup_table</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">nrel.routee.powertrain.validation.feature_visualization</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">contour_plot</span><span class="p">,</span>
     <span class="n">visualize_features</span><span class="p">,</span>
@@ -550,6 +552,19 @@ document.write(`
         <span class="n">output_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
         <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">output_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Model.to_lookup_table">
+<a class="viewcode-back" href="../../../../../api_docs.html#nrel.routee.powertrain.core.model.Model.to_lookup_table">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_lookup_table</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">feature_parameters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">energy_target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the the model to a lookup table for the given estimator id and feature parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">to_lookup_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_parameters</span><span class="p">,</span> <span class="n">energy_target</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Model.visualize_features">

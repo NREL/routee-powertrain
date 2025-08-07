@@ -1,0 +1,808 @@
+
+<!DOCTYPE html>
+
+
+<html lang="python" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Lookup Table Example &#8212; My sample book</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=30a733bc"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/to_lookup_table_example';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Build The Docs" href="../build_the_docs.html" />
+    <link rel="prev" title="Temperature Models Example" href="temperature_models_example.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="python"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/routeelogo.png" class="logo__image only-light" alt="My sample book - Home"/>
+    <script>document.write(`<img src="../_static/routeelogo.png" class="logo__image only-dark" alt="My sample book - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    RouteE Powertrain
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../what_is_routee.html">What is RouteE?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../model_prediction.html">Model Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_training.html">Model Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_docs.html">Python API Docs</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="temperature_models_example.html">Temperature Models Example</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Lookup Table Example</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../build_the_docs.html">Build The Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NREL/routee-powertrain" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/routee-powertrain/issues/new?title=Issue%20on%20page%20%2Fexamples/to_lookup_table_example.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/examples/to_lookup_table_example.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Lookup Table Example</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-models">Loading Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#single-feature-lookup-table">Single Feature Lookup Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-feature-lookup-table">Two Feature Lookup Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-feature-lookup-table-with-temperature">Three Feature Lookup Table with Temperature</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-usage-interpolation-for-route-prediction">Practical Usage: Interpolation for Route Prediction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices-and-considerations">Best Practices and Considerations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-cases">Use Cases</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="lookup-table-example">
+<h1>Lookup Table Example<a class="headerlink" href="#lookup-table-example" title="Link to this heading">#</a></h1>
+<p>This example demonstrates how to convert a Routee Powertrain model into a lookup table format.
+Lookup tables are useful for fast energy consumption predictions across a predefined grid of operating conditions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">nrel.routee.powertrain</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="loading-models">
+<h2>Loading Models<a class="headerlink" href="#loading-models" title="Link to this heading">#</a></h2>
+<p>First, let's load a few different models to demonstrate lookup table generation.
+We'll use models with different feature sets to show the flexibility of the approach.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">toyota_camry</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2016_TOYOTA_Camry_4cyl_2WD&quot;</span><span class="p">)</span>
+<span class="n">tesla_model3</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2022_Tesla_Model_3_RWD&quot;</span><span class="p">)</span>
+<span class="n">tesla_with_temp</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2022_Tesla_Model_3_RWD_0F_110F_steady&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let's examine the available features and targets for each model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Toyota Camry features:&quot;</span><span class="p">,</span> <span class="n">toyota_camry</span><span class="o">.</span><span class="n">feature_set_lists</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Toyota Camry targets:&quot;</span><span class="p">,</span> <span class="n">toyota_camry</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">target_name_list</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tesla Model 3 features:&quot;</span><span class="p">,</span> <span class="n">tesla_model3</span><span class="o">.</span><span class="n">feature_set_lists</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tesla Model 3 targets:&quot;</span><span class="p">,</span> <span class="n">tesla_model3</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">target_name_list</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tesla with Temperature features:&quot;</span><span class="p">,</span> <span class="n">tesla_with_temp</span><span class="o">.</span><span class="n">feature_set_lists</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Tesla with Temperature targets:&quot;</span><span class="p">,</span>
+    <span class="n">tesla_with_temp</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">target_name_list</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Toyota Camry features: [[&#39;speed_mph&#39;], [&#39;grade_percent&#39;, &#39;speed_mph&#39;], [&#39;grade_percent&#39;, &#39;speed_mph&#39;, &#39;turn_angle&#39;]]
+Toyota Camry targets: [&#39;gge&#39;]
+
+Tesla Model 3 features: [[&#39;speed_mph&#39;], [&#39;grade_percent&#39;, &#39;speed_mph&#39;], [&#39;grade_percent&#39;, &#39;speed_mph&#39;, &#39;turn_angle&#39;]]
+Tesla Model 3 targets: [&#39;kwh&#39;]
+
+Tesla with Temperature features: [[&#39;ambient_temp_f&#39;, &#39;speed_mph&#39;], [&#39;ambient_temp_f&#39;, &#39;grade_percent&#39;, &#39;speed_mph&#39;]]
+Tesla with Temperature targets: [&#39;kwh&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="single-feature-lookup-table">
+<h2>Single Feature Lookup Table<a class="headerlink" href="#single-feature-lookup-table" title="Link to this heading">#</a></h2>
+<p>Let's start with a simple single-feature lookup table using speed only.
+This creates a 1D lookup table showing how energy consumption varies with vehicle speed.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define feature parameters for speed-only lookup</span>
+<span class="n">speed_only_params</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;feature_name&quot;</span><span class="p">:</span> <span class="s2">&quot;speed_mph&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lower_bound&quot;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+        <span class="s2">&quot;upper_bound&quot;</span><span class="p">:</span> <span class="mf">80.0</span><span class="p">,</span>
+        <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>  <span class="c1"># Every 5 mph from 5 to 80</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="c1"># Generate lookup table for Toyota Camry</span>
+<span class="n">camry_speed_lookup</span> <span class="o">=</span> <span class="n">toyota_camry</span><span class="o">.</span><span class="n">to_lookup_table</span><span class="p">(</span>
+    <span class="n">feature_parameters</span><span class="o">=</span><span class="n">speed_only_params</span><span class="p">,</span>
+    <span class="n">energy_target</span><span class="o">=</span><span class="s2">&quot;gge&quot;</span><span class="p">,</span>  <span class="c1"># Gallons of gasoline equivalent</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Single feature lookup table (first 5 rows):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">camry_speed_lookup</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Single feature lookup table (first 5 rows):
+   speed_mph  gge_per_distance
+0        5.0          0.079209
+1       10.0          0.050484
+2       15.0          0.045138
+3       20.0          0.045888
+4       25.0          0.042178
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="two-feature-lookup-table">
+<h2>Two Feature Lookup Table<a class="headerlink" href="#two-feature-lookup-table" title="Link to this heading">#</a></h2>
+<p>Now let's create a more comprehensive 2D lookup table using both speed and grade.
+This shows how energy consumption varies with both vehicle speed and road grade.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define feature parameters for speed and grade</span>
+<span class="n">speed_grade_params</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;feature_name&quot;</span><span class="p">:</span> <span class="s2">&quot;speed_mph&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lower_bound&quot;</span><span class="p">:</span> <span class="mf">25.0</span><span class="p">,</span>
+        <span class="s2">&quot;upper_bound&quot;</span><span class="p">:</span> <span class="mf">65.0</span><span class="p">,</span>
+        <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>  <span class="c1"># Every 5 mph from 25 to 65</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;feature_name&quot;</span><span class="p">:</span> <span class="s2">&quot;grade_percent&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lower_bound&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">6.0</span><span class="p">,</span>
+        <span class="s2">&quot;upper_bound&quot;</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">,</span>
+        <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>  <span class="c1"># Every 2% grade from -6% to +6%</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+
+<span class="c1"># Generate lookup table for Tesla Model 3</span>
+<span class="n">tesla_speed_grade_lookup</span> <span class="o">=</span> <span class="n">tesla_model3</span><span class="o">.</span><span class="n">to_lookup_table</span><span class="p">(</span>
+    <span class="n">feature_parameters</span><span class="o">=</span><span class="n">speed_grade_params</span><span class="p">,</span>
+    <span class="n">energy_target</span><span class="o">=</span><span class="s2">&quot;kwh&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Two feature lookup table shape: </span><span class="si">{</span><span class="n">tesla_speed_grade_lookup</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sample rows:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tesla_speed_grade_lookup</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Two feature lookup table shape: (63, 3)
+Sample rows:
+   speed_mph  grade_percent  kwh_per_distance
+0       25.0           -6.0         -0.211147
+1       30.0           -6.0         -0.211147
+2       35.0           -6.0         -0.211147
+3       40.0           -6.0         -0.208576
+4       45.0           -6.0         -0.201589
+5       50.0           -6.0         -0.201589
+6       55.0           -6.0         -0.201589
+7       60.0           -6.0         -0.201589
+8       65.0           -6.0         -0.201589
+9       25.0           -4.0         -0.087312
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="three-feature-lookup-table-with-temperature">
+<h2>Three Feature Lookup Table with Temperature<a class="headerlink" href="#three-feature-lookup-table-with-temperature" title="Link to this heading">#</a></h2>
+<p>For models that include temperature, we can create a 3D lookup table.
+This is particularly useful for electric vehicles where temperature significantly affects range.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define feature parameters including temperature</span>
+<span class="n">temp_params</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;feature_name&quot;</span><span class="p">:</span> <span class="s2">&quot;speed_mph&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lower_bound&quot;</span><span class="p">:</span> <span class="mf">35.0</span><span class="p">,</span>
+        <span class="s2">&quot;upper_bound&quot;</span><span class="p">:</span> <span class="mf">55.0</span><span class="p">,</span>
+        <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># 35, 45, 55 mph</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;feature_name&quot;</span><span class="p">:</span> <span class="s2">&quot;grade_percent&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lower_bound&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="s2">&quot;upper_bound&quot;</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span>
+        <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># -2%, 0%, 2%, 4%</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;feature_name&quot;</span><span class="p">:</span> <span class="s2">&quot;ambient_temp_f&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lower_bound&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span>
+        <span class="s2">&quot;upper_bound&quot;</span><span class="p">:</span> <span class="mf">80.0</span><span class="p">,</span>
+        <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># 20°F, 40°F, 60°F, 80°F</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+
+<span class="c1"># Generate lookup table with temperature</span>
+<span class="n">tesla_temp_lookup</span> <span class="o">=</span> <span class="n">tesla_with_temp</span><span class="o">.</span><span class="n">to_lookup_table</span><span class="p">(</span>
+    <span class="n">feature_parameters</span><span class="o">=</span><span class="n">temp_params</span><span class="p">,</span>
+    <span class="n">energy_target</span><span class="o">=</span><span class="s2">&quot;kwh&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Three feature lookup table shape: </span><span class="si">{</span><span class="n">tesla_temp_lookup</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sample rows showing temperature effects:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tesla_temp_lookup</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Three feature lookup table shape: (48, 4)
+Sample rows showing temperature effects:
+    speed_mph  grade_percent  ambient_temp_f  kwh_per_distance
+0        35.0           -2.0            20.0          0.124237
+1        35.0           -2.0            40.0          0.063225
+2        35.0           -2.0            60.0          0.063225
+3        35.0           -2.0            80.0          0.063225
+4        45.0           -2.0            20.0          0.124237
+5        45.0           -2.0            40.0          0.063225
+6        45.0           -2.0            60.0          0.063225
+7        45.0           -2.0            80.0          0.063225
+8        55.0           -2.0            20.0          0.124237
+9        55.0           -2.0            40.0          0.063225
+10       55.0           -2.0            60.0          0.063225
+11       55.0           -2.0            80.0          0.063225
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="practical-usage-interpolation-for-route-prediction">
+<h2>Practical Usage: Interpolation for Route Prediction<a class="headerlink" href="#practical-usage-interpolation-for-route-prediction" title="Link to this heading">#</a></h2>
+<p>Lookup tables can be used for fast interpolation to predict energy consumption for specific driving conditions.
+Here's how you might use a lookup table for route prediction:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: Using lookup table for fast prediction</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">interpolate_energy_from_lookup</span><span class="p">(</span><span class="n">lookup_table</span><span class="p">,</span> <span class="n">speed</span><span class="p">,</span> <span class="n">grade</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">grade</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">temp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># 1D interpolation for speed only</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">lookup_table</span><span class="p">[</span><span class="s2">&quot;speed_mph&quot;</span><span class="p">],</span> <span class="n">lookup_table</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># For multi-dimensional interpolation, you&#39;d typically use scipy.interpolate</span>
+        <span class="c1"># This is a simplified example</span>
+        <span class="n">closest_row</span> <span class="o">=</span> <span class="n">lookup_table</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">lookup_table</span><span class="p">[</span><span class="s2">&quot;speed_mph&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">speed</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[:</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">closest_row</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="c1"># Example usage</span>
+<span class="n">example_speed</span> <span class="o">=</span> <span class="mf">42.5</span>
+<span class="n">predicted_energy</span> <span class="o">=</span> <span class="n">interpolate_energy_from_lookup</span><span class="p">(</span><span class="n">camry_speed_lookup</span><span class="p">,</span> <span class="n">example_speed</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Interpolated energy consumption at </span><span class="si">{</span><span class="n">example_speed</span><span class="si">}</span><span class="s2"> mph: </span><span class="si">{</span><span class="n">predicted_energy</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> gge/mile&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated energy consumption at 42.5 mph: 0.0264 gge/mile
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="best-practices-and-considerations">
+<h2>Best Practices and Considerations<a class="headerlink" href="#best-practices-and-considerations" title="Link to this heading">#</a></h2>
+<p>When creating lookup tables, consider:</p>
+<ol class="arabic simple">
+<li><p><strong>Resolution vs. Size</strong>: More samples mean higher accuracy but larger tables</p></li>
+<li><p><strong>Feature Ranges</strong>: Ensure your lookup table covers the expected operating conditions</p></li>
+<li><p><strong>Interpolation</strong>: For values between grid points, you'll need interpolation</p></li>
+<li><p><strong>Memory Usage</strong>: Large multi-dimensional tables can consume significant memory</p></li>
+<li><p><strong>Update Frequency</strong>: Lookup tables are static - update them when models change</p></li>
+</ol>
+</section>
+<section id="use-cases">
+<h2>Use Cases<a class="headerlink" href="#use-cases" title="Link to this heading">#</a></h2>
+<p>Lookup tables are particularly useful for:</p>
+<ul class="simple">
+<li><p>Real-time applications requiring fast predictions</p></li>
+<li><p>Embedded systems with limited computational resources</p></li>
+<li><p>Integration with external systems that can't run Python models directly</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./examples"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="temperature_models_example.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Temperature Models Example</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../build_the_docs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Build The Docs</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-models">Loading Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#single-feature-lookup-table">Single Feature Lookup Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-feature-lookup-table">Two Feature Lookup Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-feature-lookup-table-with-temperature">Three Feature Lookup Table with Temperature</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-usage-interpolation-for-route-prediction">Practical Usage: Interpolation for Route Prediction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices-and-considerations">Best Practices and Considerations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-cases">Use Cases</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book Community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
