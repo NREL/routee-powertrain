@@ -371,7 +371,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -387,6 +389,17 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-vehicle-comparison">Multi-Vehicle Comparison</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature-sensitivity-comparison">Temperature Sensitivity Comparison</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -408,10 +421,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-08-07 19:07:34,959 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-10-24 16:16:13,049 [INFO] - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-08-07 19:07:34,995 [INFO] - generated new fontManager
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-10-24 16:16:13,394 [INFO] - generated new fontManager
 </pre></div>
 </div>
 </div>
@@ -421,7 +434,7 @@ We will then predict energy consumption over a sample route at different ambient
 <p>It's important to understand the distinction between steady-state and transient temperature models:</p>
 <ul class="simple">
 <li><p><strong>Steady-State Temperature Models</strong>: These models assume that the vehicle's thermal conditions have stabilized to a constant state.
-They are typically used for longer trips where the vehicle has had sufficient time to reach thermal equilibrium with its environment.
+They are typically used for longer trips where the vehicle has had sufficient time for the control systems to have stabilized the thermal environment.
 In this example, we will use the steady-state model for the portion of the trip after the first 5 minutes at 32°F.</p></li>
 <li><p><strong>Transient Temperature Models</strong>: These models account for the period when the vehicle is still adjusting to the ambient temperature.
 For example, when a vehicle starts a trip in cold weather and has been sitting outside, it takes some time for the battery and cabin to warm up.</p></li>
@@ -523,16 +536,85 @@ For example, when a vehicle starts a trip in cold weather and has been sitting o
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fe4b11d7be0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f3658940b50&gt;
 </pre></div>
 </div>
-<img alt="../_images/501aba9dad9847eb8dda1d8bcda4b2c15562fe4d8254e584e8bbd44d079b42ff.png" src="../_images/501aba9dad9847eb8dda1d8bcda4b2c15562fe4d8254e584e8bbd44d079b42ff.png" />
+<img alt="../_images/0ff98181320fb6763fcffafc5ff8d475bb5406e405f40b99c1a10a2733e11f4c.png" src="../_images/0ff98181320fb6763fcffafc5ff8d475bb5406e405f40b99c1a10a2733e11f4c.png" />
 </div>
 </div>
 <p>Notice how the energy consumption for the 32°F route is higher than the other two scenarios, reflecting the increased energy demand in colder temperatures.</p>
 <p>Something else to note is that the model that doesn't consider temperature explicitly includes a &quot;real world correction factor&quot; to account for things like temperature <em>on average</em>.
 This explains why the energy consumption for the 72°F route is slightly lower than the other two scenarios since the model without temperature adjustment is effectively averaging out the impact of temperature.
 The 72°F condition would be considered the &quot;ideal&quot; case since the vehicle does not have to expand any extra effort to maintain the cabin temperature.</p>
+<section id="multi-vehicle-comparison">
+<h2>Multi-Vehicle Comparison<a class="headerlink" href="#multi-vehicle-comparison" title="Link to this heading">#</a></h2>
+<p>Now let's compare the Tesla Model 3 with other electric vehicles to see how different EVs perform under various temperature conditions.
+We'll load the Nissan Leaf and Chevrolet Bolt models and compare their energy consumption across different temperatures.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load Nissan Leaf models</span>
+<span class="n">nissan_leaf_steady</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2016_Nissan_Leaf_30_kWh_0F_110F_steady&quot;</span><span class="p">)</span>
+<span class="n">nissan_leaf_transient</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2016_Nissan_Leaf_30_kWh_0F_110F_transient&quot;</span><span class="p">)</span>
+
+<span class="c1"># Load Chevrolet Bolt models</span>
+<span class="n">chevy_bolt_steady</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2020_Chevrolet_Bolt_EV_0F_110F_steady&quot;</span><span class="p">)</span>
+<span class="n">chevy_bolt_transient</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;2020_Chevrolet_Bolt_EV_0F_110F_transient&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="temperature-sensitivity-comparison">
+<h3>Temperature Sensitivity Comparison<a class="headerlink" href="#temperature-sensitivity-comparison" title="Link to this heading">#</a></h3>
+<p>Let's compare how each vehicle's energy consumption changes across a range of temperatures (0°F, 15°F, 32°F, 50°F, 72°F, 90°F, 110°F).
+We'll use steady-state models for this comparison.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Predict energy for all vehicles at different temperatures</span>
+<span class="n">temperatures</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">110</span><span class="p">]</span>
+<span class="n">vehicles_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Tesla Model 3 RWD&quot;</span><span class="p">:</span> <span class="n">tesla_with_temp_steady</span><span class="p">,</span>
+    <span class="s2">&quot;Nissan Leaf 30 kWh&quot;</span><span class="p">:</span> <span class="n">nissan_leaf_steady</span><span class="p">,</span>
+    <span class="s2">&quot;Chevrolet Bolt EV&quot;</span><span class="p">:</span> <span class="n">chevy_bolt_steady</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">total_energy_by_temp</span> <span class="o">=</span> <span class="p">{</span><span class="n">vehicle</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">vehicle</span> <span class="ow">in</span> <span class="n">vehicles_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+<span class="k">for</span> <span class="n">temp</span> <span class="ow">in</span> <span class="n">temperatures</span><span class="p">:</span>
+    <span class="n">route_temp</span> <span class="o">=</span> <span class="n">sample_route</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">route_temp</span><span class="p">[</span><span class="s2">&quot;ambient_temp_f&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span>
+
+    <span class="k">for</span> <span class="n">vehicle_name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">vehicles_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">energy_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+            <span class="n">route_temp</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;speed_mph&quot;</span><span class="p">,</span> <span class="s2">&quot;grade_percent&quot;</span><span class="p">,</span> <span class="s2">&quot;ambient_temp_f&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">total_energy_by_temp</span><span class="p">[</span><span class="n">vehicle_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">energy_pred</span><span class="p">[</span><span class="s2">&quot;kwh&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+<span class="c1"># Create temperature sensitivity comparison plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">vehicle_name</span><span class="p">,</span> <span class="n">energies</span> <span class="ow">in</span> <span class="n">total_energy_by_temp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">temperatures</span><span class="p">,</span>
+        <span class="n">energies</span><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">vehicle_name</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Ambient Temperature (°F)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Total Energy Consumption (kWh)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Temperature Sensitivity Comparison Across Vehicles&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/7eedcc663fd486c1bcff3f1b0cf7346a40c64e234fc9c1fd7a0695941fb32980.png" src="../_images/7eedcc663fd486c1bcff3f1b0cf7346a40c64e234fc9c1fd7a0695941fb32980.png" />
+</div>
+</div>
+</section>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -589,6 +671,24 @@ The 72°F condition would be considered the &quot;ideal&quot; case since the veh
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-vehicle-comparison">Multi-Vehicle Comparison</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature-sensitivity-comparison">Temperature Sensitivity Comparison</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
