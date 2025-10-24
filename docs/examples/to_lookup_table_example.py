@@ -5,12 +5,10 @@ This example demonstrates how to convert a Routee Powertrain model into a lookup
 Lookup tables are useful for fast energy consumption predictions across a predefined grid of operating conditions.
 """
 
-# %%
 import nrel.routee.powertrain as pt
 import numpy as np
 
 
-# %%
 """
 ## Loading Models
 
@@ -18,16 +16,13 @@ First, let's load a few different models to demonstrate lookup table generation.
 We'll use models with different feature sets to show the flexibility of the approach.
 """
 
-# %%
 toyota_camry = pt.load_model("2016_TOYOTA_Camry_4cyl_2WD")
 tesla_model3 = pt.load_model("2022_Tesla_Model_3_RWD")
 tesla_with_temp = pt.load_model("2022_Tesla_Model_3_RWD_0F_110F_steady")
-# %%
 """
 Let's examine the available features and targets for each model.
 """
 
-# %%
 print("Toyota Camry features:", toyota_camry.feature_set_lists)
 print("Toyota Camry targets:", toyota_camry.metadata.config.target.target_name_list)
 print()
@@ -40,7 +35,6 @@ print(
     tesla_with_temp.metadata.config.target.target_name_list,
 )
 
-# %%
 """
 ## Single Feature Lookup Table
 
@@ -48,7 +42,6 @@ Let's start with a simple single-feature lookup table using speed only.
 This creates a 1D lookup table showing how energy consumption varies with vehicle speed.
 """
 
-# %%
 # Define feature parameters for speed-only lookup
 speed_only_params = [
     {
@@ -68,7 +61,6 @@ camry_speed_lookup = toyota_camry.to_lookup_table(
 print("Single feature lookup table (first 5 rows):")
 print(camry_speed_lookup.head())
 
-# %%
 """
 ## Two Feature Lookup Table
 
@@ -76,7 +68,6 @@ Now let's create a more comprehensive 2D lookup table using both speed and grade
 This shows how energy consumption varies with both vehicle speed and road grade.
 """
 
-# %%
 # Define feature parameters for speed and grade
 speed_grade_params = [
     {
@@ -103,7 +94,6 @@ print(f"Two feature lookup table shape: {tesla_speed_grade_lookup.shape}")
 print("Sample rows:")
 print(tesla_speed_grade_lookup.head(10))
 
-# %%
 """
 ## Three Feature Lookup Table with Temperature
 
@@ -111,7 +101,6 @@ For models that include temperature, we can create a 3D lookup table.
 This is particularly useful for electric vehicles where temperature significantly affects range.
 """
 
-# %%
 # Define feature parameters including temperature
 temp_params = [
     {
@@ -144,7 +133,6 @@ print(f"Three feature lookup table shape: {tesla_temp_lookup.shape}")
 print("Sample rows showing temperature effects:")
 print(tesla_temp_lookup.head(12))
 
-# %%
 """
 ## Practical Usage: Interpolation for Route Prediction
 
@@ -153,7 +141,6 @@ Here's how you might use a lookup table for route prediction:
 """
 
 
-# %%
 # Example: Using lookup table for fast prediction
 def interpolate_energy_from_lookup(lookup_table, speed, grade=None, temp=None):
     if grade is None and temp is None:
@@ -175,7 +162,6 @@ print(
     f"Interpolated energy consumption at {example_speed} mph: {predicted_energy:.4f} gge/mile"
 )
 
-# %%
 """
 ## Best Practices and Considerations
 
@@ -194,5 +180,3 @@ Lookup tables are particularly useful for:
 - Embedded systems with limited computational resources
 - Integration with external systems that can't run Python models directly
 """
-
-# %%
